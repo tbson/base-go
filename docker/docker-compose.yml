@@ -1,0 +1,96 @@
+version: "2.1"
+
+networks:
+  shared_network:
+    external: true
+
+services:
+    base_db:
+        container_name: base_db
+        image: "postgres:15.3-alpine"
+        environment:
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - POSTGRES_DB=${DB_NAME}
+        ports:
+            - "5432:5432"
+        volumes:
+            # - ./ext.sql:/docker-entrypoint-initdb.d/ext.sql
+            - ./dbdata:/var/lib/postgresql/data/:delegated
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready"]
+            interval: 10s
+            timeout: 5s
+            retries: 18
+
+    base_backend:
+        container_name: base_backend
+        build:
+            context: ../backend
+            dockerfile: ../docker/dockerfiles/backend
+        volumes:
+            - ../backend:/code:delegated
+        networks:
+            - shared_network
+        environment:
+            - TZ=Asia/Ho_Chi_Minh
+            - GOPATH=/code/
+            - SECRET_KEY=${SECRET_KEY}
+            - DEBUG=${DEBUG}
+            - EMAIL_ENABLE=${EMAIL_ENABLE}
+
+            - APP_TITLE=${APP_TITLE}
+            - APP_DESCRTIPTION=%{APP_DESCRTIPTION}
+
+            - PORT=${PORT}
+            - PROTOCOL=${PROTOCOL}
+            - DOMAIN=${DOMAIN}
+
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - DB_NAME=${DB_NAME}
+
+            - EMAIL_DOMAIN=${EMAIL_DOMAIN}
+            - EMAIL_HOST=${EMAIL_HOST}
+            - EMAIL_PORT=${EMAIL_PORT}
+            - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+            - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+            - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+        ports:
+            - "4000:4000"
+        depends_on:
+            base_db:
+                condition: service_healthy
+        tty: ${DOCKER_TTY}
+        command: ${DOCKER_COMMAND}
+
+    base_frontend:
+      container_name: base_frontend 
+      build:
+        context: ../frontend
+        dockerfile: ../docker/dockerfiles/frontend
+      volumes:
+        - ../frontend:/code:delegated
+        - /code/node_modules
+      networks:
+            - shared_network
+      ports:
+        - "3000:3000"
+      tty: ${DOCKER_TTY}
+
+    base_nginx:
+        container_name: base_nginx
+        build:
+            context: ./
+            dockerfile: ./dockerfiles/nginx
+        restart: always
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d
+            - ${SSL_PATH}:/resource/ssl
+            - ../backend/public/:/resource/public
+        networks:
+            - shared_network
+        ports:
+            - "443:443"
+        depends_on:
+            - base_backend
