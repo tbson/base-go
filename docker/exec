@@ -52,8 +52,8 @@ elif [ "$FIRST_ARG" == "ftest" ]; then
     docker compose exec "$NAME"_frontend yarn test $ARGS
 elif [ "$FIRST_ARG" == "poetry" ]; then
     docker compose exec "$NAME"_backend poetry $ARGS
-elif [ "$FIRST_ARG" == "php" ]; then
-    docker compose exec "$NAME"_backend php $ARGS
+elif [ "$FIRST_ARG" == "go" ]; then
+    docker compose exec "$NAME"_backend go run $ARGS
 elif [ "$FIRST_ARG" == "artisan" ]; then
     docker compose exec "$NAME"_backend php artisan $ARGS
 elif [ "$FIRST_ARG" == "queue" ]; then

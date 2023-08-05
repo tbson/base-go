@@ -1,3 +1,10 @@
 package ctype
 
-type RoleMap map[string][]string
+type Role struct {
+	ProfileTypes []string
+	Title        string
+	Module       string
+	Action       string
+}
+
+type RoleMap map[string]Role

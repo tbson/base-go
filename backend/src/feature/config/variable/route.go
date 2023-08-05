@@ -2,8 +2,7 @@ package variable
 
 import (
 	ctrl "app/feature/config/variable/crud/ctrl"
-	"reflect"
-	"runtime"
+	"app/util/route_util"
 
 	"app/util/constant"
 	"app/util/ctype"
@@ -15,12 +14,10 @@ type RoleMap map[string][]string
 
 func ApplyRoutes(e *echo.Echo, roleMap ctype.RoleMap) (*echo.Echo, ctype.RoleMap) {
 	g := e.Group("/config/variable")
-	g.GET("/", ctrl.List)
-	key := runtime.FuncForPC(reflect.ValueOf(ctrl.List).Pointer()).Name()
-	roleMap[key] = []string{constant.UsrTypeAdmin, constant.UsrTypeStaff}
+	applyRoute := route_util.ApplyRoute(g, roleMap)
 
-	g.POST("/", ctrl.Create)
-	key1 := runtime.FuncForPC(reflect.ValueOf(ctrl.Create).Pointer()).Name()
-	roleMap[key1] = []string{constant.UsrTypeAdmin}
+	applyRoute("GET", "/", ctrl.List, []string{constant.UsrTypeAdmin, constant.UsrTypeStaff}, "Get variable list")
+	applyRoute("POST", "/", ctrl.Create, []string{constant.UsrTypeAdmin}, "Create variable list")
+
 	return e, roleMap
 }
