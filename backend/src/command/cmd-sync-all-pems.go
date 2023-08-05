@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func main() {
+func main1() {
 	e := echo.New()
 	_, roleMap := route.ApplyRoutes(e)
 	fmt.Println(roleMap)

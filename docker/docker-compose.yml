@@ -1,8 +1,4 @@
-version: "2.1"
-
-networks:
-  shared_network:
-    external: true
+version: "3.6"
 
 services:
     base_db:
@@ -30,14 +26,11 @@ services:
             dockerfile: ../docker/dockerfiles/backend
         volumes:
             - ../backend:/code:delegated
-        networks:
-            - shared_network
         environment:
-            - TZ=Asia/Ho_Chi_Minh
             - GOPATH=/code/
             - SECRET_KEY=${SECRET_KEY}
+            - TIME_ZONE=${TIME_ZONE}
             - DEBUG=${DEBUG}
-            - EMAIL_ENABLE=${EMAIL_ENABLE}
 
             - APP_TITLE=${APP_TITLE}
             - APP_DESCRTIPTION=%{APP_DESCRTIPTION}
@@ -46,10 +39,13 @@ services:
             - PROTOCOL=${PROTOCOL}
             - DOMAIN=${DOMAIN}
 
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
             - DB_USER=${DB_USER}
-            - DB_PASSWORD=${DB_PASSWORD}
             - DB_NAME=${DB_NAME}
+            - DB_PASSWORD=${DB_PASSWORD}
 
+            - EMAIL_ENABLE=${EMAIL_ENABLE}
             - EMAIL_DOMAIN=${EMAIL_DOMAIN}
             - EMAIL_HOST=${EMAIL_HOST}
             - EMAIL_PORT=${EMAIL_PORT}
@@ -72,8 +68,6 @@ services:
       volumes:
         - ../frontend:/code:delegated
         - /code/node_modules
-      networks:
-            - shared_network
       ports:
         - "3000:3000"
       tty: ${DOCKER_TTY}
@@ -88,8 +82,6 @@ services:
             - ./nginx.conf:/etc/nginx/conf.d
             - ${SSL_PATH}:/resource/ssl
             - ../backend/public/:/resource/public
-        networks:
-            - shared_network
         ports:
             - "443:443"
         depends_on:
