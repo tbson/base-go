@@ -1,7 +1,7 @@
 package route_util
 
 import (
-	"app/util/ctype"
+	"app/common/ctype"
 	"reflect"
 	"runtime"
 	"strings"

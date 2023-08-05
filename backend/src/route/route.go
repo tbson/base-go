@@ -1,8 +1,8 @@
 package route
 
 import (
+	"app/common/ctype"
 	"app/feature/config/variable"
-	"app/util/ctype"
 
 	"github.com/labstack/echo/v4"
 )

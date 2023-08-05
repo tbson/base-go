@@ -4,8 +4,8 @@ import (
 	ctrl "app/feature/config/variable/crud/ctrl"
 	"app/util/route_util"
 
-	"app/util/constant"
-	"app/util/ctype"
+	"app/common/constant"
+	"app/common/ctype"
 
 	"github.com/labstack/echo/v4"
 )
