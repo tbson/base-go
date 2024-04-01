@@ -12,12 +12,12 @@ import (
 
 type RoleMap map[string][]string
 
-func ApplyRoutes(e *echo.Echo, roleMap ctype.RoleMap) (*echo.Echo, ctype.RoleMap) {
+func RegisterCtrl(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.RoleMap) {
 	g := e.Group("/config/variable")
-	applyRoute := route_util.ApplyRoute(g, roleMap)
+	rr := route_util.RegisterRoute(g, roleMap)
 
-	applyRoute("GET", "/", ctrl.List, []string{constant.UsrTypeAdmin, constant.UsrTypeStaff}, "Get variable list")
-	applyRoute("POST", "/", ctrl.Create, []string{constant.UsrTypeAdmin}, "Create variable list")
+	rr("GET", "/", ctrl.List, []string{constant.UsrTypeAdmin, constant.UsrTypeStaff}, "Get variable list")
+	rr("POST", "/", ctrl.Create, []string{constant.UsrTypeAdmin}, "Create variable list")
 
 	return e, roleMap
 }

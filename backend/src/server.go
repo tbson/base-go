@@ -28,7 +28,8 @@ func otherPage(c echo.Context) error {
 func main() {
 	db_util.InitDb()
 	e := echo.New()
-	e, _ = route.ApplyRoutes(e)
+	apiGroup := e.Group("/api/v1")
+	route.CollectRoutes(apiGroup)
 	e.Logger.Fatal(e.Start("0.0.0.0:4000"))
 }
 

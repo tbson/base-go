@@ -20,7 +20,7 @@ func getFnInfo(fnPath string) (string, string) {
 	return arrResult[0], arrResult[1]
 }
 
-func ApplyRoute(group *echo.Group, roleMap ctype.RoleMap) RuteHandlerFunc {
+func RegisterRoute(group *echo.Group, roleMap ctype.RoleMap) RuteHandlerFunc {
 	return func(verb string, path string, ctrl echo.HandlerFunc, profileTypes []string, title string) ctype.RoleMap {
 		verbs := []string{verb}
 		group.Match(verbs, path, ctrl)

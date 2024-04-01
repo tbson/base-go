@@ -1,8 +1,8 @@
 version: "3.6"
 
 services:
-    base_db:
-        container_name: base_db
+    basecode_db:
+        container_name: basecode_db
         image: "postgres:15.3-alpine"
         environment:
             - POSTGRES_USER=${DB_USER}
@@ -19,8 +19,8 @@ services:
             timeout: 5s
             retries: 18
 
-    base_backend:
-        container_name: base_backend
+    basecode_backend:
+        container_name: basecode_backend
         build:
             context: ../backend
             dockerfile: ../docker/dockerfiles/backend
@@ -55,13 +55,13 @@ services:
         ports:
             - "4000:4000"
         depends_on:
-            base_db:
+            basecode_db:
                 condition: service_healthy
         tty: ${DOCKER_TTY}
         command: ${DOCKER_COMMAND}
 
-    base_frontend:
-      container_name: base_frontend 
+    basecode_frontend:
+      container_name: basecode_frontend 
       build:
         context: ../frontend
         dockerfile: ../docker/dockerfiles/frontend
@@ -72,8 +72,8 @@ services:
         - "3000:3000"
       tty: ${DOCKER_TTY}
 
-    base_nginx:
-        container_name: base_nginx
+    basecode_nginx:
+        container_name: basecode_nginx
         build:
             context: ./
             dockerfile: ./dockerfiles/nginx
@@ -85,4 +85,4 @@ services:
         ports:
             - "443:443"
         depends_on:
-            - base_backend
+            - basecode_backend

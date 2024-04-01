@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-NAME="base"
+NAME="basecode"
 
 FIRST_ARG="$1"
 shift
@@ -9,6 +9,7 @@ ARGS="$@"
 
 docker_down () {
     COMPOSE_HTTP_TIMEOUT=512 docker compose down --volumes
+    docker-clean
 }
 
 docker_up () {
@@ -53,6 +54,8 @@ elif [ "$FIRST_ARG" == "ftest" ]; then
 elif [ "$FIRST_ARG" == "poetry" ]; then
     docker compose exec "$NAME"_backend poetry $ARGS
 elif [ "$FIRST_ARG" == "go" ]; then
+    docker compose exec "$NAME"_backend go $ARGS
+elif [ "$FIRST_ARG" == "gorun" ]; then
     docker compose exec "$NAME"_backend go run $ARGS
 elif [ "$FIRST_ARG" == "artisan" ]; then
     docker compose exec "$NAME"_backend php artisan $ARGS
