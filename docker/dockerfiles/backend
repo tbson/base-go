@@ -1,14 +1,14 @@
-FROM golang:1.22.1-bookworm
+FROM golang:1.23.1-bookworm
 
-RUN apt-get update
-RUN apt-get upgrade -y
+RUN apt-get update && apt-get upgrade -y
 
-RUN go install github.com/cosmtrek/air@latest
+RUN curl -sSf https://atlasgo.sh | sh
 
-RUN mkdir /code
-RUN mkdir /code/src
+RUN go install github.com/air-verse/air@latest
+
+RUN mkdir /code && mkdir /code/src
 WORKDIR /code/src
 
 ADD src/go.mod src/go.sum /code/src
 
-RUN go mod download
+RUN go mod download && go mod tidy

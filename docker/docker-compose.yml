@@ -1,20 +1,19 @@
-version: "3.6"
-
 services:
     basecode_db:
         container_name: basecode_db
-        image: "postgres:15.3-alpine"
+        image: 'postgres:16.0-alpine3.17'
         environment:
-            - POSTGRES_USER=${DB_USER}
-            - POSTGRES_PASSWORD=${DB_PASSWORD}
-            - POSTGRES_DB=${DB_NAME}
+            PGUSER: ${POSTGRES_USER}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_NAME}
         ports:
-            - "5432:5432"
+            - '${POSTGRES_EXPOSE_PORT}:5432'
         volumes:
             # - ./ext.sql:/docker-entrypoint-initdb.d/ext.sql
             - ./dbdata:/var/lib/postgresql/data/:delegated
         healthcheck:
-            test: ["CMD-SHELL", "pg_isready"]
+            test: ['CMD-SHELL', 'pg_isready']
             interval: 10s
             timeout: 5s
             retries: 18
@@ -27,33 +26,33 @@ services:
         volumes:
             - ../backend:/code:delegated
         environment:
-            - GOPATH=/code/
-            - SECRET_KEY=${SECRET_KEY}
-            - TIME_ZONE=${TIME_ZONE}
-            - DEBUG=${DEBUG}
+            GOPATH: /code/
+            SECRET_KEY: ${SECRET_KEY}
+            TIME_ZONE: ${TIME_ZONE}
+            DEBUG: ${DEBUG}
 
-            - APP_TITLE=${APP_TITLE}
-            - APP_DESCRTIPTION=%{APP_DESCRTIPTION}
+            APP_TITLE: ${APP_TITLE}
+            APP_DESCRTIPTION: ${APP_DESCRTIPTION}
 
-            - PORT=${PORT}
-            - PROTOCOL=${PROTOCOL}
-            - DOMAIN=${DOMAIN}
+            PORT: ${PORT}
+            PROTOCOL: ${PROTOCOL}
+            DOMAIN: ${DOMAIN}
 
-            - DB_HOST=${DB_HOST}
-            - DB_PORT=${DB_PORT}
-            - DB_USER=${DB_USER}
-            - DB_NAME=${DB_NAME}
-            - DB_PASSWORD=${DB_PASSWORD}
+            DB_HOST: ${POSTGRES_HOST}
+            DB_PORT: ${POSTGRES_PORT}
+            DB_USER: ${POSTGRES_USER}
+            DB_NAME: ${POSTGRES_NAME}
+            DB_PASSWORD: ${POSTGRES_PASSWORD}
 
-            - EMAIL_ENABLE=${EMAIL_ENABLE}
-            - EMAIL_DOMAIN=${EMAIL_DOMAIN}
-            - EMAIL_HOST=${EMAIL_HOST}
-            - EMAIL_PORT=${EMAIL_PORT}
-            - EMAIL_HOST_USER=${EMAIL_HOST_USER}
-            - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
-            - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+            EMAIL_ENABLE: ${EMAIL_ENABLE}
+            EMAIL_DOMAIN: ${EMAIL_DOMAIN}
+            EMAIL_HOST: ${EMAIL_HOST}
+            EMAIL_PORT: ${EMAIL_PORT}
+            EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+            EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+            EMAIL_USE_TLS: ${EMAIL_USE_TLS}
         ports:
-            - "4000:4000"
+            - '4000:4000'
         depends_on:
             basecode_db:
                 condition: service_healthy
@@ -61,16 +60,16 @@ services:
         command: ${DOCKER_COMMAND}
 
     basecode_frontend:
-      container_name: basecode_frontend 
-      build:
-        context: ../frontend
-        dockerfile: ../docker/dockerfiles/frontend
-      volumes:
-        - ../frontend:/code:delegated
-        - /code/node_modules
-      ports:
-        - "3000:3000"
-      tty: ${DOCKER_TTY}
+        container_name: basecode_frontend
+        build:
+            context: ../frontend
+            dockerfile: ../docker/dockerfiles/frontend
+        volumes:
+            - ../frontend:/code:delegated
+            - /code/node_modules
+        ports:
+            - '3000:3000'
+        tty: ${DOCKER_TTY}
 
     basecode_nginx:
         container_name: basecode_nginx
@@ -83,6 +82,6 @@ services:
             - ${SSL_PATH}:/resource/ssl
             - ../backend/public/:/resource/public
         ports:
-            - "443:443"
+            - '443:443'
         depends_on:
             - basecode_backend

@@ -66,9 +66,9 @@ elif [ "$FIRST_ARG" == "composer" ]; then
 elif [ "$FIRST_ARG" == "dump-autoload" ]; then
     docker compose exec "$NAME"_backend composer dump-autoload
 elif [ "$FIRST_ARG" == "makemigrations" ]; then
-    docker compose exec "$NAME"_backend poetry run alembic revision -m $ARGS
+    docker compose exec "$NAME"_backend atlas migrate diff --env gorm
 elif [ "$FIRST_ARG" == "migrate" ]; then
-    docker compose exec "$NAME"_backend poetry run alembic upgrade head $ARGS
+    docker compose exec "$NAME"_backend atlas migrate apply --env gorm
 elif [ "$FIRST_ARG" == "bserver" ]; then
     # docker compose exec "$NAME"_backend poetry run uvicorn main:app --reload --host 0.0.0.0 --port 4000
     docker compose exec "$NAME"_backend air src/server.go --root src
