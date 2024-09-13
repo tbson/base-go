@@ -1,15 +1,15 @@
 package main
 
 import (
-	configSchema "app/service/config/schema"
-	"app/util/db_util"
+	schema "app/module/config/repo/schema"
+	"app/util/dbutil"
 	"fmt"
 )
 
 func main() {
 	fmt.Println("[+] START MIGRATION...")
-	db_util.InitDb()
-	db := db_util.Db()
-	db.AutoMigrate(&configSchema.Variable{})
+	dbutil.InitDb()
+	db := dbutil.Db()
+	db.AutoMigrate(&schema.Variable{})
 	fmt.Println("[+] DONE")
 }

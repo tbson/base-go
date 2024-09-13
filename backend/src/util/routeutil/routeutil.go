@@ -1,4 +1,4 @@
-package route_util
+package routeutil
 
 import (
 	"app/common/ctype"

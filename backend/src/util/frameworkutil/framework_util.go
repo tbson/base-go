@@ -1,4 +1,4 @@
-package framework_util
+package frameworkutil
 
 import (
 	"os"

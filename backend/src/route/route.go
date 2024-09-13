@@ -2,7 +2,7 @@ package route
 
 import (
 	"app/common/ctype"
-	"app/feature/config/variable"
+	"app/module/config/usecase/variable"
 
 	"github.com/labstack/echo/v4"
 )
