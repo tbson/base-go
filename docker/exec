@@ -56,8 +56,9 @@ elif [ "$FIRST_ARG" == "go" ]; then
     docker compose exec "$NAME"_backend go $ARGS
 elif [ "$FIRST_ARG" == "gorun" ]; then
     docker compose exec "$NAME"_backend go run $ARGS
+elif [ "$FIRST_ARG" == "initmigrations" ]; then
+    docker compose exec "$NAME"_backend atlas migrate hash --env gorm
 elif [ "$FIRST_ARG" == "makemigrations" ]; then
-    docker compose exec "$NAME"_backend atlas migrate hash --dir file://dbversioning/migration
     docker compose exec "$NAME"_backend atlas migrate diff --env gorm
 elif [ "$FIRST_ARG" == "migrate" ]; then
     docker compose exec "$NAME"_backend atlas migrate apply --env gorm

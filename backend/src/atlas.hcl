@@ -9,15 +9,21 @@ data "external_schema" "gorm" {
 
 variable "db_url" {
   type = string
-  default = "postgres://postgres:postgres@basecode_db:5432/basecode_dev?sslmode=disable"
+  default = getenv("DB_URL")
+}
+
+variable "db_url_atlas" {
+  type = string
+  default = getenv("DB_URL_ATLAS")
 }
 
 env "gorm" {
   src = data.external_schema.gorm.url
-  dev = var.db_url
   url = var.db_url
+  dev = var.db_url_atlas
   migration {
     dir = "file://dbversioning/migration"
+    revisions_schema = "public"
   }
   format {
     migrate {
