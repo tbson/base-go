@@ -22,13 +22,10 @@ help () {
     echo "down              :  down docker inscance"
     echo "restart           :  down then up docker instance"
     echo "bserver           :  run phoenix dev server"
-    echo "btest             :  run test"
     echo "fserver           :  run frontendpack dev server"
-    echo "yarn              :  run yarn"
-    echo "manage.py         :  run manage.y"
-    echo "backend <args>        :  execute random command on backend service, ex: ./exec backend ls"
-    echo "backend-upgrade       :  upgrade backend dependencies",
-    echo "backend-post-upgrade  :  check outdated backend dependencies"
+    echo "yarn              :  run yarn on frontend"
+    echo "command <args>    :   run spefic command on backend/src/command"
+    echo "backend <args>    :  execute random command on backend, ex: ./exec backend ls"
 }
 
 if [ "$FIRST_ARG" == "-h" ]; then
@@ -48,14 +45,10 @@ elif [ "$FIRST_ARG" == "fmakemessages" ]; then
 elif [ "$FIRST_ARG" == "fdumpmessages" ]; then
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/vi.po > ../frontend/src/locale/vi.po.json
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/en.po > ../frontend/src/locale/en.po.json
-elif [ "$FIRST_ARG" == "ftest" ]; then
-    docker compose exec "$NAME"_frontend yarn test $ARGS
-elif [ "$FIRST_ARG" == "atlas" ]; then
-    docker compose exec "$NAME"_backend atlas $ARGS
 elif [ "$FIRST_ARG" == "go" ]; then
     docker compose exec "$NAME"_backend go $ARGS
-elif [ "$FIRST_ARG" == "gorun" ]; then
-    docker compose exec "$NAME"_backend go run $ARGS
+elif [ "$FIRST_ARG" == "command" ]; then
+    docker compose exec "$NAME"_backend go run ./command/$ARGS
 elif [ "$FIRST_ARG" == "initmigrations" ]; then
     docker compose exec "$NAME"_backend atlas migrate hash --env gorm
 elif [ "$FIRST_ARG" == "makemigrations" ]; then

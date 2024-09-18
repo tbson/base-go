@@ -1,4 +1,4 @@
-package ctrl
+package crudvariable
 
 import (
 	"net/http"

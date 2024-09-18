@@ -1,8 +1,8 @@
 package main
 
 import (
+	"app/route"
 	"app/util/dbutil"
-	"app/util/frameworkutil"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,6 +17,6 @@ func main() {
 	dbutil.InitDb()
 	e := echo.New()
 	apiGroup := e.Group("/api/v1")
-	frameworkutil.CollectRoutes(apiGroup)
+	route.CollectRoutes(apiGroup)
 	e.Logger.Fatal(e.Start("0.0.0.0:4000"))
 }

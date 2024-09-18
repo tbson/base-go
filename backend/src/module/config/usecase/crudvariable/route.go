@@ -1,7 +1,6 @@
-package variable
+package crudvariable
 
 import (
-	ctrl "app/module/config/usecase/variable/crud/ctrl"
 	"app/util/routeutil"
 
 	"app/common/constant"
@@ -16,8 +15,8 @@ func RegisterCtrl(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.Role
 	g := e.Group("/config/variable")
 	rr := routeutil.RegisterRoute(g, roleMap)
 
-	rr("GET", "/", ctrl.List, []string{constant.UsrTypeAdmin, constant.UsrTypeStaff}, "Get variable list")
-	rr("POST", "/", ctrl.Create, []string{constant.UsrTypeAdmin}, "Create variable list")
+	rr("GET", "/", List, []string{constant.UsrTypeAdmin, constant.UsrTypeStaff}, "Get variable list")
+	rr("POST", "/", Create, []string{constant.UsrTypeAdmin}, "Create variable list")
 
 	return e, roleMap
 }

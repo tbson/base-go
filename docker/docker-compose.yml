@@ -36,6 +36,7 @@ services:
             - ../backend:/code:delegated
         environment:
             GOPATH: /code/
+            # GO111MODULE: off
             SECRET_KEY: ${SECRET_KEY}
             TIME_ZONE: ${TIME_ZONE}
             DEBUG: ${DEBUG}

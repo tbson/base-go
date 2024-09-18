@@ -1,7 +1,7 @@
 package main
 
 import (
-	"app/util/frameworkutil"
+	"app/route"
 	"fmt"
 
 	"github.com/labstack/echo/v4"
@@ -10,6 +10,6 @@ import (
 func main() {
 	e := echo.New()
 	apiGroup := e.Group("/api/v1")
-	_, roleMap := frameworkutil.CollectRoutes(apiGroup)
+	_, roleMap := route.CollectRoutes(apiGroup)
 	fmt.Println(roleMap)
 }
