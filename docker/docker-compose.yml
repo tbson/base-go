@@ -6,12 +6,12 @@ services:
             PGUSER: ${POSTGRES_USER}
             POSTGRES_USER: ${POSTGRES_USER}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_DB: ${POSTGRES_NAME}
+            POSTGRES_DB: ${POSTGRES_DB}
         ports:
-            - '${POSTGRES_EXPOSE_PORT}:5432'
+            - '${POSTGRES_EXPOSE_PORT}:${POSTGRES_PORT}'
         volumes:
-            # - ./ext.sql:/docker-entrypoint-initdb.d/ext.sql
-            - ./dbdata:/var/lib/postgresql/data/:delegated
+            # - ./volumes/db/sql/ext.sql:/docker-entrypoint-initdb.d/ext.sql
+            - ./volumes/db/dbdata:/var/lib/postgresql/data/:delegated
         healthcheck:
             test: ['CMD-SHELL', 'pg_isready']
             interval: 10s
@@ -25,7 +25,7 @@ services:
             PGUSER: ${POSTGRES_USER}
             POSTGRES_USER: ${POSTGRES_USER}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_DB: ${POSTGRES_NAME}
+            POSTGRES_DB: ${POSTGRES_DB}
 
     basecode_backend:
         container_name: basecode_backend
@@ -36,7 +36,6 @@ services:
             - ../backend:/code:delegated
         environment:
             GOPATH: /code/
-            # GO111MODULE: off
             SECRET_KEY: ${SECRET_KEY}
             TIME_ZONE: ${TIME_ZONE}
             DEBUG: ${DEBUG}
@@ -51,10 +50,10 @@ services:
             DB_HOST: ${POSTGRES_HOST}
             DB_PORT: ${POSTGRES_PORT}
             DB_USER: ${POSTGRES_USER}
-            DB_NAME: ${POSTGRES_NAME}
+            DB_NAME: ${POSTGRES_DB}
             DB_PASSWORD: ${POSTGRES_PASSWORD}
-            DB_URL: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_NAME}?sslmode=disable'
-            DB_URL_ATLAS: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST_ATLAS}:${POSTGRES_PORT}/${POSTGRES_NAME}?sslmode=disable'
+            DB_URL: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable'
+            DB_URL_ATLAS: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST_ATLAS}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable'
 
             EMAIL_ENABLE: ${EMAIL_ENABLE}
             EMAIL_DOMAIN: ${EMAIL_DOMAIN}
@@ -90,10 +89,40 @@ services:
             dockerfile: ./dockerfiles/nginx
         restart: always
         volumes:
-            - ./nginx.conf:/etc/nginx/conf.d
+            - ./volumes/nginx/conf:/etc/nginx/conf.d
             - ${SSL_PATH}:/resource/ssl
             - ../backend/public/:/resource/public
         ports:
             - '443:443'
         depends_on:
             - basecode_backend
+
+    basecode_keycloak_db:
+        container_name: basecode_keycloak_db 
+        image: 'postgres:16.4-alpine3.20'
+        environment:
+            PGUSER: ${POSTGRES_USER}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+        volumes:
+            - ./volumes/keycloak/dbdata:/var/lib/postgresql/data/:delegated
+
+    basecode_keycloak:
+        image: docker.io/bitnami/keycloak:latest
+        ports:
+            - '8080:8080'
+        environment:
+            KEYCLOAK_CREATE_ADMIN_USER: true
+            KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+            KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+
+            KEYCLOAK_DATABASE_HOST: basecode_keycloak_db
+            KEYCLOAK_DATABASE_PORT: 5432
+            KEYCLOAK_DATABASE_USER: ${POSTGRES_USER}
+            KEYCLOAK_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+            KEYCLOAK_DATABASE_NAME: ${POSTGRES_DB}
+        depends_on:
+            - basecode_keycloak_db
+        volumes:
+            - './volumes/keycloak/theme:/opt/bitnami/keycloak/themes/mynewtheme'

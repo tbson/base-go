@@ -1,3 +1,5 @@
-dbdata/
-nginx.conf/*.conf
+volumes/db/dbdata/
+volumes/keycloak/dbdata/
+volumes/keycloak/theme/
+volumes/nginx/conf/*.conf
 .env
