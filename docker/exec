@@ -35,6 +35,8 @@ fi
 
 if [ "$FIRST_ARG" == "backend" ] || [ "$FIRST_ARG" == "db" ] || [ "$FIRST_ARG" == "frontend" ]; then
     docker compose exec "$NAME"_"$FIRST_ARG" $ARGS
+elif [ "$FIRST_ARG" == "makemessages" ]; then
+    docker compose exec "$NAME"_backend goi18n extract -outdir util/localeutil/locales -format json
 elif [ "$FIRST_ARG" == "yarn" ]; then
     docker compose exec "$NAME"_frontend yarn $ARGS
 elif [ "$FIRST_ARG" == "fserver" ]; then

@@ -1,7 +1,7 @@
 package schema
 
 import (
-	"app/util/iterutil"
+	"src/util/iterutil"
 
 	"gorm.io/gorm"
 )

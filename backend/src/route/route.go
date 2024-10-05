@@ -1,14 +1,14 @@
 package route
 
 import (
-	"app/common/ctype"
-	"app/module/config/usecase/crudvariable"
+	"src/common/ctype"
+	crudvariable "src/module/config/usecase/crudvariable/infra"
 
 	"github.com/labstack/echo/v4"
 )
 
 func CollectRoutes(e *echo.Group) (*echo.Group, ctype.RoleMap) {
 	roleMap := ctype.RoleMap{}
-	e, roleMap = crudvariable.RegisterCtrl(e, roleMap)
+	e, roleMap = crudvariable.RegisterUrls(e, roleMap)
 	return e, roleMap
 }

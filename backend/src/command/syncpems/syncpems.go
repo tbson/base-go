@@ -1,8 +1,8 @@
 package main
 
 import (
-	"app/route"
 	"fmt"
+	"src/route"
 
 	"github.com/labstack/echo/v4"
 )

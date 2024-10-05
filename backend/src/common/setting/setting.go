@@ -1,7 +1,7 @@
 package setting
 
 import (
-	"app/util/frameworkutil"
+	"src/util/frameworkutil"
 )
 
 var DB_HOST string = frameworkutil.GetEnv("DB_HOST", "")
@@ -10,3 +10,5 @@ var DB_USER string = frameworkutil.GetEnv("DB_USER", "")
 var DB_NAME string = frameworkutil.GetEnv("DB_NAME", "")
 var DB_PASSWORD string = frameworkutil.GetEnv("DB_PASSWORD", "")
 var TIME_ZONE string = frameworkutil.GetEnv("TIME_ZONE", "")
+
+const DEFAULT_LANG = "en"

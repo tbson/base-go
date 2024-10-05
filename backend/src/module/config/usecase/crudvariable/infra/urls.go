@@ -1,17 +1,17 @@
-package crudvariable
+package infra
 
 import (
-	"app/util/routeutil"
+	"src/util/routeutil"
 
-	"app/common/constant"
-	"app/common/ctype"
+	"src/common/constant"
+	"src/common/ctype"
 
 	"github.com/labstack/echo/v4"
 )
 
 type RoleMap map[string][]string
 
-func RegisterCtrl(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.RoleMap) {
+func RegisterUrls(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.RoleMap) {
 	g := e.Group("/config/variable")
 	rr := routeutil.RegisterRoute(g, roleMap)
 

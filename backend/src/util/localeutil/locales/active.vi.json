@@ -1,0 +1,4 @@
+{
+  "cannot_read_request_body": "Không thể đọc nội dung request",
+  "invalid_json_payload": "Nội dung JSON không hợp lệ"
+}

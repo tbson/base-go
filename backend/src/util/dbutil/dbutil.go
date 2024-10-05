@@ -3,7 +3,7 @@ package dbutil
 import (
 	"fmt"
 
-	"app/common/setting"
+	"src/common/setting"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

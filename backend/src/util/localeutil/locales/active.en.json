@@ -1,0 +1,4 @@
+{
+  "cannot_read_request_body": "Can not read request body",
+  "invalid_json_payload": "Invalid JSON payload"
+}

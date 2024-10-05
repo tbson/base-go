@@ -1,9 +1,9 @@
 package routeutil
 
 import (
-	"app/common/ctype"
 	"reflect"
 	"runtime"
+	"src/common/ctype"
 	"strings"
 
 	"github.com/labstack/echo/v4"
