@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"reflect"
 	"strings"
@@ -56,10 +55,7 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 	bodyBytes, err := io.ReadAll(c.Request().Body)
 	if err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: &i18n.Message{
-				ID:    "cannot_read_request_body",
-				Other: "Can not read request body",
-			},
+			DefaultMessage: localeutil.CannotReadRequestBody,
 		})
 		return result, errutil.New("", []string{msg})
 	}
@@ -71,10 +67,7 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 	var payloadMap map[string]interface{}
 	if err := json.Unmarshal(bodyBytes, &payloadMap); err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: &i18n.Message{
-				ID:    "invalid_json_payload",
-				Other: "Invalid JSON payload",
-			},
+			DefaultMessage: localeutil.InvalidJSONPayload,
 		})
 
 		return result, errutil.New("", []string{msg})
@@ -92,8 +85,11 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 	if len(missingFields) > 0 {
 		// Collect errors for missing fields
 		error := errutil.CustomError{}
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.FieldRequired,
+		})
 		for _, field := range missingFields {
-			error.Add(field, []string{"This field is required"})
+			error.Add(field, []string{msg})
 		}
 		return result, &error
 	}
@@ -109,22 +105,45 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 
 		switch {
 		case errors.As(err, &syntaxError):
-			return result, errutil.New("", []string{fmt.Sprintf("Request body contains badly-formed JSON (at position %d)", syntaxError.Offset)})
+			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+				DefaultMessage: localeutil.BadJson,
+				TemplateData: map[string]interface{}{
+					"Offset": syntaxError.Offset,
+				},
+			})
+			return result, errutil.New("", []string{msg})
 
 		case errors.As(err, &unmarshalTypeError):
 			// Report the specific field that has an invalid type
 			fieldName := unmarshalTypeError.Field
-			return result, errutil.New(fieldName, []string{fmt.Sprintf("Invalid value for field '%s'. Expected type %v but got %v", fieldName, unmarshalTypeError.Type, unmarshalTypeError.Value)})
+			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+				DefaultMessage: localeutil.InvalidFieldValue,
+				TemplateData: map[string]interface{}{
+					"FieldName": fieldName,
+					"Type":      unmarshalTypeError.Type.String(),
+					"Value":     unmarshalTypeError.Value,
+				},
+			})
+			return result, errutil.New(fieldName, []string{msg})
 
 		case strings.HasPrefix(err.Error(), "json: unknown field"):
 			unknownField := strings.TrimPrefix(err.Error(), "json: unknown field ")
-			return result, errutil.New(strings.Trim(unknownField, "\""), []string{"This field is not recognized."})
+			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+				DefaultMessage: localeutil.NotRecognizedField,
+			})
+			return result, errutil.New(strings.Trim(unknownField, "\""), []string{msg})
 
 		case errors.Is(err, io.EOF):
-			return result, errutil.New("", []string{"Request body must not be empty."})
+			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+				DefaultMessage: localeutil.EmptyRequestBody,
+			})
+			return result, errutil.New("", []string{msg})
 
 		default:
-			return result, errutil.New("", []string{"Failed to decode JSON"})
+			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+				DefaultMessage: localeutil.FailToDecodeJSON,
+			})
+			return result, errutil.New("", []string{msg})
 		}
 	}
 
@@ -143,18 +162,27 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 				}
 
 				// Customize the error message based on the validation tag
-				var errorMsg string
+				var msg string
 				switch fe.Tag() {
 				case "required":
-					errorMsg = "This field is required."
+					msg = localizer.MustLocalize(&i18n.LocalizeConfig{
+						DefaultMessage: localeutil.FieldRequired,
+					})
 				case "oneof":
-					errorMsg = fmt.Sprintf("Must be one of: %s.", fe.Param())
+					msg = localizer.MustLocalize(&i18n.LocalizeConfig{
+						DefaultMessage: localeutil.MustBeOneOf,
+						TemplateData: map[string]interface{}{
+							"Values": fe.Param(),
+						},
+					})
 				default:
-					errorMsg = "Invalid value."
+					msg = localizer.MustLocalize(&i18n.LocalizeConfig{
+						DefaultMessage: localeutil.InvalidValue,
+					})
 				}
 
 				// Append the error message to the field's error list
-				error.Add(fieldName, []string{errorMsg})
+				error.Add(fieldName, []string{msg})
 			}
 		} else {
 			// For other errors, return a general message
