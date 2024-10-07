@@ -7,7 +7,7 @@ import (
 
 	"ariga.io/atlas-provider-gorm/gormschema"
 
-	"src/module/config/repo/schema"
+	"src/module/config/schema"
 )
 
 func main() {

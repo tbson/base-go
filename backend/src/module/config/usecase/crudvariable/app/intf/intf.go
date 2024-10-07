@@ -1,6 +1,6 @@
-package core
+package intf
 
-import "src/module/config/repo/schema"
+import "src/module/config/schema"
 
 type VariableRepo interface {
 	CreateVariable(variable *schema.Variable) (*schema.Variable, error)

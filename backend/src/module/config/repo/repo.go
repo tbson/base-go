@@ -1,7 +1,7 @@
 package repo
 
 import (
-	"src/module/config/repo/schema"
+	"src/module/config/schema"
 	"src/util/dbutil"
 )
 

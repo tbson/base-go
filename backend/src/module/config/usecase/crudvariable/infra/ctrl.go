@@ -4,19 +4,11 @@ import (
 	"net/http"
 	"src/util/vldtutil"
 
+	"src/module/config/repo"
+	"src/module/config/usecase/crudvariable/app"
+
 	"github.com/labstack/echo/v4"
-	// "src/module/config/repo"
-	// "src/module/config/usecase/crudvariable/app"
 )
-
-type VariableData struct {
-	Key         string `json:"key" validate:"required"`
-	Value       string `json:"value"`
-	Description string `json:"description"`
-	DataType    string `json:"data_type" validate:"required,oneof=STRING INTEGER FLOAT BOOLEAN DATE DATETIME"`
-}
-
-// Cache the required fields at startup
 
 func List(c echo.Context) error {
 	return c.String(http.StatusOK, "List variable")
@@ -27,7 +19,16 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	result, error := vldtutil.ValidatePayload(c, VariableData{})
+
+	data, error := vldtutil.ValidatePayload(c, app.VariableData{})
+
+	if error != nil {
+		return c.JSON(http.StatusBadRequest, error)
+	}
+
+	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+
+	result, error := srv.CreateVariable(data)
 
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
