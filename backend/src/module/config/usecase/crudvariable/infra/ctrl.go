@@ -11,11 +11,27 @@ import (
 )
 
 func List(c echo.Context) error {
-	return c.String(http.StatusOK, "List variable")
+	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+
+	result, error := srv.ListVariable()
+
+	if error != nil {
+		return c.JSON(http.StatusBadRequest, error)
+	}
+
+	return c.JSON(http.StatusOK, result)
 }
 
 func Retrieve(c echo.Context) error {
-	return c.String(http.StatusOK, "Retrieve variable")
+	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+	id := vldtutil.ValidateId(c.Param("id"))
+	result, error := srv.RetrieveVariable(id)
+
+	if error != nil {
+		return c.JSON(http.StatusBadRequest, error)
+	}
+
+	return c.JSON(http.StatusOK, result)
 }
 
 func Create(c echo.Context) error {
@@ -39,13 +55,46 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	return c.String(http.StatusOK, "Update variable")
+	data, error := vldtutil.ValidateUpdatePayload(c)
+
+	if error != nil {
+		return c.JSON(http.StatusBadRequest, error)
+	}
+
+	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+	id := vldtutil.ValidateId(c.Param("id"))
+
+	result, error := srv.UpdateVariable(id, data)
+
+	if error != nil {
+		return c.JSON(http.StatusBadRequest, error)
+	}
+
+	return c.JSON(http.StatusOK, result)
 }
 
 func Delete(c echo.Context) error {
+	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+	id := vldtutil.ValidateId(c.Param("id"))
+
+	error := srv.DeleteVariable(id)
+
+	if error != nil {
+		return c.JSON(http.StatusBadRequest, error)
+	}
+
 	return c.String(http.StatusOK, "Delete variable")
 }
 
 func DeleteList(c echo.Context) error {
-	return c.String(http.StatusOK, "Delete list variable")
+	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
+
+	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+	error := srv.DeleteListVariable(ids)
+
+	if error != nil {
+		return c.JSON(http.StatusBadRequest, error)
+	}
+
+	return c.String(http.StatusOK, "Delete variables")
 }

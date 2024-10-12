@@ -25,11 +25,31 @@ type CrudVariableSrv struct {
 	repo intf.VariableRepo
 }
 
+func NewCrudVariableSrv(repo intf.VariableRepo) CrudVariableSrv {
+	return CrudVariableSrv{repo}
+}
+
+func (srv CrudVariableSrv) ListVariable() ([]schema.Variable, error) {
+	return srv.repo.ListVariable()
+}
+
+func (srv CrudVariableSrv) RetrieveVariable(id int) (*schema.Variable, error) {
+	return srv.repo.RetrieveVariable(id)
+}
+
 func (srv CrudVariableSrv) CreateVariable(inputData VariableData) (*schema.Variable, error) {
 	schema := inputData.ToSchema()
 	return srv.repo.CreateVariable(schema)
 }
 
-func NewCrudVariableSrv(repo intf.VariableRepo) CrudVariableSrv {
-	return CrudVariableSrv{repo}
+func (srv CrudVariableSrv) UpdateVariable(id int, inputData map[string]interface{}) (*schema.Variable, error) {
+	return srv.repo.UpdateVariable(id, inputData)
+}
+
+func (srv CrudVariableSrv) DeleteVariable(id int) error {
+	return srv.repo.DeleteVariable(id)
+}
+
+func (srv CrudVariableSrv) DeleteListVariable(ids []int) error {
+	return srv.repo.DeleteListVariable(ids)
 }

@@ -16,7 +16,10 @@ func RegisterUrls(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.Role
 	rr := routeutil.RegisterRoute(g, roleMap)
 
 	rr("GET", "/", List, []string{constant.UsrTypeAdmin, constant.UsrTypeStaff}, "Get variable list")
-	rr("POST", "/", Create, []string{constant.UsrTypeAdmin}, "Create variable list")
-
+	rr("GET", "/:id", Retrieve, []string{constant.UsrTypeAdmin, constant.UsrTypeStaff}, "Get variable detail")
+	rr("POST", "/", Create, []string{constant.UsrTypeAdmin}, "Create variable")
+	rr("PUT", "/:id", Update, []string{constant.UsrTypeAdmin}, "Update variable")
+	rr("DELETE", "/:id", Delete, []string{constant.UsrTypeAdmin}, "Delete variable")
+	rr("DELETE", "/", DeleteList, []string{constant.UsrTypeAdmin}, "Delete list variable")
 	return e, roleMap
 }

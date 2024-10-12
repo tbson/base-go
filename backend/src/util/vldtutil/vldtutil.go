@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -47,6 +48,32 @@ func GetRequiredFields(v interface{}) []string {
 	}
 
 	return requiredFields
+}
+
+func ValidateUpdatePayload(c echo.Context) (map[string]interface{}, error) {
+	localizer := localeutil.Get()
+	var result map[string]interface{}
+	bodyBytes, err := io.ReadAll(c.Request().Body)
+	if err != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.CannotReadRequestBody,
+		})
+		return result, errutil.New("", []string{msg})
+	}
+
+	// Reset the body so it can be read again if needed
+	c.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	// Unmarshal into a map to get the keys present in the payload
+	var payloadMap map[string]interface{}
+	if err := json.Unmarshal(bodyBytes, &payloadMap); err != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.InvalidJSONPayload,
+		})
+
+		return result, errutil.New("", []string{msg})
+	}
+	return payloadMap, nil
 }
 
 func ValidatePayload[T any](c echo.Context, target T) (T, error) {
@@ -191,4 +218,27 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 		return result, &error
 	}
 	return data, nil
+}
+
+func ValidateId(id string) int {
+	if id == "" {
+		return 0
+	}
+	if id, err := strconv.Atoi(id); err == nil {
+		return id
+	}
+	return 0
+}
+
+func ValidateIds(ids string) []int {
+	var idList []int
+	if ids == "" {
+		return idList
+	}
+	for _, id := range strings.Split(ids, ",") {
+		if id, err := strconv.Atoi(id); err == nil {
+			idList = append(idList, id)
+		}
+	}
+	return idList
 }
