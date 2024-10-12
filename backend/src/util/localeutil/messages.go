@@ -52,4 +52,9 @@ var (
 		ID:    "MustBeOneOf",
 		Other: "Must be one of: {{.Values}}",
 	}
+
+	GormDuplicateKey = &i18n.Message{
+		ID:    "GormDuplicateKey",
+		Other: "Value already exists",
+	}
 )
