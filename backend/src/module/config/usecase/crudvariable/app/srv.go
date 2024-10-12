@@ -12,7 +12,7 @@ type VariableData struct {
 	DataType    string `json:"data_type" validate:"required,oneof=STRING INTEGER FLOAT BOOLEAN DATE DATETIME"`
 }
 
-func NewVariable(data VariableData) *schema.Variable {
+func (data VariableData) ToSchema() *schema.Variable {
 	return &schema.Variable{
 		Key:         data.Key,
 		Value:       data.Value,
@@ -26,8 +26,8 @@ type CrudVariableSrv struct {
 }
 
 func (srv CrudVariableSrv) CreateVariable(inputData VariableData) (*schema.Variable, error) {
-	variable := NewVariable(inputData)
-	return srv.repo.CreateVariable(variable)
+	schema := inputData.ToSchema()
+	return srv.repo.CreateVariable(schema)
 }
 
 func NewCrudVariableSrv(repo intf.VariableRepo) CrudVariableSrv {
