@@ -7,6 +7,6 @@ type VariableRepo interface {
 	RetrieveVariable(key int) (*schema.Variable, error)
 	CreateVariable(variable *schema.Variable) (*schema.Variable, error)
 	UpdateVariable(key int, variable map[string]interface{}) (*schema.Variable, error)
-	DeleteVariable(key int) error
-	DeleteListVariable(keys []int) error
+	DeleteVariable(key int) ([]int, error)
+	DeleteListVariable(keys []int) ([]int, error)
 }

@@ -50,7 +50,7 @@ func Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, error)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusCreated, result)
 
 }
 
@@ -77,24 +77,24 @@ func Delete(c echo.Context) error {
 	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
 	id := vldtutil.ValidateId(c.Param("id"))
 
-	error := srv.DeleteVariable(id)
+	ids, error := srv.DeleteVariable(id)
 
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
-
-	return c.String(http.StatusOK, "Delete variable")
+	// return deleted id slide with one item
+	return c.JSON(http.StatusNoContent, ids)
 }
 
 func DeleteList(c echo.Context) error {
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
 
 	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
-	error := srv.DeleteListVariable(ids)
+	ids, error := srv.DeleteListVariable(ids)
 
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
-
-	return c.String(http.StatusOK, "Delete variables")
+	// return deleted id slide
+	return c.JSON(http.StatusNoContent, ids)
 }

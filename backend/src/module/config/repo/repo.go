@@ -51,20 +51,21 @@ func (vr VariableRepo) UpdateVariable(id int, variable map[string]interface{}) (
 	return item, err
 }
 
-func (vr VariableRepo) DeleteVariable(id int) error {
+func (vr VariableRepo) DeleteVariable(id int) ([]int, error) {
+	ids := []int{id}
 	result := dbutil.Db().Where("id = ?", id).Delete(&schema.Variable{})
 	err := result.Error
 	if err != nil {
-		return errutil.NewGormError(err)
+		return ids, errutil.NewGormError(err)
 	}
-	return err
+	return ids, err
 }
 
-func (vr VariableRepo) DeleteListVariable(ids []int) error {
+func (vr VariableRepo) DeleteListVariable(ids []int) ([]int, error) {
 	result := dbutil.Db().Where("id IN (?)", ids).Delete(&schema.Variable{})
 	err := result.Error
 	if err != nil {
-		return errutil.NewGormError(err)
+		return ids, errutil.NewGormError(err)
 	}
-	return err
+	return ids, err
 }

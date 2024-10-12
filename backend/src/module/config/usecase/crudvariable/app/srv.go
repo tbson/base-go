@@ -46,10 +46,10 @@ func (srv CrudVariableSrv) UpdateVariable(id int, inputData map[string]interface
 	return srv.repo.UpdateVariable(id, inputData)
 }
 
-func (srv CrudVariableSrv) DeleteVariable(id int) error {
+func (srv CrudVariableSrv) DeleteVariable(id int) ([]int, error) {
 	return srv.repo.DeleteVariable(id)
 }
 
-func (srv CrudVariableSrv) DeleteListVariable(ids []int) error {
+func (srv CrudVariableSrv) DeleteListVariable(ids []int) ([]int, error) {
 	return srv.repo.DeleteListVariable(ids)
 }
