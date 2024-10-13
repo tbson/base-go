@@ -2,6 +2,7 @@ package infra
 
 import (
 	"net/http"
+	"src/util/dbutil"
 	"src/util/vldtutil"
 
 	"src/module/config/repo"
@@ -10,16 +11,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+var searchableFields = []string{"key", "value", "description"}
+var filterableFields = []string{"data_type"}
+var orderableFields = []string{"id", "key"}
+
 func List(c echo.Context) error {
-	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+	srv := app.NewCrudVariableListSrv(VariableListRepo{})
 
-	result, error := srv.ListVariable()
-
+	options := dbutil.GetOptions(c, filterableFields, orderableFields)
+	listResult, error := srv.ListRestful(options, searchableFields)
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, listResult)
 }
 
 func Retrieve(c echo.Context) error {

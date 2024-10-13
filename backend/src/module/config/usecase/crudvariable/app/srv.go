@@ -3,6 +3,7 @@ package app
 import (
 	"src/module/config/schema"
 	"src/module/config/usecase/crudvariable/app/intf"
+	"src/util/dbutil"
 )
 
 type VariableData struct {
@@ -25,12 +26,20 @@ type CrudVariableSrv struct {
 	repo intf.VariableRepo
 }
 
+type CrudVariableListSrv struct {
+	repo intf.VariableListRepo
+}
+
 func NewCrudVariableSrv(repo intf.VariableRepo) CrudVariableSrv {
 	return CrudVariableSrv{repo}
 }
 
-func (srv CrudVariableSrv) ListVariable() ([]schema.Variable, error) {
-	return srv.repo.ListVariable()
+func NewCrudVariableListSrv(repo intf.VariableListRepo) CrudVariableListSrv {
+	return CrudVariableListSrv{repo}
+}
+
+func (srv CrudVariableListSrv) ListRestful(options dbutil.ListOptions, searchableFields []string) (dbutil.ListRestfulResult[schema.Variable], error) {
+	return srv.repo.ListRestful(options, searchableFields)
 }
 
 func (srv CrudVariableSrv) RetrieveVariable(id int) (*schema.Variable, error) {
