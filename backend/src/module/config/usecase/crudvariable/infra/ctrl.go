@@ -33,7 +33,7 @@ func Retrieve(c echo.Context) error {
 	result, error := srv.RetrieveVariable(id)
 
 	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+		return c.JSON(http.StatusNotFound, error)
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -87,8 +87,7 @@ func Delete(c echo.Context) error {
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
-	// return deleted id slide with one item
-	return c.JSON(http.StatusNoContent, ids)
+	return c.JSON(http.StatusOK, ids)
 }
 
 func DeleteList(c echo.Context) error {
@@ -100,6 +99,5 @@ func DeleteList(c echo.Context) error {
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
-	// return deleted id slide
-	return c.JSON(http.StatusNoContent, ids)
+	return c.JSON(http.StatusOK, ids)
 }
