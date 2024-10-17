@@ -23,7 +23,7 @@ func (r Repo) List(params ctype.Dict) ([]Schema, error) {
 	var items []Schema
 
 	if len(params) > 0 {
-		db = db.Where(params)
+		db = db.Where(map[string]interface{}(params))
 	}
 	result := db.Find(&items)
 	err := result.Error
