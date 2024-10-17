@@ -2,6 +2,7 @@ package infra
 
 import (
 	"net/http"
+	"src/common/ctype"
 	"src/util/dbutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
@@ -33,7 +34,7 @@ func Retrieve(c echo.Context) error {
 	srv := app.Service{}.New(repo)
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	result, error := srv.Retrieve(id)
+	result, error := srv.Retrieve(ctype.Dict{"id": id})
 
 	if error != nil {
 		return c.JSON(http.StatusNotFound, error)

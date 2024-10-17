@@ -11,7 +11,7 @@ type RestCrudRepo[T any] interface {
 		searchableFields []string) (
 		restlistutil.ListRestfulResult[T], error,
 	)
-	Retrieve(key int) (*T, error)
+	Retrieve(params ctype.Dict) (*T, error)
 	Create(instance *T) (*T, error)
 	Update(key int, data ctype.Dict) (*T, error)
 	Delete(key int) ([]int, error)

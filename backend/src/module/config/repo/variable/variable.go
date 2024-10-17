@@ -33,9 +33,9 @@ func (r Repo) List(params ctype.Dict) ([]Schema, error) {
 	return items, err
 }
 
-func (r Repo) Retrieve(id int) (*Schema, error) {
+func (r Repo) Retrieve(params ctype.Dict) (*Schema, error) {
 	var item Schema
-	result := r.db.Where("id = ?", id).First(&item)
+	result := r.db.Where(map[string]interface{}(params)).First(&item)
 	err := result.Error
 	if err != nil {
 		return &item, errutil.NewGormError(err)
@@ -53,11 +53,11 @@ func (r Repo) Create(item *Schema) (*Schema, error) {
 }
 
 func (r Repo) Update(id int, data ctype.Dict) (*Schema, error) {
-	item, err := r.Retrieve(id)
+	item, err := r.Retrieve(ctype.Dict{"id": id})
 	if err != nil {
 		return nil, err
 	}
-	result := r.db.Model(&item).Updates(data)
+	result := r.db.Model(&item).Updates(map[string]interface{}(data))
 	err = result.Error
 	if err != nil {
 		return nil, errutil.NewGormError(err)
