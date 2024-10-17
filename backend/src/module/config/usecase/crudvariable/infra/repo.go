@@ -1,9 +1,9 @@
 package infra
 
 import (
-	"src/module/config/repo/common"
 	"src/module/config/repo/variable"
 	"src/module/config/schema"
+	"src/util/repoutil"
 	"src/util/restlistutil"
 
 	"gorm.io/gorm"
@@ -28,6 +28,6 @@ func (r Repo) List(
 	options restlistutil.ListOptions,
 	searchableFields []string,
 ) (restlistutil.ListRestfulResult[Schema], error) {
-	commonRepo := common.Repo[Schema]{}.New(r.db)
+	commonRepo := repoutil.Repo[Schema]{}.New(r.db)
 	return commonRepo.ListPaging(options, searchableFields)
 }
