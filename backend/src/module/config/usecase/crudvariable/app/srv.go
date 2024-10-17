@@ -7,14 +7,14 @@ import (
 	"src/util/restlistutil"
 )
 
+type Schema = schema.Variable
+
 type Data struct {
 	Key         string `json:"key" validate:"required"`
 	Value       string `json:"value"`
 	Description string `json:"description"`
 	DataType    string `json:"data_type" validate:"required,oneof=STRING INTEGER FLOAT BOOLEAN DATE DATETIME"`
 }
-
-type Schema = schema.Variable
 
 func (data Data) ToSchema() *Schema {
 	return &Schema{

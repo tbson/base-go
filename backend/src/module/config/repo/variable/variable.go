@@ -8,11 +8,11 @@ import (
 	"gorm.io/gorm"
 )
 
+type Schema = schema.Variable
+
 type Repo struct {
 	db *gorm.DB
 }
-
-type Schema = schema.Variable
 
 func (r Repo) New(db *gorm.DB) Repo {
 	return Repo{db: db}
