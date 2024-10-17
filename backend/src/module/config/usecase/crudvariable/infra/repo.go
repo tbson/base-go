@@ -9,6 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
+type Schema = schema.Variable
+
 type Repo struct {
 	*variable.Repo
 	db *gorm.DB
@@ -25,7 +27,7 @@ func (r Repo) New(db *gorm.DB) Repo {
 func (r Repo) List(
 	options restlistutil.ListOptions,
 	searchableFields []string,
-) (restlistutil.ListRestfulResult[schema.Variable], error) {
-	commonRepo := common.Repo[schema.Variable]{}.New(r.db)
+) (restlistutil.ListRestfulResult[Schema], error) {
+	commonRepo := common.Repo[Schema]{}.New(r.db)
 	return commonRepo.ListPaging(options, searchableFields)
 }

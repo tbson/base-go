@@ -17,7 +17,7 @@ var orderableFields = []string{"id", "key"}
 
 func List(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	srv := app.CrudVariableSrv{}.New(repo)
+	srv := app.Service{}.New(repo)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	listResult, error := srv.List(options, searchableFields)
@@ -30,7 +30,7 @@ func List(c echo.Context) error {
 
 func Retrieve(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	srv := app.CrudVariableSrv{}.New(repo)
+	srv := app.Service{}.New(repo)
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	result, error := srv.Retrieve(id)
@@ -44,9 +44,9 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	srv := app.CrudVariableSrv{}.New(repo)
+	srv := app.Service{}.New(repo)
 
-	data, error := vldtutil.ValidatePayload(c, app.VariableData{})
+	data, error := vldtutil.ValidatePayload(c, app.Data{})
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
@@ -62,7 +62,7 @@ func Create(c echo.Context) error {
 
 func Update(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	srv := app.CrudVariableSrv{}.New(repo)
+	srv := app.Service{}.New(repo)
 
 	data, error := vldtutil.ValidateUpdatePayload(c)
 	if error != nil {
@@ -81,7 +81,7 @@ func Update(c echo.Context) error {
 
 func Delete(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	srv := app.CrudVariableSrv{}.New(repo)
+	srv := app.Service{}.New(repo)
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	ids, error := srv.Delete(id)
@@ -95,7 +95,7 @@ func Delete(c echo.Context) error {
 
 func DeleteList(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	srv := app.CrudVariableSrv{}.New(repo)
+	srv := app.Service{}.New(repo)
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
 	ids, error := srv.DeleteList(ids)

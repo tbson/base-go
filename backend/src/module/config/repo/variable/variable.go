@@ -12,15 +12,15 @@ type Repo struct {
 	db *gorm.DB
 }
 
-type Variable = schema.Variable
+type Schema = schema.Variable
 
 func (r Repo) New(db *gorm.DB) Repo {
 	return Repo{db: db}
 }
 
-func (r Repo) List(params ctype.Dict) ([]Variable, error) {
+func (r Repo) List(params ctype.Dict) ([]Schema, error) {
 	db := r.db.Order("id DESC")
-	var items []Variable
+	var items []Schema
 
 	if len(params) > 0 {
 		db = db.Where(params)
@@ -33,8 +33,8 @@ func (r Repo) List(params ctype.Dict) ([]Variable, error) {
 	return items, err
 }
 
-func (r Repo) Retrieve(id int) (*Variable, error) {
-	var item Variable
+func (r Repo) Retrieve(id int) (*Schema, error) {
+	var item Schema
 	result := r.db.Where("id = ?", id).First(&item)
 	err := result.Error
 	if err != nil {
@@ -43,7 +43,7 @@ func (r Repo) Retrieve(id int) (*Variable, error) {
 	return &item, err
 }
 
-func (r Repo) Create(item *Variable) (*Variable, error) {
+func (r Repo) Create(item *Schema) (*Schema, error) {
 	result := r.db.Create(item)
 	err := result.Error
 	if err != nil {
@@ -52,7 +52,7 @@ func (r Repo) Create(item *Variable) (*Variable, error) {
 	return item, err
 }
 
-func (r Repo) Update(id int, data ctype.Dict) (*Variable, error) {
+func (r Repo) Update(id int, data ctype.Dict) (*Schema, error) {
 	item, err := r.Retrieve(id)
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func (r Repo) Update(id int, data ctype.Dict) (*Variable, error) {
 
 func (r Repo) Delete(id int) ([]int, error) {
 	ids := []int{id}
-	result := r.db.Where("id = ?", id).Delete(&Variable{})
+	result := r.db.Where("id = ?", id).Delete(&Schema{})
 	err := result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)
@@ -76,7 +76,7 @@ func (r Repo) Delete(id int) ([]int, error) {
 }
 
 func (r Repo) DeleteList(ids []int) ([]int, error) {
-	result := r.db.Where("id IN (?)", ids).Delete(&Variable{})
+	result := r.db.Where("id IN (?)", ids).Delete(&Schema{})
 	err := result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)

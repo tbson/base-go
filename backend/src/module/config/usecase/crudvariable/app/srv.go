@@ -7,15 +7,17 @@ import (
 	"src/util/restlistutil"
 )
 
-type VariableData struct {
+type Data struct {
 	Key         string `json:"key" validate:"required"`
 	Value       string `json:"value"`
 	Description string `json:"description"`
 	DataType    string `json:"data_type" validate:"required,oneof=STRING INTEGER FLOAT BOOLEAN DATE DATETIME"`
 }
 
-func (data VariableData) ToSchema() *schema.Variable {
-	return &schema.Variable{
+type Schema = schema.Variable
+
+func (data Data) ToSchema() *Schema {
+	return &Schema{
 		Key:         data.Key,
 		Value:       data.Value,
 		Description: data.Description,
@@ -23,35 +25,35 @@ func (data VariableData) ToSchema() *schema.Variable {
 	}
 }
 
-type CrudVariableSrv struct {
-	repo intf.RestCrudRepo[schema.Variable]
+type Service struct {
+	repo intf.RestCrudRepo[Schema]
 }
 
-func (s CrudVariableSrv) New(repo intf.RestCrudRepo[schema.Variable]) CrudVariableSrv {
-	return CrudVariableSrv{repo}
+func (s Service) New(repo intf.RestCrudRepo[Schema]) Service {
+	return Service{repo}
 }
 
-func (srv CrudVariableSrv) List(options restlistutil.ListOptions, searchableFields []string) (restlistutil.ListRestfulResult[schema.Variable], error) {
+func (srv Service) List(options restlistutil.ListOptions, searchableFields []string) (restlistutil.ListRestfulResult[Schema], error) {
 	return srv.repo.List(options, searchableFields)
 }
 
-func (srv CrudVariableSrv) Retrieve(id int) (*schema.Variable, error) {
+func (srv Service) Retrieve(id int) (*Schema, error) {
 	return srv.repo.Retrieve(id)
 }
 
-func (srv CrudVariableSrv) Create(inputData VariableData) (*schema.Variable, error) {
+func (srv Service) Create(inputData Data) (*Schema, error) {
 	schema := inputData.ToSchema()
 	return srv.repo.Create(schema)
 }
 
-func (srv CrudVariableSrv) Update(id int, inputData ctype.Dict) (*schema.Variable, error) {
+func (srv Service) Update(id int, inputData ctype.Dict) (*Schema, error) {
 	return srv.repo.Update(id, inputData)
 }
 
-func (srv CrudVariableSrv) Delete(id int) ([]int, error) {
+func (srv Service) Delete(id int) ([]int, error) {
 	return srv.repo.Delete(id)
 }
 
-func (srv CrudVariableSrv) DeleteList(ids []int) ([]int, error) {
+func (srv Service) DeleteList(ids []int) ([]int, error) {
 	return srv.repo.DeleteList(ids)
 }
