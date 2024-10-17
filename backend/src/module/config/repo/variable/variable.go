@@ -12,50 +12,52 @@ type Repo struct {
 	db *gorm.DB
 }
 
+type Variable = schema.Variable
+
 func (r Repo) New(db *gorm.DB) Repo {
 	return Repo{db: db}
 }
 
-func (r Repo) List(params ctype.Dict) ([]schema.Variable, error) {
+func (r Repo) List(params ctype.Dict) ([]Variable, error) {
 	db := r.db.Order("id DESC")
-	var variables []schema.Variable
+	var items []Variable
 
 	if len(params) > 0 {
 		db = db.Where(params)
 	}
-	result := db.Find(&variables)
+	result := db.Find(&items)
 	err := result.Error
 	if err != nil {
-		return variables, errutil.NewGormError(err)
+		return items, errutil.NewGormError(err)
 	}
-	return variables, err
+	return items, err
 }
 
-func (r Repo) Retrieve(id int) (*schema.Variable, error) {
-	var variable schema.Variable
-	result := r.db.Where("id = ?", id).First(&variable)
+func (r Repo) Retrieve(id int) (*Variable, error) {
+	var item Variable
+	result := r.db.Where("id = ?", id).First(&item)
 	err := result.Error
 	if err != nil {
-		return &variable, errutil.NewGormError(err)
+		return &item, errutil.NewGormError(err)
 	}
-	return &variable, err
+	return &item, err
 }
 
-func (r Repo) Create(variable *schema.Variable) (*schema.Variable, error) {
-	result := r.db.Create(variable)
+func (r Repo) Create(item *Variable) (*Variable, error) {
+	result := r.db.Create(item)
 	err := result.Error
 	if err != nil {
-		return variable, errutil.NewGormError(err)
+		return item, errutil.NewGormError(err)
 	}
-	return variable, err
+	return item, err
 }
 
-func (r Repo) Update(id int, variable ctype.Dict) (*schema.Variable, error) {
+func (r Repo) Update(id int, data ctype.Dict) (*Variable, error) {
 	item, err := r.Retrieve(id)
 	if err != nil {
 		return nil, err
 	}
-	result := r.db.Model(&item).Updates(variable)
+	result := r.db.Model(&item).Updates(data)
 	err = result.Error
 	if err != nil {
 		return nil, errutil.NewGormError(err)
@@ -65,7 +67,7 @@ func (r Repo) Update(id int, variable ctype.Dict) (*schema.Variable, error) {
 
 func (r Repo) Delete(id int) ([]int, error) {
 	ids := []int{id}
-	result := r.db.Where("id = ?", id).Delete(&schema.Variable{})
+	result := r.db.Where("id = ?", id).Delete(&Variable{})
 	err := result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)
@@ -74,7 +76,7 @@ func (r Repo) Delete(id int) ([]int, error) {
 }
 
 func (r Repo) DeleteList(ids []int) ([]int, error) {
-	result := r.db.Where("id IN (?)", ids).Delete(&schema.Variable{})
+	result := r.db.Where("id IN (?)", ids).Delete(&Variable{})
 	err := result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)

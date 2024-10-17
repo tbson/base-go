@@ -17,10 +17,10 @@ var orderableFields = []string{"id", "key"}
 
 func List(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	srv := app.NewCrudVariableSrv(repo)
+	srv := app.CrudVariableSrv{}.New(repo)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
-	listResult, error := srv.ListRestful(options, searchableFields)
+	listResult, error := srv.List(options, searchableFields)
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
@@ -30,9 +30,10 @@ func List(c echo.Context) error {
 
 func Retrieve(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	srv := app.NewCrudVariableSrv(repo)
+	srv := app.CrudVariableSrv{}.New(repo)
+
 	id := vldtutil.ValidateId(c.Param("id"))
-	result, error := srv.RetrieveVariable(id)
+	result, error := srv.Retrieve(id)
 
 	if error != nil {
 		return c.JSON(http.StatusNotFound, error)
@@ -43,17 +44,14 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
+	srv := app.CrudVariableSrv{}.New(repo)
 
 	data, error := vldtutil.ValidatePayload(c, app.VariableData{})
-
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
 
-	srv := app.NewCrudVariableSrv(repo)
-
-	result, error := srv.CreateVariable(data)
-
+	result, error := srv.Create(data)
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
@@ -64,16 +62,15 @@ func Create(c echo.Context) error {
 
 func Update(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	data, error := vldtutil.ValidateUpdatePayload(c)
+	srv := app.CrudVariableSrv{}.New(repo)
 
+	data, error := vldtutil.ValidateUpdatePayload(c)
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
 
-	srv := app.NewCrudVariableSrv(repo)
 	id := vldtutil.ValidateId(c.Param("id"))
-
-	result, error := srv.UpdateVariable(id, data)
+	result, error := srv.Update(id, data)
 
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
@@ -84,26 +81,28 @@ func Update(c echo.Context) error {
 
 func Delete(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	srv := app.NewCrudVariableSrv(repo)
-	id := vldtutil.ValidateId(c.Param("id"))
+	srv := app.CrudVariableSrv{}.New(repo)
 
-	ids, error := srv.DeleteVariable(id)
+	id := vldtutil.ValidateId(c.Param("id"))
+	ids, error := srv.Delete(id)
 
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
+
 	return c.JSON(http.StatusOK, ids)
 }
 
 func DeleteList(c echo.Context) error {
 	repo := Repo{}.New(dbutil.Db())
-	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
+	srv := app.CrudVariableSrv{}.New(repo)
 
-	srv := app.NewCrudVariableSrv(repo)
-	ids, error := srv.DeleteListVariable(ids)
+	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
+	ids, error := srv.DeleteList(ids)
 
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
+
 	return c.JSON(http.StatusOK, ids)
 }
