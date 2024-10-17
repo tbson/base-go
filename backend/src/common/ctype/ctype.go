@@ -1,5 +1,7 @@
 package ctype
 
+type Dict map[string]interface{}
+
 type Role struct {
 	ProfileTypes []string
 	Title        string

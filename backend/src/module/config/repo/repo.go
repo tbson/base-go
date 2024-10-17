@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"src/common/ctype"
 	"src/module/config/schema"
 	"src/util/dbutil"
 	"src/util/errutil"
@@ -8,10 +9,14 @@ import (
 
 type VariableRepo struct{}
 
-func (vr VariableRepo) ListVariable() ([]schema.Variable, error) {
+func (vr VariableRepo) ListVariable(params ctype.Dict) ([]schema.Variable, error) {
 	var variables []schema.Variable
-	// find with order by id DESC
-	result := dbutil.Db().Order("id DESC").Find(&variables)
+	db := dbutil.Db().Order("id DESC")
+
+	if len(params) > 0 {
+		db = db.Where(params)
+	}
+	result := db.Find(&variables)
 	err := result.Error
 	if err != nil {
 		return variables, errutil.NewGormError(err)
@@ -38,7 +43,7 @@ func (vr VariableRepo) CreateVariable(variable *schema.Variable) (*schema.Variab
 	return variable, err
 }
 
-func (vr VariableRepo) UpdateVariable(id int, variable map[string]interface{}) (*schema.Variable, error) {
+func (vr VariableRepo) UpdateVariable(id int, variable ctype.Dict) (*schema.Variable, error) {
 	item, err := vr.RetrieveVariable(id)
 	if err != nil {
 		return nil, err

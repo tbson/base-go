@@ -1,6 +1,7 @@
 package app
 
 import (
+	"src/common/ctype"
 	"src/module/config/schema"
 	"src/module/config/usecase/crudvariable/app/intf"
 	"src/util/dbutil"
@@ -51,7 +52,7 @@ func (srv CrudVariableSrv) CreateVariable(inputData VariableData) (*schema.Varia
 	return srv.repo.CreateVariable(schema)
 }
 
-func (srv CrudVariableSrv) UpdateVariable(id int, inputData map[string]interface{}) (*schema.Variable, error) {
+func (srv CrudVariableSrv) UpdateVariable(id int, inputData ctype.Dict) (*schema.Variable, error) {
 	return srv.repo.UpdateVariable(id, inputData)
 }
 

@@ -2,6 +2,7 @@ package dbutil
 
 import (
 	"fmt"
+	"src/common/ctype"
 	"src/common/setting"
 	"strings"
 
@@ -42,10 +43,10 @@ type QueryOrder struct {
 }
 
 type ListOptions struct {
-	Search  string                 // Search term
-	Filters map[string]interface{} // Filters as key-value pairs
-	Order   QueryOrder             // Ordering field and direction
-	Page    int                    // Page number
+	Search  string     // Search term
+	Filters ctype.Dict // Filters as key-value pairs
+	Order   QueryOrder // Ordering field and direction
+	Page    int        // Page number
 }
 
 type Pages struct {
@@ -75,7 +76,7 @@ func GetOptions(c echo.Context, filterableFields []string, orderableFields []str
 		Direction: "DESC",
 	}
 
-	filters := make(map[string]interface{})
+	filters := make(ctype.Dict)
 	for _, field := range filterableFields {
 		if value := c.QueryParam(field); value != "" {
 			filters[field] = value
@@ -141,7 +142,7 @@ func ApplySearch(query *gorm.DB, search string, allowFields []string) *gorm.DB {
 	return query
 }
 
-func ApplyFilters(query *gorm.DB, filters map[string]interface{}) *gorm.DB {
+func ApplyFilters(query *gorm.DB, filters ctype.Dict) *gorm.DB {
 	// Iterate over the filters and apply only the allowed fields
 	for key, value := range filters {
 		query = query.Where(fmt.Sprintf("%s = ?", key), value)

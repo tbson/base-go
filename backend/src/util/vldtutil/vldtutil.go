@@ -11,6 +11,7 @@ import (
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
+	"src/common/ctype"
 	"src/util/errutil"
 	"src/util/localeutil"
 
@@ -50,9 +51,9 @@ func GetRequiredFields(v interface{}) []string {
 	return requiredFields
 }
 
-func ValidateUpdatePayload(c echo.Context) (map[string]interface{}, error) {
+func ValidateUpdatePayload(c echo.Context) (ctype.Dict, error) {
 	localizer := localeutil.Get()
-	var result map[string]interface{}
+	var result ctype.Dict
 	bodyBytes, err := io.ReadAll(c.Request().Body)
 	if err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -65,7 +66,7 @@ func ValidateUpdatePayload(c echo.Context) (map[string]interface{}, error) {
 	c.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	// Unmarshal into a map to get the keys present in the payload
-	var payloadMap map[string]interface{}
+	var payloadMap ctype.Dict
 	if err := json.Unmarshal(bodyBytes, &payloadMap); err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.InvalidJSONPayload,
@@ -91,7 +92,7 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 	c.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	// Unmarshal into a map to get the keys present in the payload
-	var payloadMap map[string]interface{}
+	var payloadMap ctype.Dict
 	if err := json.Unmarshal(bodyBytes, &payloadMap); err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.InvalidJSONPayload,
@@ -134,7 +135,7 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 		case errors.As(err, &syntaxError):
 			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 				DefaultMessage: localeutil.BadJson,
-				TemplateData: map[string]interface{}{
+				TemplateData: ctype.Dict{
 					"Offset": syntaxError.Offset,
 				},
 			})
@@ -145,7 +146,7 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 			fieldName := unmarshalTypeError.Field
 			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 				DefaultMessage: localeutil.InvalidFieldValue,
-				TemplateData: map[string]interface{}{
+				TemplateData: ctype.Dict{
 					"FieldName": fieldName,
 					"Type":      unmarshalTypeError.Type.String(),
 					"Value":     unmarshalTypeError.Value,
@@ -198,7 +199,7 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 				case "oneof":
 					msg = localizer.MustLocalize(&i18n.LocalizeConfig{
 						DefaultMessage: localeutil.MustBeOneOf,
-						TemplateData: map[string]interface{}{
+						TemplateData: ctype.Dict{
 							"Values": fe.Param(),
 						},
 					})
