@@ -24,42 +24,34 @@ func (data VariableData) ToSchema() *schema.Variable {
 }
 
 type CrudVariableSrv struct {
-	repo intf.VariableRepo
+	repo intf.RestCrudRepo[schema.Variable]
 }
 
-type CrudVariableListSrv struct {
-	repo intf.VariableListRepo
-}
-
-func NewCrudVariableSrv(repo intf.VariableRepo) CrudVariableSrv {
+func NewCrudVariableSrv(repo intf.RestCrudRepo[schema.Variable]) CrudVariableSrv {
 	return CrudVariableSrv{repo}
 }
 
-func NewCrudVariableListSrv(repo intf.VariableListRepo) CrudVariableListSrv {
-	return CrudVariableListSrv{repo}
-}
-
-func (srv CrudVariableListSrv) ListRestful(options restlistutil.ListOptions, searchableFields []string) (restlistutil.ListRestfulResult[schema.Variable], error) {
-	return srv.repo.ListRestful(options, searchableFields)
+func (srv CrudVariableSrv) ListRestful(options restlistutil.ListOptions, searchableFields []string) (restlistutil.ListRestfulResult[schema.Variable], error) {
+	return srv.repo.List(options, searchableFields)
 }
 
 func (srv CrudVariableSrv) RetrieveVariable(id int) (*schema.Variable, error) {
-	return srv.repo.RetrieveVariable(id)
+	return srv.repo.Retrieve(id)
 }
 
 func (srv CrudVariableSrv) CreateVariable(inputData VariableData) (*schema.Variable, error) {
 	schema := inputData.ToSchema()
-	return srv.repo.CreateVariable(schema)
+	return srv.repo.Create(schema)
 }
 
 func (srv CrudVariableSrv) UpdateVariable(id int, inputData ctype.Dict) (*schema.Variable, error) {
-	return srv.repo.UpdateVariable(id, inputData)
+	return srv.repo.Update(id, inputData)
 }
 
 func (srv CrudVariableSrv) DeleteVariable(id int) ([]int, error) {
-	return srv.repo.DeleteVariable(id)
+	return srv.repo.Delete(id)
 }
 
 func (srv CrudVariableSrv) DeleteListVariable(ids []int) ([]int, error) {
-	return srv.repo.DeleteListVariable(ids)
+	return srv.repo.DeleteList(ids)
 }

@@ -6,6 +6,19 @@ import (
 	"src/util/restlistutil"
 )
 
+type RestCrudRepo[T any] interface {
+	List(
+		options restlistutil.ListOptions,
+		searchableFields []string) (
+		restlistutil.ListRestfulResult[T], error,
+	)
+	Retrieve(key int) (*T, error)
+	Create(instance *T) (*T, error)
+	Update(key int, data ctype.Dict) (*T, error)
+	Delete(key int) ([]int, error)
+	DeleteList(keys []int) ([]int, error)
+}
+
 type VariableRepo interface {
 	ListVariable(params ctype.Dict) ([]schema.Variable, error)
 	RetrieveVariable(key int) (*schema.Variable, error)
@@ -18,5 +31,7 @@ type VariableRepo interface {
 type VariableListRepo interface {
 	ListRestful(
 		options restlistutil.ListOptions,
-		searchableFields []string) (restlistutil.ListRestfulResult[schema.Variable], error)
+		searchableFields []string) (
+		restlistutil.ListRestfulResult[schema.Variable], error,
+	)
 }
