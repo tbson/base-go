@@ -3,6 +3,7 @@ package infra
 import (
 	"net/http"
 	"src/util/dbutil"
+	"src/util/restlistutil"
 	"src/util/vldtutil"
 
 	"src/module/config/repo"
@@ -16,9 +17,10 @@ var filterableFields = []string{"data_type"}
 var orderableFields = []string{"id", "key"}
 
 func List(c echo.Context) error {
-	srv := app.NewCrudVariableListSrv(VariableListRepo{})
+	repo := VariableListRepo{}.New(dbutil.Db())
+	srv := app.NewCrudVariableListSrv(repo)
 
-	options := dbutil.GetOptions(c, filterableFields, orderableFields)
+	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	listResult, error := srv.ListRestful(options, searchableFields)
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
@@ -28,7 +30,8 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+	repo := repo.VariableRepo{}.New(dbutil.Db())
+	srv := app.NewCrudVariableSrv(repo)
 	id := vldtutil.ValidateId(c.Param("id"))
 	result, error := srv.RetrieveVariable(id)
 
@@ -40,6 +43,7 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
+	repo := repo.VariableRepo{}.New(dbutil.Db())
 
 	data, error := vldtutil.ValidatePayload(c, app.VariableData{})
 
@@ -47,7 +51,7 @@ func Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, error)
 	}
 
-	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+	srv := app.NewCrudVariableSrv(repo)
 
 	result, error := srv.CreateVariable(data)
 
@@ -60,13 +64,14 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
+	repo := repo.VariableRepo{}.New(dbutil.Db())
 	data, error := vldtutil.ValidateUpdatePayload(c)
 
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
 
-	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+	srv := app.NewCrudVariableSrv(repo)
 	id := vldtutil.ValidateId(c.Param("id"))
 
 	result, error := srv.UpdateVariable(id, data)
@@ -79,7 +84,8 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+	repo := repo.VariableRepo{}.New(dbutil.Db())
+	srv := app.NewCrudVariableSrv(repo)
 	id := vldtutil.ValidateId(c.Param("id"))
 
 	ids, error := srv.DeleteVariable(id)
@@ -91,9 +97,10 @@ func Delete(c echo.Context) error {
 }
 
 func DeleteList(c echo.Context) error {
+	repo := repo.VariableRepo{}.New(dbutil.Db())
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
 
-	srv := app.NewCrudVariableSrv(repo.VariableRepo{})
+	srv := app.NewCrudVariableSrv(repo)
 	ids, error := srv.DeleteListVariable(ids)
 
 	if error != nil {

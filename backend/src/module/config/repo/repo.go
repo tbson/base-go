@@ -3,15 +3,22 @@ package repo
 import (
 	"src/common/ctype"
 	"src/module/config/schema"
-	"src/util/dbutil"
 	"src/util/errutil"
+
+	"gorm.io/gorm"
 )
 
-type VariableRepo struct{}
+type VariableRepo struct {
+	db *gorm.DB
+}
 
-func (vr VariableRepo) ListVariable(params ctype.Dict) ([]schema.Variable, error) {
+func (r VariableRepo) New(db *gorm.DB) VariableRepo {
+	return VariableRepo{db: db}
+}
+
+func (r VariableRepo) ListVariable(params ctype.Dict) ([]schema.Variable, error) {
+	db := r.db.Order("id DESC")
 	var variables []schema.Variable
-	db := dbutil.Db().Order("id DESC")
 
 	if len(params) > 0 {
 		db = db.Where(params)
@@ -24,9 +31,9 @@ func (vr VariableRepo) ListVariable(params ctype.Dict) ([]schema.Variable, error
 	return variables, err
 }
 
-func (vr VariableRepo) RetrieveVariable(id int) (*schema.Variable, error) {
+func (r VariableRepo) RetrieveVariable(id int) (*schema.Variable, error) {
 	var variable schema.Variable
-	result := dbutil.Db().Where("id = ?", id).First(&variable)
+	result := r.db.Where("id = ?", id).First(&variable)
 	err := result.Error
 	if err != nil {
 		return &variable, errutil.NewGormError(err)
@@ -34,8 +41,8 @@ func (vr VariableRepo) RetrieveVariable(id int) (*schema.Variable, error) {
 	return &variable, err
 }
 
-func (vr VariableRepo) CreateVariable(variable *schema.Variable) (*schema.Variable, error) {
-	result := dbutil.Db().Create(variable)
+func (r VariableRepo) CreateVariable(variable *schema.Variable) (*schema.Variable, error) {
+	result := r.db.Create(variable)
 	err := result.Error
 	if err != nil {
 		return variable, errutil.NewGormError(err)
@@ -43,12 +50,12 @@ func (vr VariableRepo) CreateVariable(variable *schema.Variable) (*schema.Variab
 	return variable, err
 }
 
-func (vr VariableRepo) UpdateVariable(id int, variable ctype.Dict) (*schema.Variable, error) {
-	item, err := vr.RetrieveVariable(id)
+func (r VariableRepo) UpdateVariable(id int, variable ctype.Dict) (*schema.Variable, error) {
+	item, err := r.RetrieveVariable(id)
 	if err != nil {
 		return nil, err
 	}
-	result := dbutil.Db().Model(&item).Updates(variable)
+	result := r.db.Model(&item).Updates(variable)
 	err = result.Error
 	if err != nil {
 		return nil, errutil.NewGormError(err)
@@ -56,9 +63,9 @@ func (vr VariableRepo) UpdateVariable(id int, variable ctype.Dict) (*schema.Vari
 	return item, err
 }
 
-func (vr VariableRepo) DeleteVariable(id int) ([]int, error) {
+func (r VariableRepo) DeleteVariable(id int) ([]int, error) {
 	ids := []int{id}
-	result := dbutil.Db().Where("id = ?", id).Delete(&schema.Variable{})
+	result := r.db.Where("id = ?", id).Delete(&schema.Variable{})
 	err := result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)
@@ -66,8 +73,8 @@ func (vr VariableRepo) DeleteVariable(id int) ([]int, error) {
 	return ids, err
 }
 
-func (vr VariableRepo) DeleteListVariable(ids []int) ([]int, error) {
-	result := dbutil.Db().Where("id IN (?)", ids).Delete(&schema.Variable{})
+func (r VariableRepo) DeleteListVariable(ids []int) ([]int, error) {
+	result := r.db.Where("id IN (?)", ids).Delete(&schema.Variable{})
 	err := result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)

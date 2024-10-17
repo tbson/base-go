@@ -4,7 +4,7 @@ import (
 	"src/common/ctype"
 	"src/module/config/schema"
 	"src/module/config/usecase/crudvariable/app/intf"
-	"src/util/dbutil"
+	"src/util/restlistutil"
 )
 
 type VariableData struct {
@@ -39,7 +39,7 @@ func NewCrudVariableListSrv(repo intf.VariableListRepo) CrudVariableListSrv {
 	return CrudVariableListSrv{repo}
 }
 
-func (srv CrudVariableListSrv) ListRestful(options dbutil.ListOptions, searchableFields []string) (dbutil.ListRestfulResult[schema.Variable], error) {
+func (srv CrudVariableListSrv) ListRestful(options restlistutil.ListOptions, searchableFields []string) (restlistutil.ListRestfulResult[schema.Variable], error) {
 	return srv.repo.ListRestful(options, searchableFields)
 }
 

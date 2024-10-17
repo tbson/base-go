@@ -3,7 +3,7 @@ package intf
 import (
 	"src/common/ctype"
 	"src/module/config/schema"
-	"src/util/dbutil"
+	"src/util/restlistutil"
 )
 
 type VariableRepo interface {
@@ -16,5 +16,7 @@ type VariableRepo interface {
 }
 
 type VariableListRepo interface {
-	ListRestful(options dbutil.ListOptions, searchableFields []string) (dbutil.ListRestfulResult[schema.Variable], error)
+	ListRestful(
+		options restlistutil.ListOptions,
+		searchableFields []string) (restlistutil.ListRestfulResult[schema.Variable], error)
 }
