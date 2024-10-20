@@ -24,6 +24,9 @@ func RegisterRoute(group *echo.Group, roleMap ctype.RoleMap) RuteHandlerFunc {
 	return func(verb string, path string, ctrl echo.HandlerFunc, profileTypes []string, title string) ctype.RoleMap {
 		verbs := []string{verb}
 		group.Match(verbs, path, ctrl)
+		if len(profileTypes) == 0 || len(title) == 0 {
+			return roleMap
+		}
 		key := getFnPath(ctrl)
 		module, action := getFnInfo(key)
 		role := ctype.Role{

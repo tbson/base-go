@@ -57,4 +57,64 @@ var (
 		ID:    "GormDuplicateKey",
 		Other: "Value already exists",
 	}
+
+	InvalidState = &i18n.Message{
+		ID:    "InvalidState",
+		Other: "Invalid state",
+	}
+
+	AuthorizationCodeNotFound = &i18n.Message{
+		ID:    "AuthorizationCodeNotFound",
+		Other: "Authorization code not found",
+	}
+
+	CannotExchangeAuthorizationCode = &i18n.Message{
+		ID:    "CannotExchangeAuthorizationCode",
+		Other: "Can not exchange authorization code for tokens",
+	}
+
+	FailedToFetchJWKS = &i18n.Message{
+		ID:    "FailedToFetchJWKS",
+		Other: "Failed to fetch JWKS",
+	}
+
+	FailedToParseToken = &i18n.Message{
+		ID:    "FailedToParseToken",
+		Other: "Failed to parse token",
+	}
+
+	NoKidFieldInJWTTokenHeader = &i18n.Message{
+		ID:    "NoKidFieldInJWTTokenHeader",
+		Other: "No 'kid' field in JWT token header",
+	}
+
+	UnableToFindKeyWithKid = &i18n.Message{
+		ID:    "UnableToFindKeyWithKid",
+		Other: "Unable to find key with kid",
+	}
+
+	FailedToCreateRawKey = &i18n.Message{
+		ID:    "FailedToCreateRawKey",
+		Other: "Failed to create raw key",
+	}
+
+	ExpectedRSAKey = &i18n.Message{
+		ID:    "ExpectedRSAKey",
+		Other: "Expected RSA public key but got something else",
+	}
+
+	FailedToVerifyToken = &i18n.Message{
+		ID:    "FailedToVerifyToken",
+		Other: "Failed to verify token",
+	}
+
+	TokenHasExpired = &i18n.Message{
+		ID:    "TokenHasExpired",
+		Other: "Token has expired",
+	}
+
+	NoRealmFound = &i18n.Message{
+		ID:    "NoRealmFound",
+		Other: "No realm found",
+	}
 )
