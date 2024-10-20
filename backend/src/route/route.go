@@ -2,6 +2,7 @@ package route
 
 import (
 	"src/common/ctype"
+	crudauthclient "src/module/account/usecase/crudauthclient/infra"
 	sso "src/module/account/usecase/sso/infra"
 	crudvariable "src/module/config/usecase/crudvariable/infra"
 
@@ -11,6 +12,7 @@ import (
 func CollectRoutes(e *echo.Group) (*echo.Group, ctype.RoleMap) {
 	roleMap := ctype.RoleMap{}
 	e, roleMap = crudvariable.RegisterUrls(e, roleMap)
+	e, roleMap = crudauthclient.RegisterUrls(e, roleMap)
 	e, roleMap = sso.RegisterUrls(e, roleMap)
 	return e, roleMap
 }

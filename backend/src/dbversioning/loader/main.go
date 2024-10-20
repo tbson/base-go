@@ -7,11 +7,17 @@ import (
 
 	"ariga.io/atlas-provider-gorm/gormschema"
 
-	"src/module/config/schema"
+	account "src/module/account/schema"
+	config "src/module/config/schema"
 )
 
 func main() {
-	stmts, err := gormschema.New("postgres").Load(&schema.Variable{})
+	stmts, err := gormschema.New("postgres").Load(
+		&config.Variable{},
+		&account.Tenant{},
+		&account.AuthClient{},
+		&account.User{},
+	)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to load gorm schema: %v\n", err)
 		os.Exit(1)

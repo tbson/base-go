@@ -24,6 +24,10 @@ func GetLoginUrl(c echo.Context) error {
 	return c.Redirect(http.StatusTemporaryRedirect, authUrl)
 }
 
+func Callback(c echo.Context) error {
+	return c.JSON(http.StatusOK, "Callback")
+}
+
 /*
 func Callback(c echo.Context) error {
 	code := c.QueryParam("code")
