@@ -18,12 +18,20 @@ func (r Repo) New(db *gorm.DB) Repo {
 	return Repo{db: db}
 }
 
-func (r Repo) List(params ctype.Dict) ([]Schema, error) {
+func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 	db := r.db.Order("id DESC")
+	filters := queryOptions.Filters
+	preloads := queryOptions.Preloads
+	if len(preloads) > 0 {
+		for _, preload := range preloads {
+			db = db.Preload(preload)
+		}
+	}
+
 	var items []Schema
 
-	if len(params) > 0 {
-		db = db.Where(map[string]interface{}(params))
+	if len(filters) > 0 {
+		db = db.Where(map[string]interface{}(filters))
 	}
 	result := db.Find(&items)
 	err := result.Error

@@ -23,6 +23,12 @@ func (r Repo[T]) ListPaging(
 	searchableFields []string,
 ) (restlistutil.ListRestfulResult[T], error) {
 	db := r.db
+	preloads := options.Preloads
+	if len(preloads) > 0 {
+		for _, preload := range preloads {
+			db = db.Preload(preload)
+		}
+	}
 	pageSize := restlistutil.DEFAULT_PAGE_SIZE
 	var items []T
 	emptyResult := restlistutil.ListRestfulResult[T]{

@@ -19,10 +19,11 @@ type QueryOrder struct {
 }
 
 type ListOptions struct {
-	Search  string     // Search term
-	Filters ctype.Dict // Filters as key-value pairs
-	Order   QueryOrder // Ordering field and direction
-	Page    int        // Page number
+	Search   string     // Search term
+	Filters  ctype.Dict // Filters as key-value pairs
+	Order    QueryOrder // Ordering field and direction
+	Page     int        // Page number
+	Preloads []string
 }
 
 type Pages struct {
