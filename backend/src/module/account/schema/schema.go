@@ -21,7 +21,7 @@ type AuthClient struct {
 type Tenant struct {
 	ID           uint
 	AuthClientID uint
-	AuthClient   AuthClient
+	AuthClient   *AuthClient
 	Uid          string `gorm:"type:text;not null;unique"`
 	Title        string `gorm:"type:text;not null"`
 	Avatar       string `gorm:"type:text;not null;default:''"`
@@ -33,7 +33,7 @@ type Tenant struct {
 type User struct {
 	ID          uint
 	TenantID    uint `gorm:"not null;uniqueIndex:idx_users_tenant_uid;uniqueIndex:idx_users_tenant_email"`
-	Tenant      Tenant
+	Tenant      *Tenant
 	TenantTmpID *uint
 	Uid         string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_uid"`
 	Email       string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_email"`

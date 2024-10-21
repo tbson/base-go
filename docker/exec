@@ -64,10 +64,25 @@ elif [ "$FIRST_ARG" == "initmigrations" ]; then
 elif [ "$FIRST_ARG" == "makemigrations" ]; then
     docker compose exec "$NAME"_backend atlas migrate diff --env gorm
 elif [ "$FIRST_ARG" == "resetmakemigrations" ]; then
-    echo > ../backend/src/dbversioning/migration/atlas.sum
+    echo "[+] Delete current DB..."
+    rm -rf volumes/db/dbdata
+    docker restart "$NAME"_db
+
+    echo "[+] Sleep 5 secs..."
+    sleep 5
+
+    echo "[+] Clean migration files..."
     rm ../backend/src/dbversioning/migration/*.sql
+
+    echo "[+] Init migrations configuration..."
+    echo > ../backend/src/dbversioning/migration/atlas.sum
     docker compose exec "$NAME"_backend atlas migrate hash --env gorm
+
+    echo "[+] Make migration files..."
     docker compose exec "$NAME"_backend atlas migrate diff --env gorm
+
+    echo "[+] Migrate migration files..."
+    docker compose exec "$NAME"_backend atlas migrate apply --env gorm
 elif [ "$FIRST_ARG" == "migrate" ]; then
     docker compose exec "$NAME"_backend atlas migrate apply --env gorm
 elif [ "$FIRST_ARG" == "bserver" ]; then

@@ -14,7 +14,7 @@ type Data struct {
 	Uid          string `json:"uid" validate:"required"`
 	Title        string `json:"title" validate:"required"`
 	Avatar       string `json:"avatar"`
-	AvatarStr    string `json:"avatar_url" validate:"required"`
+	AvatarStr    string `json:"avatar_str"`
 }
 
 func (data Data) ToSchema() *Schema {

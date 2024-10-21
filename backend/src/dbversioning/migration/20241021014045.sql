@@ -11,6 +11,19 @@ CREATE TABLE "public"."auth_clients" (
   PRIMARY KEY ("id"),
   CONSTRAINT "uni_auth_clients_uid" UNIQUE ("uid")
 );
+-- Create "variables" table
+CREATE TABLE "public"."variables" (
+  "id" bigserial NOT NULL,
+  "key" text NOT NULL,
+  "value" text NOT NULL DEFAULT '',
+  "description" text NOT NULL DEFAULT '',
+  "data_type" text NOT NULL DEFAULT 'STRING',
+  "created_at" timestamptz NULL,
+  "updated_at" timestamptz NULL,
+  PRIMARY KEY ("id"),
+  CONSTRAINT "uni_variables_key" UNIQUE ("key"),
+  CONSTRAINT "chk_variables_data_type" CHECK (data_type = ANY (ARRAY['STRING'::text, 'INTEGER'::text, 'FLOAT'::text, 'BOOLEAN'::text, 'DATE'::text, 'DATETIME'::text]))
+);
 -- Create "tenants" table
 CREATE TABLE "public"."tenants" (
   "id" bigserial NOT NULL,
@@ -18,6 +31,7 @@ CREATE TABLE "public"."tenants" (
   "uid" text NOT NULL,
   "title" text NOT NULL,
   "avatar" text NOT NULL DEFAULT '',
+  "avatar_str" text NOT NULL DEFAULT '',
   "created_at" timestamptz NULL,
   "updated_at" timestamptz NULL,
   PRIMARY KEY ("id"),
