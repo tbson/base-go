@@ -70,7 +70,10 @@ func (r Repo) Create(item *Schema) (*Schema, error) {
 }
 
 func (r Repo) Update(id int, data ctype.Dict) (*Schema, error) {
-	item, err := r.Retrieve(ctype.Dict{"id": id})
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"id": id},
+	}
+	item, err := r.Retrieve(queryOptions)
 	if err != nil {
 		return nil, err
 	}
