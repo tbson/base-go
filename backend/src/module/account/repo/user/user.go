@@ -33,9 +33,18 @@ func (r Repo) List(params ctype.Dict) ([]Schema, error) {
 	return items, err
 }
 
-func (r Repo) Retrieve(params ctype.Dict) (*Schema, error) {
+func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
+	db := r.db
+	filters := queryOptions.Filters
+	preloads := queryOptions.Preloads
+	if len(preloads) > 0 {
+		for _, preload := range preloads {
+			db = db.Preload(preload)
+		}
+	}
+
 	var item Schema
-	result := r.db.Where(map[string]interface{}(params)).First(&item)
+	result := r.db.Where(map[string]interface{}(filters)).First(&item)
 	err := result.Error
 	if err != nil {
 		return &item, errutil.NewGormError(err)

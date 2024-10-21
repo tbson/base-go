@@ -39,8 +39,8 @@ func (srv Service) List(options restlistutil.ListOptions, searchableFields []str
 	return srv.repo.List(options, searchableFields)
 }
 
-func (srv Service) Retrieve(params ctype.Dict) (*Schema, error) {
-	return srv.repo.Retrieve(params)
+func (srv Service) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
+	return srv.repo.Retrieve(queryOptions)
 }
 
 func (srv Service) Create(inputData Data) (*Schema, error) {

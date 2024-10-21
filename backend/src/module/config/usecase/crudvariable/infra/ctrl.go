@@ -34,7 +34,11 @@ func Retrieve(c echo.Context) error {
 	srv := app.Service{}.New(repo)
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	result, error := srv.Retrieve(ctype.Dict{"id": id})
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"id": id},
+	}
+
+	result, error := srv.Retrieve(queryOptions)
 
 	if error != nil {
 		return c.JSON(http.StatusNotFound, error)

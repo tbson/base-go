@@ -10,3 +10,8 @@ type Role struct {
 }
 
 type RoleMap map[string]Role
+
+type QueryOptions struct {
+	Filters  Dict
+	Preloads []string
+}
