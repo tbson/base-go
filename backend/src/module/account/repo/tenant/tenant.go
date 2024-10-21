@@ -69,6 +69,14 @@ func (r Repo) Create(item *Schema) (*Schema, error) {
 	return item, err
 }
 
+func (r Repo) GetOrCreate(queryOptions ctype.QueryOptions, item *Schema) (*Schema, error) {
+	existItem, err := r.Retrieve(queryOptions)
+	if err != nil {
+		return r.Create(item)
+	}
+	return existItem, nil
+}
+
 func (r Repo) Update(id int, data ctype.Dict) (*Schema, error) {
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"id": id},
