@@ -20,11 +20,12 @@ type AuthClient struct {
 
 type Tenant struct {
 	ID           uint
-	AuthClientID *uint
-	AuthClient   *AuthClient
+	AuthClientID uint
+	AuthClient   AuthClient
 	Uid          string `gorm:"type:text;not null;unique"`
 	Title        string `gorm:"type:text;not null"`
 	Avatar       string `gorm:"type:text;not null;default:''"`
+	AvatarStr    string `gorm:"type:text;not null;default:''"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }

@@ -2,8 +2,8 @@ package app
 
 import (
 	"src/common/ctype"
+	"src/common/intf"
 	"src/module/config/schema"
-	"src/module/config/usecase/crudvariable/app/intf"
 	"src/util/restlistutil"
 )
 

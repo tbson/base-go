@@ -7,23 +7,23 @@ import (
 	"src/util/restlistutil"
 )
 
-type Schema = schema.AuthClient
+type Schema = schema.Tenant
 
 type Data struct {
-	Uid         string `json:"uid" validate:"required"`
-	Description string `json:"description"`
-	Secret      string `json:"secret" validate:"required"`
-	Partition   string `json:"partition" validate:"required"`
-	Default     bool   `json:"default"`
+	AuthClientID uint   `json:"auth_client_id" validate:"required"`
+	Uid          string `json:"uid" validate:"required"`
+	Title        string `json:"title" validate:"required"`
+	Avatar       string `json:"avatar"`
+	AvatarStr    string `json:"avatar_url" validate:"required"`
 }
 
 func (data Data) ToSchema() *Schema {
 	return &Schema{
-		Uid:         data.Uid,
-		Description: data.Description,
-		Secret:      data.Secret,
-		Partition:   data.Partition,
-		Default:     data.Default,
+		AuthClientID: data.AuthClientID,
+		Uid:          data.Uid,
+		Title:        data.Title,
+		Avatar:       data.Avatar,
+		AvatarStr:    data.AvatarStr,
 	}
 }
 

@@ -63,6 +63,11 @@ elif [ "$FIRST_ARG" == "initmigrations" ]; then
     docker compose exec "$NAME"_backend atlas migrate hash --env gorm
 elif [ "$FIRST_ARG" == "makemigrations" ]; then
     docker compose exec "$NAME"_backend atlas migrate diff --env gorm
+elif [ "$FIRST_ARG" == "resetmakemigrations" ]; then
+    echo > ../backend/src/dbversioning/migration/atlas.sum
+    rm ../backend/src/dbversioning/migration/*.sql
+    docker compose exec "$NAME"_backend atlas migrate hash --env gorm
+    docker compose exec "$NAME"_backend atlas migrate diff --env gorm
 elif [ "$FIRST_ARG" == "migrate" ]; then
     docker compose exec "$NAME"_backend atlas migrate apply --env gorm
 elif [ "$FIRST_ARG" == "bserver" ]; then
