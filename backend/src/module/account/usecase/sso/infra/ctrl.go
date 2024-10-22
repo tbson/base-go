@@ -1,7 +1,6 @@
 package infra
 
 import (
-	"fmt"
 	"net/http"
 
 	"src/common/ctype"
@@ -11,17 +10,23 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GetLoginUrl(c echo.Context) error {
+func GetAuthUrl(c echo.Context) error {
 	state := ctype.Dict{
 		"tenantId": "tenant1",
 	}
 	realm := setting.KEYCLOAK_DEFAULT_REALM
 	clientId := setting.KEYCLOAK_DEFAULT_CLIENT_ID
-	redirectUri := setting.KEYCLOAK_DEFAULT_REDIRECT_URI
 
-	authUrl := ssoutil.GetAuthUrl(realm, clientId, redirectUri, state)
-	fmt.Println(authUrl)
-	return c.Redirect(http.StatusTemporaryRedirect, authUrl)
+	url := ssoutil.GetAuthUrl(realm, clientId, state)
+	return c.Redirect(http.StatusTemporaryRedirect, url)
+}
+
+func GetLogoutUrl(c echo.Context) error {
+	realm := setting.KEYCLOAK_DEFAULT_REALM
+	clientId := setting.KEYCLOAK_DEFAULT_CLIENT_ID
+
+	url := ssoutil.GetLogoutUrl(realm, clientId)
+	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
 func Callback(c echo.Context) error {

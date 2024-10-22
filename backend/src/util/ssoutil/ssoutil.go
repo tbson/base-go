@@ -68,7 +68,6 @@ func decodeState(stateStr string) (ctype.Dict, error) {
 func GetAuthUrl(
 	realm string,
 	clientId string,
-	redirectUri string,
 	state ctype.Dict,
 ) string {
 	stateStr := encodeState(state)
@@ -77,8 +76,22 @@ func GetAuthUrl(
 		setting.KEYCLOAK_URL,
 		realm,
 		clientId,
-		redirectUri,
+		setting.KEYCLOAK_DEFAULT_REDIRECT_URI,
 		stateStr,
+	)
+	return keycloakAuthURL
+}
+
+func GetLogoutUrl(
+	realm string,
+	clientId string,
+) string {
+	keycloakAuthURL := fmt.Sprintf(
+		"%s/realms/%s/protocol/openid-connect/logout?client_id=%s&post_logout_redirect_uri=%s",
+		setting.KEYCLOAK_URL,
+		realm,
+		clientId,
+		setting.KEYCLOAK_DEFAULT_POST_LOGOUT_URI,
 	)
 	return keycloakAuthURL
 }
