@@ -117,4 +117,14 @@ var (
 		ID:    "NoRealmFound",
 		Other: "No realm found",
 	}
+
+	RefreshTokenNotFound = &i18n.Message{
+		ID:    "RefreshTokenNotFound",
+		Other: "Refresh token not found",
+	}
+
+	CannotExchangeRefreshToken = &i18n.Message{
+		ID:    "CannotExchangeRefreshToken",
+		Other: "Can not exchange refresh token for tokens",
+	}
 )

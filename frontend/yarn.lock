@@ -1735,10 +1735,10 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
-"@vitejs/plugin-react@^4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@vitejs/plugin-react/-/plugin-react-4.3.2.tgz#1e13f666fe3135b477220d3c13b783704636b6e4"
-  integrity sha512-hieu+o05v4glEBucTcKMK3dlES0OeJlD9YVOAPraVMOInBCwzumaIFiUjr4bHK7NPgnAHgiskUoceKercrN8vg==
+"@vitejs/plugin-react@^4.3.3":
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/@vitejs/plugin-react/-/plugin-react-4.3.3.tgz#28301ac6d7aaf20b73a418ee5c65b05519b4836c"
+  integrity sha512-NooDe9GpHGqNns1i8XDERg0Vsg5SSYRhRxxyTGogUdkdNt47jal+fbuYi+Yfq6pzRCKXyoPcWisfxE6RIM3GKA==
   dependencies:
     "@babel/core" "^7.25.2"
     "@babel/plugin-transform-react-jsx-self" "^7.24.7"
@@ -1866,10 +1866,10 @@ ansi-styles@^4.0.0:
   dependencies:
     color-convert "^2.0.1"
 
-antd@5.21.4:
-  version "5.21.4"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-5.21.4.tgz#c17a732fa26a4af1b21c72d08a92bc01c8f3e4d1"
-  integrity sha512-yMpwam1A4/RIIemJK0V3SpMAfgbBEM47OFzEYcEQPDP+B4ZAeviKOLaFFxUt/sxRCMeoALnJEK6Hb6qOqL0hbA==
+antd@5.21.5:
+  version "5.21.5"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-5.21.5.tgz#c82f14b36f6821490ccd30d8befaa65a11b5e782"
+  integrity sha512-g/c8VkdruKDCVA6di9Ow1fG6dLtYJ1IOraPo7vXaY7DoQ56A3HExaFaH0fBEwTYKC0ICeftC4iA5eAjrF6/b9w==
   dependencies:
     "@ant-design/colors" "^7.1.0"
     "@ant-design/cssinjs" "^1.21.1"
@@ -1886,7 +1886,7 @@ antd@5.21.4:
     classnames "^2.5.1"
     copy-to-clipboard "^3.3.3"
     dayjs "^1.11.11"
-    rc-cascader "~3.28.1"
+    rc-cascader "~3.28.2"
     rc-checkbox "~3.3.0"
     rc-collapse "~3.8.0"
     rc-dialog "~9.6.0"
@@ -3396,7 +3396,7 @@ raw-body@^2.2.0:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
-rc-cascader@~3.28.1:
+rc-cascader@~3.28.2:
   version "3.28.2"
   resolved "https://registry.yarnpkg.com/rc-cascader/-/rc-cascader-3.28.2.tgz#91720d3498261a7bff9fffc953501a8830f601fb"
   integrity sha512-8f+JgM83iLTvjgdkgU7GfI4qY8icXOBP0cGZjOdx2iJAkEe8ucobxDQAVE69UD/c3ehCxZlcgEHeD5hFmypbUw==

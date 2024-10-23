@@ -1,15 +1,15 @@
-import * as React from "react";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { t } from "ttag";
-import { Row, Col, Card, Button } from "antd";
-import NavUtil from "service/helper/nav_util";
-import StorageUtil from "service/helper/storage_util";
-import LocaleSelect from "component/common/locale_select.jsx";
-import Form from "./form";
-import OTPDialog from "../otp_dialog";
-import ResetPwdDialog from "../reset_pwd";
-import ResetPwdConfirmDialog from "../reset_pwd_confirm";
+import * as React from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { t } from 'ttag';
+import { Row, Col, Card, Button } from 'antd';
+import NavUtil from 'service/helper/nav_util';
+import StorageUtil from 'service/helper/storage_util';
+import LocaleSelect from 'component/common/locale_select.jsx';
+import Form from './form';
+import OTPDialog from '../otp_dialog';
+import ResetPwdDialog from '../reset_pwd';
+import ResetPwdConfirmDialog from '../reset_pwd_confirm';
 
 const styles = {
     wrapper: {
@@ -25,8 +25,8 @@ export default function Login() {
     }, []);
 
     function handleLogin(data) {
-        const nextUrl = window.location.href.split("next=")[1] || "/";
-        StorageUtil.setStorage("auth", data);
+        const nextUrl = window.location.href.split('next=')[1] || '/';
+        StorageUtil.setStorage('auth', data);
         navigateTo(nextUrl);
     }
 
@@ -60,6 +60,20 @@ export default function Login() {
                                 </Button>
                             </>
                         </Form>
+                        <Row>
+                            <Col span={12}>
+                                <a
+                                    href="/api/v1/account/sso/auth/default"
+                                    target="_blank"
+                                >{t`SSO`}</a>
+                            </Col>
+                            <Col span={12}>
+                                <a
+                                    href="https://basecode.test/api/v1/account/sso/logout"
+                                    target="_blank"
+                                >{t`Logout`}</a>
+                            </Col>
+                        </Row>
                     </Card>
                 </Col>
             </Row>

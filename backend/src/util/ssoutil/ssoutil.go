@@ -2,7 +2,6 @@ package ssoutil
 
 import (
 	"context"
-	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -14,7 +13,6 @@ import (
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
-	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
@@ -22,7 +20,7 @@ import (
 type CallbackResult struct {
 	AccessToken  string
 	RefreshToken string
-	Cliams       ctype.Dict
+	Claims       ctype.Dict
 }
 
 func getJwksUrl(realm string) string {
@@ -98,26 +96,11 @@ func GetLogoutUrl(
 
 func ValidateCallback(
 	ctx context.Context,
+	realm string,
 	code string,
-	stateStr string,
 ) (CallbackResult, error) {
 	var result CallbackResult
 	localizer := localeutil.Get()
-	// Decode the state
-	stateData, err := decodeState(stateStr)
-	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.InvalidState,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-	realm, ok := stateData["realm"].(string)
-	if !ok {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.NoRealmFound,
-		})
-		return result, errutil.New("", []string{msg})
-	}
 
 	if code == "" {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -127,7 +110,7 @@ func ValidateCallback(
 	}
 
 	// Exchange the code for tokens
-	client := gocloak.NewClient(setting.KEYCLOAK_API_URL)
+	client := gocloak.NewClient(setting.KEYCLOAK_URL)
 	token, err := client.GetToken(ctx, realm, gocloak.TokenOptions{
 		ClientID:     gocloak.StringP(setting.KEYCLOAK_DEFAULT_CLIENT_ID),
 		ClientSecret: gocloak.StringP(setting.KEYCLOAK_DEFAULT_CLIENT_SECRET),
@@ -155,11 +138,12 @@ func ValidateCallback(
 	result = CallbackResult{
 		AccessToken:  accesToken,
 		RefreshToken: refreshToken,
-		Cliams:       claims,
+		Claims:       claims,
 	}
 	return result, nil
 }
 
+// TODO: Implement checking kid
 func ValidateToken(tokenStr string, realm string) (ctype.Dict, error) {
 	localizer := localeutil.Get()
 	var result ctype.Dict
@@ -172,7 +156,7 @@ func ValidateToken(tokenStr string, realm string) (ctype.Dict, error) {
 	}
 
 	// Parse the JWT token to extract headers and claims
-	token, err := jwt.Parse([]byte(tokenStr))
+	token, err := jwt.Parse([]byte(tokenStr), jwt.WithKeySet(keySet))
 	if err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.FailedToParseToken,
@@ -180,53 +164,8 @@ func ValidateToken(tokenStr string, realm string) (ctype.Dict, error) {
 		return result, errutil.New("", []string{msg})
 	}
 
-	// Get the `kid` from the JWT header using jwt.Get()
-	kid, ok := token.Get("kid")
-	if !ok {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.NoKidFieldInJWTTokenHeader,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
-	// Look up the correct key from the JWKS using the `kid`
-	key, found := keySet.LookupKeyID(kid.(string))
-	if !found {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.UnableToFindKeyWithKid,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
-	// Extract the raw RSA public key
-	var rawKey interface{}
-	if err := key.Raw(&rawKey); err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToCreateRawKey,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
-	// Ensure it's an RSA public key
-	rsaKey, ok := rawKey.(*rsa.PublicKey)
-	if !ok {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.ExpectedRSAKey,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
-	// Parse and verify the JWT token with the RSA public key, using jwa.RS256
-	verifiedToken, err := jwt.Parse([]byte(tokenStr), jwt.WithKey(jwa.RS256, rsaKey))
-	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToVerifyToken,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
 	// Check if the token is expired by inspecting the "exp" claim
-	if err := jwt.Validate(verifiedToken, jwt.WithAcceptableSkew(0)); err != nil {
+	if err := jwt.Validate(token, jwt.WithAcceptableSkew(0)); err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.TokenHasExpired,
 		})
@@ -234,7 +173,56 @@ func ValidateToken(tokenStr string, realm string) (ctype.Dict, error) {
 	}
 
 	// If verification is successful, print the claims
-	result = verifiedToken.PrivateClaims()
+	result = token.PrivateClaims()
 
+	return result, nil
+}
+
+func RefreshToken(
+	ctx context.Context,
+	realm string,
+	refreshToken string,
+) (CallbackResult, error) {
+	var result CallbackResult
+	localizer := localeutil.Get()
+	if refreshToken == "" {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.RefreshTokenNotFound,
+		})
+		return result, errutil.New("", []string{msg})
+	}
+
+	// Exchange the refresh token for new tokens
+	client := gocloak.NewClient(setting.KEYCLOAK_URL)
+	token, err := client.RefreshToken(
+		ctx,
+		refreshToken,
+		setting.KEYCLOAK_DEFAULT_CLIENT_ID,
+		setting.KEYCLOAK_DEFAULT_CLIENT_SECRET,
+		realm,
+	)
+	fmt.Println(token)
+	fmt.Println(err)
+	if err != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.CannotExchangeRefreshToken,
+		})
+		return result, errutil.New("", []string{msg})
+	}
+
+	idToken := token.IDToken
+	accesToken := token.AccessToken
+	refreshToken = token.RefreshToken
+
+	claims, err := ValidateToken(idToken, realm)
+	if err != nil {
+		return result, err
+	}
+
+	result = CallbackResult{
+		AccessToken:  accesToken,
+		RefreshToken: refreshToken,
+		Claims:       claims,
+	}
 	return result, nil
 }
