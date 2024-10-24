@@ -11,17 +11,17 @@ import (
 type Schema = schema.Tenant
 
 type Repo struct {
-	db *gorm.DB
+	client *gorm.DB
 }
 
-func New(db *gorm.DB) Repo {
+func New(client *gorm.DB) Repo {
 	return Repo{
-		db: db,
+		client: client,
 	}
 }
 
 func (r Repo) BuildAuthUrl(tenantUid string) (string, error) {
-	repo := tenant.New(r.db)
+	repo := tenant.New(r.client)
 	queryOptions := ctype.QueryOptions{
 		Filters:  ctype.Dict{"uid": tenantUid},
 		Preloads: []string{"AuthClient"},

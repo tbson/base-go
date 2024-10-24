@@ -13,14 +13,14 @@ type Schema = schema.AuthClient
 
 type Repo struct {
 	*authclient.Repo
-	db *gorm.DB
+	client *gorm.DB
 }
 
-func New(db *gorm.DB) Repo {
-	parent := authclient.New(db)
+func New(client *gorm.DB) Repo {
+	parent := authclient.New(client)
 	return Repo{
-		Repo: &parent,
-		db:   db,
+		Repo:   &parent,
+		client: client,
 	}
 }
 
@@ -28,6 +28,6 @@ func (r Repo) List(
 	options restlistutil.ListOptions,
 	searchableFields []string,
 ) (restlistutil.ListRestfulResult[Schema], error) {
-	commonRepo := repoutil.Repo[Schema]{}.New(r.db)
+	commonRepo := repoutil.Repo[Schema]{}.New(r.client)
 	return commonRepo.ListPaging(options, searchableFields)
 }

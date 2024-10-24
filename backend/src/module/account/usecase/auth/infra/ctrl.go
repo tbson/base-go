@@ -13,8 +13,7 @@ import (
 
 func GetAuthUrl(c echo.Context) error {
 	// tenantUid := c.Param("tenantUid")
-	client := ssoutil.Client(setting.KEYCLOAK_URL)
-	iamRepo := iam.New(client)
+	iamRepo := iam.New(ssoutil.Client())
 	state := ctype.Dict{
 		"tenantId": c.Param("tenantUid"),
 	}
@@ -26,8 +25,7 @@ func GetAuthUrl(c echo.Context) error {
 }
 
 func GetLogoutUrl(c echo.Context) error {
-	client := ssoutil.Client(setting.KEYCLOAK_URL)
-	iamRepo := iam.New(client)
+	iamRepo := iam.New(ssoutil.Client())
 	realm := setting.KEYCLOAK_DEFAULT_REALM
 	clientId := setting.KEYCLOAK_DEFAULT_CLIENT_ID
 
@@ -36,8 +34,7 @@ func GetLogoutUrl(c echo.Context) error {
 }
 
 func Callback(c echo.Context) error {
-	client := ssoutil.Client(setting.KEYCLOAK_URL)
-	iamRepo := iam.New(client)
+	iamRepo := iam.New(ssoutil.Client())
 	code := c.QueryParam("code")
 	// Decode the state
 	/*
@@ -67,8 +64,7 @@ func Callback(c echo.Context) error {
 }
 
 func RefreshToken(c echo.Context) error {
-	client := ssoutil.Client(setting.KEYCLOAK_URL)
-	iamRepo := iam.New(client)
+	iamRepo := iam.New(ssoutil.Client())
 	realm := setting.KEYCLOAK_DEFAULT_REALM
 	refreshToken := c.FormValue("refresh_token")
 	result, err := iamRepo.RefreshToken(c.Request().Context(), realm, refreshToken)

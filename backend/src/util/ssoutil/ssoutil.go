@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"src/common/ctype"
+	"src/common/setting"
 	"src/util/errutil"
 	"src/util/localeutil"
 
@@ -22,11 +23,11 @@ type TokensAndClaims struct {
 	Claims       ctype.Dict
 }
 
-func Client(iamUrl string) *gocloak.GoCloak {
+func Client() *gocloak.GoCloak {
 	if client != nil {
 		return client
 	}
-	client = gocloak.NewClient(iamUrl)
+	client = gocloak.NewClient(setting.KEYCLOAK_URL)
 	return client
 }
 

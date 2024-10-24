@@ -11,15 +11,16 @@ import (
 type Schema = schema.User
 
 type Repo struct {
-	db *gorm.DB
+	client *gorm.DB
 }
 
-func New(db *gorm.DB) Repo {
-	return Repo{db: db}
+func New(client *gorm.DB) Repo {
+	return Repo{client: client}
 }
 
 func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
-	db := r.db.Order("id DESC")
+	db := r.client
+	db = db.Order("id DESC")
 	filters := queryOptions.Filters
 	preloads := queryOptions.Preloads
 	if len(preloads) > 0 {
@@ -42,7 +43,7 @@ func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 }
 
 func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
-	db := r.db
+	db := r.client
 	filters := queryOptions.Filters
 	preloads := queryOptions.Preloads
 	if len(preloads) > 0 {
@@ -52,7 +53,7 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	}
 
 	var item Schema
-	result := r.db.Where(map[string]interface{}(filters)).First(&item)
+	result := r.client.Where(map[string]interface{}(filters)).First(&item)
 	err := result.Error
 	if err != nil {
 		return &item, errutil.NewGormError(err)
@@ -61,7 +62,7 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 }
 
 func (r Repo) Create(item *Schema) (*Schema, error) {
-	result := r.db.Create(item)
+	result := r.client.Create(item)
 	err := result.Error
 	if err != nil {
 		return item, errutil.NewGormError(err)
@@ -85,7 +86,7 @@ func (r Repo) Update(id int, data ctype.Dict) (*Schema, error) {
 	if err != nil {
 		return nil, err
 	}
-	result := r.db.Model(&item).Updates(map[string]interface{}(data))
+	result := r.client.Model(&item).Updates(map[string]interface{}(data))
 	err = result.Error
 	if err != nil {
 		return nil, errutil.NewGormError(err)
@@ -95,7 +96,7 @@ func (r Repo) Update(id int, data ctype.Dict) (*Schema, error) {
 
 func (r Repo) Delete(id int) ([]int, error) {
 	ids := []int{id}
-	result := r.db.Where("id = ?", id).Delete(&Schema{})
+	result := r.client.Where("id = ?", id).Delete(&Schema{})
 	err := result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)
@@ -104,7 +105,7 @@ func (r Repo) Delete(id int) ([]int, error) {
 }
 
 func (r Repo) DeleteList(ids []int) ([]int, error) {
-	result := r.db.Where("id IN (?)", ids).Delete(&Schema{})
+	result := r.client.Where("id IN (?)", ids).Delete(&Schema{})
 	err := result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)

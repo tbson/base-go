@@ -8,13 +8,13 @@ import (
 
 type Repo[T any] struct {
 	schema T
-	db     *gorm.DB
+	client *gorm.DB
 }
 
-func (r Repo[T]) New(db *gorm.DB) Repo[T] {
+func (r Repo[T]) New(client *gorm.DB) Repo[T] {
 	return Repo[T]{
 		schema: r.schema,
-		db:     db,
+		client: client,
 	}
 }
 
@@ -22,7 +22,7 @@ func (r Repo[T]) ListPaging(
 	options restlistutil.ListOptions,
 	searchableFields []string,
 ) (restlistutil.ListRestfulResult[T], error) {
-	db := r.db
+	db := r.client
 	preloads := options.Preloads
 	if len(preloads) > 0 {
 		for _, preload := range preloads {
