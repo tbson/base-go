@@ -14,7 +14,7 @@ type Repo struct {
 	db *gorm.DB
 }
 
-func (r Repo) New(db *gorm.DB) Repo {
+func New(db *gorm.DB) Repo {
 	return Repo{db: db}
 }
 

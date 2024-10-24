@@ -16,8 +16,8 @@ type Repo struct {
 	db *gorm.DB
 }
 
-func (r Repo) New(db *gorm.DB) Repo {
-	parent := tenant.Repo{}.New(db)
+func New(db *gorm.DB) Repo {
+	parent := tenant.New(db)
 	return Repo{
 		Repo: &parent,
 		db:   db,

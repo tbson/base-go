@@ -17,7 +17,7 @@ var filterableFields = []string{}
 var orderableFields = []string{"id", "uid"}
 
 func List(c echo.Context) error {
-	repo := Repo{}.New(dbutil.Db())
+	repo := New(dbutil.Db())
 	srv := app.Service{}.New(repo)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
@@ -30,7 +30,7 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	repo := Repo{}.New(dbutil.Db())
+	repo := New(dbutil.Db())
 	srv := app.Service{}.New(repo)
 
 	id := vldtutil.ValidateId(c.Param("id"))
@@ -47,7 +47,7 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	repo := Repo{}.New(dbutil.Db())
+	repo := New(dbutil.Db())
 	srv := app.Service{}.New(repo)
 
 	data, error := vldtutil.ValidatePayload(c, app.Data{})
@@ -65,7 +65,7 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	repo := Repo{}.New(dbutil.Db())
+	repo := New(dbutil.Db())
 	srv := app.Service{}.New(repo)
 
 	data, error := vldtutil.ValidateUpdatePayload(c)
@@ -84,7 +84,7 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	repo := Repo{}.New(dbutil.Db())
+	repo := New(dbutil.Db())
 	srv := app.Service{}.New(repo)
 
 	id := vldtutil.ValidateId(c.Param("id"))
@@ -98,7 +98,7 @@ func Delete(c echo.Context) error {
 }
 
 func DeleteList(c echo.Context) error {
-	repo := Repo{}.New(dbutil.Db())
+	repo := New(dbutil.Db())
 	srv := app.Service{}.New(repo)
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
