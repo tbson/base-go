@@ -1,7 +1,7 @@
 package app
 
 import (
-	"src/module/account/usecase/sso/app/intf"
+	"src/module/account/usecase/auth/app/intf"
 )
 
 type Service struct {

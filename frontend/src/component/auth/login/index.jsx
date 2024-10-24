@@ -63,13 +63,13 @@ export default function Login() {
                         <Row>
                             <Col span={12}>
                                 <a
-                                    href="/api/v1/account/sso/auth/default"
+                                    href="/api/v1/account/auth/sso/login/default"
                                     target="_blank"
                                 >{t`SSO`}</a>
                             </Col>
                             <Col span={12}>
                                 <a
-                                    href="https://basecode.test/api/v1/account/sso/logout"
+                                    href="https://basecode.test/api/v1/account/auth/sso/logout"
                                     target="_blank"
                                 >{t`Logout`}</a>
                             </Col>

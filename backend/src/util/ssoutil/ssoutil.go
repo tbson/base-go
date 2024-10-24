@@ -4,35 +4,33 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"src/common/ctype"
-	"src/common/setting"
 	"src/util/errutil"
 	"src/util/localeutil"
 
-	"github.com/Nerzal/gocloak/v13"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
+	"github.com/Nerzal/gocloak/v13"
 	"github.com/lestrrat-go/jwx/v2/jwk"
-	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
-type CallbackResult struct {
+var client *gocloak.GoCloak
+
+type TokensAndClaims struct {
 	AccessToken  string
 	RefreshToken string
 	Claims       ctype.Dict
 }
 
-func getJwksUrl(realm string) string {
-	jwksURL := fmt.Sprintf(
-		"%s/realms/%s/protocol/openid-connect/certs",
-		setting.KEYCLOAK_URL,
-		realm,
-	)
-	return jwksURL
+func Client(iamUrl string) *gocloak.GoCloak {
+	if client != nil {
+		return client
+	}
+	client = gocloak.NewClient(iamUrl)
+	return client
 }
 
-func getKeySet(jwksURL string) (jwk.Set, error) {
+func GetKeySet(jwksURL string) (jwk.Set, error) {
 	localizer := localeutil.Get()
 	ctx := context.Background()
 	keySet, err := jwk.Fetch(ctx, jwksURL)
@@ -45,12 +43,12 @@ func getKeySet(jwksURL string) (jwk.Set, error) {
 	return keySet, nil
 }
 
-func encodeState(stateData ctype.Dict) string {
+func EncodeState(stateData ctype.Dict) string {
 	jsonData, _ := json.Marshal(stateData)
 	return base64.URLEncoding.EncodeToString(jsonData)
 }
 
-func decodeState(stateStr string) (ctype.Dict, error) {
+func DecodeState(stateStr string) (ctype.Dict, error) {
 	jsonData, err := base64.URLEncoding.DecodeString(stateStr)
 	if err != nil {
 		return nil, err
@@ -61,168 +59,4 @@ func decodeState(stateStr string) (ctype.Dict, error) {
 		return nil, err
 	}
 	return stateData, nil
-}
-
-func GetAuthUrl(
-	realm string,
-	clientId string,
-	state ctype.Dict,
-) string {
-	stateStr := encodeState(state)
-	keycloakAuthURL := fmt.Sprintf(
-		"%s/realms/%s/protocol/openid-connect/auth?client_id=%s&response_type=code&redirect_uri=%s&scope=openid profile email&state=%s",
-		setting.KEYCLOAK_URL,
-		realm,
-		clientId,
-		setting.KEYCLOAK_DEFAULT_REDIRECT_URI,
-		stateStr,
-	)
-	return keycloakAuthURL
-}
-
-func GetLogoutUrl(
-	realm string,
-	clientId string,
-) string {
-	keycloakAuthURL := fmt.Sprintf(
-		"%s/realms/%s/protocol/openid-connect/logout?client_id=%s&post_logout_redirect_uri=%s",
-		setting.KEYCLOAK_URL,
-		realm,
-		clientId,
-		setting.KEYCLOAK_DEFAULT_POST_LOGOUT_URI,
-	)
-	return keycloakAuthURL
-}
-
-func ValidateCallback(
-	ctx context.Context,
-	realm string,
-	code string,
-) (CallbackResult, error) {
-	var result CallbackResult
-	localizer := localeutil.Get()
-
-	if code == "" {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.AuthorizationCodeNotFound,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
-	// Exchange the code for tokens
-	client := gocloak.NewClient(setting.KEYCLOAK_URL)
-	token, err := client.GetToken(ctx, realm, gocloak.TokenOptions{
-		ClientID:     gocloak.StringP(setting.KEYCLOAK_DEFAULT_CLIENT_ID),
-		ClientSecret: gocloak.StringP(setting.KEYCLOAK_DEFAULT_CLIENT_SECRET),
-		RedirectURI:  gocloak.StringP(setting.KEYCLOAK_DEFAULT_REDIRECT_URI),
-		Code:         gocloak.StringP(code),
-		GrantType:    gocloak.StringP("authorization_code"),
-	})
-
-	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CannotExchangeAuthorizationCode,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
-	idToken := token.IDToken
-	accesToken := token.AccessToken
-	refreshToken := token.RefreshToken
-
-	claims, err := ValidateToken(idToken, realm)
-	if err != nil {
-		return result, err
-	}
-
-	result = CallbackResult{
-		AccessToken:  accesToken,
-		RefreshToken: refreshToken,
-		Claims:       claims,
-	}
-	return result, nil
-}
-
-// TODO: Implement checking kid
-func ValidateToken(tokenStr string, realm string) (ctype.Dict, error) {
-	localizer := localeutil.Get()
-	var result ctype.Dict
-	jwksURL := getJwksUrl(realm)
-
-	// Fetch the JWKS (public keys)
-	keySet, err := getKeySet(jwksURL)
-	if err != nil {
-		return result, err
-	}
-
-	// Parse the JWT token to extract headers and claims
-	token, err := jwt.Parse([]byte(tokenStr), jwt.WithKeySet(keySet))
-	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToParseToken,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
-	// Check if the token is expired by inspecting the "exp" claim
-	if err := jwt.Validate(token, jwt.WithAcceptableSkew(0)); err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.TokenHasExpired,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
-	// If verification is successful, print the claims
-	result = token.PrivateClaims()
-
-	return result, nil
-}
-
-func RefreshToken(
-	ctx context.Context,
-	realm string,
-	refreshToken string,
-) (CallbackResult, error) {
-	var result CallbackResult
-	localizer := localeutil.Get()
-	if refreshToken == "" {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.RefreshTokenNotFound,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
-	// Exchange the refresh token for new tokens
-	client := gocloak.NewClient(setting.KEYCLOAK_URL)
-	token, err := client.RefreshToken(
-		ctx,
-		refreshToken,
-		setting.KEYCLOAK_DEFAULT_CLIENT_ID,
-		setting.KEYCLOAK_DEFAULT_CLIENT_SECRET,
-		realm,
-	)
-	fmt.Println(token)
-	fmt.Println(err)
-	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CannotExchangeRefreshToken,
-		})
-		return result, errutil.New("", []string{msg})
-	}
-
-	idToken := token.IDToken
-	accesToken := token.AccessToken
-	refreshToken = token.RefreshToken
-
-	claims, err := ValidateToken(idToken, realm)
-	if err != nil {
-		return result, err
-	}
-
-	result = CallbackResult{
-		AccessToken:  accesToken,
-		RefreshToken: refreshToken,
-		Claims:       claims,
-	}
-	return result, nil
 }

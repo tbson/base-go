@@ -2,10 +2,10 @@ package route
 
 import (
 	"src/common/ctype"
+	sso "src/module/account/usecase/auth/infra"
 	crudauthclient "src/module/account/usecase/crudauthclient/infra"
 	crudtenant "src/module/account/usecase/crudtenant/infra"
 	cruduser "src/module/account/usecase/cruduser/infra"
-	sso "src/module/account/usecase/sso/infra"
 	crudvariable "src/module/config/usecase/crudvariable/infra"
 
 	"github.com/labstack/echo/v4"

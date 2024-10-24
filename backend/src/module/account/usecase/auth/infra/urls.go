@@ -11,12 +11,12 @@ import (
 type RoleMap map[string][]string
 
 func RegisterUrls(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.RoleMap) {
-	g := e.Group("/account/sso")
+	g := e.Group("/account/auth")
 	rr := routeutil.RegisterRoute(g, roleMap)
 
-	rr("GET", "/auth/:tenantUid", GetAuthUrl, []string{}, "")
-	rr("GET", "/logout", GetLogoutUrl, []string{}, "")
-	rr("GET", "/callback", Callback, []string{}, "")
-	rr("GET", "/refresh-token", RefreshToken, []string{}, "")
+	rr("GET", "/sso/login/:tenantUid", GetAuthUrl, []string{}, "")
+	rr("GET", "/sso/logout", GetLogoutUrl, []string{}, "")
+	rr("GET", "/sso/callback", Callback, []string{}, "")
+	rr("GET", "/sso/refresh-token", RefreshToken, []string{}, "")
 	return e, roleMap
 }
