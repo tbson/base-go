@@ -10,6 +10,8 @@ import (
 
 type Schema = schema.Variable
 
+var newSchema = schema.NewVariable
+
 type Repo struct {
 	client *gorm.DB
 }
@@ -61,13 +63,22 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	return &item, err
 }
 
-func (r Repo) Create(item *Schema) (*Schema, error) {
+func (r Repo) Create(data ctype.Dict) (*Schema, error) {
+	item := newSchema(data)
 	result := r.client.Create(item)
 	err := result.Error
 	if err != nil {
 		return item, errutil.NewGormError(err)
 	}
 	return item, err
+}
+
+func (r Repo) GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
+	existItem, err := r.Retrieve(queryOptions)
+	if err != nil {
+		return r.Create(data)
+	}
+	return existItem, nil
 }
 
 func (r Repo) Update(id int, data ctype.Dict) (*Schema, error) {

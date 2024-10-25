@@ -10,6 +10,8 @@ import (
 
 type Schema = schema.AuthClient
 
+var newSchema = schema.NewAuthClient
+
 type Repo struct {
 	client *gorm.DB
 }
@@ -61,7 +63,8 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	return &item, err
 }
 
-func (r Repo) Create(item *Schema) (*Schema, error) {
+func (r Repo) Create(data ctype.Dict) (*Schema, error) {
+	item := newSchema(data)
 	result := r.client.Create(item)
 	err := result.Error
 	if err != nil {
@@ -70,10 +73,10 @@ func (r Repo) Create(item *Schema) (*Schema, error) {
 	return item, err
 }
 
-func (r Repo) GetOrCreate(queryOptions ctype.QueryOptions, item *Schema) (*Schema, error) {
+func (r Repo) GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
 	existItem, err := r.Retrieve(queryOptions)
 	if err != nil {
-		return r.Create(item)
+		return r.Create(data)
 	}
 	return existItem, nil
 }

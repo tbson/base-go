@@ -51,7 +51,7 @@ func GetRequiredFields(v interface{}) []string {
 	return requiredFields
 }
 
-func ValidateUpdatePayload(c echo.Context) (ctype.Dict, error) {
+func ValidateUpdatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
 	localizer := localeutil.Get()
 	var result ctype.Dict
 	bodyBytes, err := io.ReadAll(c.Request().Body)
@@ -74,7 +74,20 @@ func ValidateUpdatePayload(c echo.Context) (ctype.Dict, error) {
 
 		return result, errutil.New("", []string{msg})
 	}
-	return payloadMap, nil
+
+	convertedMap := ctype.Dict{}
+	targetType := reflect.TypeOf(target)
+	for i := 0; i < targetType.NumField(); i++ {
+		field := targetType.Field(i)
+		structKey := field.Name
+		jsonTag := field.Tag.Get("json")
+		fieldName := strings.Split(jsonTag, ",")[0]
+		if value, ok := payloadMap[fieldName]; ok {
+			convertedMap[structKey] = value
+		}
+	}
+
+	return convertedMap, nil
 }
 
 func ValidatePayload[T any](c echo.Context, target T) (T, error) {

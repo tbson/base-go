@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"src/common/ctype"
 	"src/util/iterutil"
 	"time"
 )
@@ -24,4 +25,13 @@ type Variable struct {
 	DataType    string `gorm:"type:text;not null;default:'STRING';check:data_type IN ('STRING', 'INTEGER', 'FLOAT', 'BOOLEAN', 'DATE', 'DATETIME')"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+}
+
+func NewVariable(data ctype.Dict) *Variable {
+	return &Variable{
+		Key:         data["Key"].(string),
+		Value:       data["Value"].(string),
+		Description: data["Description"].(string),
+		DataType:    data["DataType"].(string),
+	}
 }

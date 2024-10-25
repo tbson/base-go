@@ -66,6 +66,8 @@ func (r Repo) GetLogoutUrl(
 func (r Repo) ValidateCallback(
 	ctx context.Context,
 	realm string,
+	clientId string,
+	clientSecret string,
 	code string,
 ) (ssoutil.TokensAndClaims, error) {
 	var result ssoutil.TokensAndClaims
@@ -80,8 +82,8 @@ func (r Repo) ValidateCallback(
 
 	// Exchange the code for tokens
 	token, err := r.client.GetToken(ctx, realm, gocloak.TokenOptions{
-		ClientID:     gocloak.StringP(setting.KEYCLOAK_DEFAULT_CLIENT_ID),
-		ClientSecret: gocloak.StringP(setting.KEYCLOAK_DEFAULT_CLIENT_SECRET),
+		ClientID:     gocloak.StringP(clientId),
+		ClientSecret: gocloak.StringP(clientSecret),
 		RedirectURI:  gocloak.StringP(setting.KEYCLOAK_DEFAULT_REDIRECT_URI),
 		Code:         gocloak.StringP(code),
 		GrantType:    gocloak.StringP("authorization_code"),

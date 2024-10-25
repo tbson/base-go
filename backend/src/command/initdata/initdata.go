@@ -6,7 +6,6 @@ import (
 	"src/module/account/repo/authclient"
 	"src/module/account/repo/tenant"
 	"src/module/account/repo/user"
-	"src/module/account/schema"
 	"src/util/dbutil"
 )
 
@@ -22,15 +21,15 @@ func main() {
 			"uid": setting.KEYCLOAK_DEFAULT_CLIENT_ID,
 		},
 	}
-	authClientData := schema.AuthClient{
-		Uid:         setting.KEYCLOAK_DEFAULT_CLIENT_ID,
-		Description: "Default client",
-		Secret:      setting.KEYCLOAK_DEFAULT_CLIENT_SECRET,
-		Partition:   setting.KEYCLOAK_DEFAULT_REALM,
-		Default:     true,
+	authClientData := ctype.Dict{
+		"uid":         setting.KEYCLOAK_DEFAULT_CLIENT_ID,
+		"description": "Default client",
+		"secret":      setting.KEYCLOAK_DEFAULT_CLIENT_SECRET,
+		"partition":   setting.KEYCLOAK_DEFAULT_REALM,
+		"default":     true,
 	}
 
-	authClient, err := authClientRepo.GetOrCreate(queryOptions, &authClientData)
+	authClient, err := authClientRepo.GetOrCreate(queryOptions, authClientData)
 	if err != nil {
 		panic(err)
 	}
@@ -40,12 +39,12 @@ func main() {
 			"uid": "default",
 		},
 	}
-	tenantData := schema.Tenant{
-		AuthClientID: authClient.ID,
-		Uid:          "default",
-		Title:        "Default",
+	tenantData := ctype.Dict{
+		"auth_client_id": authClient.ID,
+		"uid":            "default",
+		"title":          "Default",
 	}
-	tenant, err := tenantRepo.GetOrCreate(queryOptions, &tenantData)
+	tenant, err := tenantRepo.GetOrCreate(queryOptions, tenantData)
 	if err != nil {
 		panic(err)
 	}
@@ -55,15 +54,15 @@ func main() {
 			"email": "admin@localhost",
 		},
 	}
-	userData := schema.User{
-		TenantID:  tenant.ID,
-		Uid:       "admin@localhost",
-		Email:     "admin@localhost",
-		FirstName: "Admin",
-		LastName:  "Admin",
-		Admin:     true,
+	userData := ctype.Dict{
+		"tenant_id":  tenant.ID,
+		"uid":        "admin@localhost",
+		"email":      "admin@localhost",
+		"first_name": "Admin",
+		"last_name":  "Admin",
+		"admin":      true,
 	}
-	_, err = userRepo.GetOrCreate(queryOptions, &userData)
+	_, err = userRepo.GetOrCreate(queryOptions, userData)
 	if err != nil {
 		panic(err)
 	}

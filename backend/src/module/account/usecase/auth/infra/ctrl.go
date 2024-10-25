@@ -3,33 +3,45 @@ package infra
 import (
 	"net/http"
 
-	"src/common/ctype"
 	"src/common/setting"
 	"src/module/account/repo/iam"
+	"src/util/dbutil"
 	"src/util/ssoutil"
+
+	"src/module/account/usecase/auth/app"
 
 	"github.com/labstack/echo/v4"
 )
 
 func GetAuthUrl(c echo.Context) error {
-	// tenantUid := c.Param("tenantUid")
-	iamRepo := iam.New(ssoutil.Client())
-	state := ctype.Dict{
-		"tenantId": c.Param("tenantUid"),
-	}
-	realm := setting.KEYCLOAK_DEFAULT_REALM
-	clientId := setting.KEYCLOAK_DEFAULT_CLIENT_ID
+	tenantUid := c.Param("tenantUid")
+	dbClient := dbutil.Db()
+	ssoClient := ssoutil.Client()
+	repo := New(dbClient, ssoClient)
 
-	url := iamRepo.GetAuthUrl(realm, clientId, state)
+	srv := app.Service{}.New(repo)
+
+	url, error := srv.BuildAuthUrl(tenantUid)
+	if error != nil {
+		return c.JSON(http.StatusBadRequest, error)
+	}
+
 	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
 func GetLogoutUrl(c echo.Context) error {
-	iamRepo := iam.New(ssoutil.Client())
-	realm := setting.KEYCLOAK_DEFAULT_REALM
-	clientId := setting.KEYCLOAK_DEFAULT_CLIENT_ID
+	tenantUid := c.Param("tenantUid")
+	dbClient := dbutil.Db()
+	ssoClient := ssoutil.Client()
+	repo := New(dbClient, ssoClient)
 
-	url := iamRepo.GetLogoutUrl(realm, clientId)
+	srv := app.Service{}.New(repo)
+
+	url, error := srv.BuildLogoutUrl(tenantUid)
+	if error != nil {
+		return c.JSON(http.StatusBadRequest, error)
+	}
+
 	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
@@ -55,7 +67,9 @@ func Callback(c echo.Context) error {
 		}
 	*/
 	realm := setting.KEYCLOAK_DEFAULT_REALM
-	result, err := iamRepo.ValidateCallback(c.Request().Context(), realm, code)
+	clientId := setting.KEYCLOAK_DEFAULT_CLIENT_ID
+	clientSecret := setting.KEYCLOAK_DEFAULT_CLIENT_SECRET
+	result, err := iamRepo.ValidateCallback(c.Request().Context(), realm, clientId, clientSecret, code)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}

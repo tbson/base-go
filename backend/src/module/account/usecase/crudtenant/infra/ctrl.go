@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
+	"src/util/iterutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
@@ -50,12 +51,12 @@ func Create(c echo.Context) error {
 	repo := New(dbutil.Db())
 	srv := app.Service{}.New(repo)
 
-	data, error := vldtutil.ValidatePayload(c, app.Data{})
+	data, error := vldtutil.ValidatePayload(c, InputData{})
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
 
-	result, error := srv.Create(data)
+	result, error := srv.Create(iterutil.StructToDict(data))
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
@@ -68,7 +69,7 @@ func Update(c echo.Context) error {
 	repo := New(dbutil.Db())
 	srv := app.Service{}.New(repo)
 
-	data, error := vldtutil.ValidateUpdatePayload(c)
+	data, error := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
