@@ -108,7 +108,12 @@ func (r Repo) ValidateCallback(
 	result = ssoutil.TokensAndClaims{
 		AccessToken:  accesToken,
 		RefreshToken: refreshToken,
-		Claims:       claims,
+		UserInfo: ssoutil.SsoUserInfo{
+			Uid:       claims["preferred_username"].(string),
+			Email:     claims["email"].(string),
+			FirstName: claims["given_name"].(string),
+			LastName:  claims["family_name"].(string),
+		},
 	}
 	return result, nil
 }
@@ -186,10 +191,17 @@ func (r Repo) RefreshToken(
 		return result, err
 	}
 
+	userInfo := ssoutil.SsoUserInfo{
+		Uid:       claims["preferred_username"].(string),
+		Email:     claims["email"].(string),
+		FirstName: claims["given_name"].(string),
+		LastName:  claims["family_name"].(string),
+	}
+
 	result = ssoutil.TokensAndClaims{
 		AccessToken:  accesToken,
 		RefreshToken: refreshToken,
-		Claims:       claims,
+		UserInfo:     userInfo,
 	}
 	return result, nil
 }

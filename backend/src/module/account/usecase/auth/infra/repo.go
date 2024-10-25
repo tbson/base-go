@@ -1,10 +1,12 @@
 package infra
 
 import (
+	"context"
 	"src/common/ctype"
 	"src/module/account/repo/iam"
 	"src/module/account/repo/tenant"
 	"src/module/account/repo/user"
+	"src/util/ssoutil"
 
 	"github.com/Nerzal/gocloak/v13"
 
@@ -37,6 +39,7 @@ func (r Repo) GetAuthClientFromTenantUid(tenantUid string) (intf.AuthClientInfo,
 	}
 
 	return intf.AuthClientInfo{
+		TenantID:     tenant.ID,
 		Realm:        tenant.AuthClient.Partition,
 		ClientID:     tenant.AuthClient.Uid,
 		ClientSecret: tenant.AuthClient.Secret,
@@ -64,4 +67,15 @@ func (r Repo) CheckUserByEmail(email string) error {
 
 func (r Repo) CreateUser(data ctype.Dict) error {
 	return nil
+}
+
+func (r Repo) ValidateCallback(
+	ctx context.Context,
+	realm string,
+	clientId string,
+	clientSecret string,
+	code string,
+) (ssoutil.TokensAndClaims, error) {
+	iamRepo := iam.New(r.iamClient)
+	return iamRepo.ValidateCallback(ctx, realm, clientId, clientSecret, code)
 }

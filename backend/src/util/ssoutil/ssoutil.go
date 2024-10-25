@@ -17,10 +17,17 @@ import (
 
 var client *gocloak.GoCloak
 
+type SsoUserInfo struct {
+	Uid       string
+	Email     string
+	FirstName string
+	LastName  string
+}
+
 type TokensAndClaims struct {
 	AccessToken  string
 	RefreshToken string
-	Claims       ctype.Dict
+	UserInfo     SsoUserInfo
 }
 
 func Client() *gocloak.GoCloak {
