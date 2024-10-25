@@ -1,28 +1,21 @@
-import * as React from "react";
-import { Button, Row, Col, Form, Input } from "antd";
-import { t } from "ttag";
-import { CheckOutlined } from "@ant-design/icons";
-import FormUtil from "service/helper/form_util";
-import { urls } from "../config";
+import * as React from 'react';
+import { Button, Row, Col, Form, Input } from 'antd';
+import { t } from 'ttag';
+import { CheckOutlined } from '@ant-design/icons';
+import FormUtil from 'service/helper/form_util';
 
-const formName = "LoginForm";
+const formName = 'LoginForm';
 
 export default function LoginForm({ onChange, children }) {
     const [form] = Form.useForm();
     const initialValues = {
-        username: "",
-        password: ""
+        tenantUid: ''
     };
 
     const formAttrs = {
-        username: {
-            name: "username",
-            label: t`Username`,
-            rules: [FormUtil.ruleRequired()]
-        },
-        password: {
-            name: "password",
-            label: t`Password`,
+        tenantUid: {
+            name: 'tenantUid',
+            label: t`Company code`,
             rules: [FormUtil.ruleRequired()]
         }
     };
@@ -33,18 +26,12 @@ export default function LoginForm({ onChange, children }) {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             initialValues={{ ...initialValues }}
-            onFinish={(payload) =>
-                FormUtil.submit(urls.login, payload)
-                    .then((data) => onChange(data))
-                    .catch(FormUtil.setFormErrors(form))
-            }
+            onFinish={(payload) => {
+                onChange(payload.tenantUid);
+            }}
         >
-            <Form.Item {...formAttrs.username}>
+            <Form.Item {...formAttrs.tenantUid}>
                 <Input autoFocus />
-            </Form.Item>
-
-            <Form.Item {...formAttrs.password}>
-                <Input type="password" />
             </Form.Item>
 
             <br />

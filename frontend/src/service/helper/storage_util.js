@@ -1,5 +1,3 @@
-import { LOCAL_STORAGE_PREFIX } from "src/consts";
-
 export default class StorageUtil {
     /**
      * setStorage.
@@ -11,7 +9,7 @@ export default class StorageUtil {
     static setStorage(key, value) {
         try {
             localStorage.setItem(
-                LOCAL_STORAGE_PREFIX + "_" + key,
+                key,
                 JSON.stringify(value)
             );
         } catch (error) {
@@ -41,7 +39,7 @@ export default class StorageUtil {
     static getStorageObj(key) {
         try {
             const value = StorageUtil.parseJson(
-                localStorage.getItem(LOCAL_STORAGE_PREFIX + "_" + key)
+                localStorage.getItem(key)
             );
             if (value && typeof value === "object") {
                 return value;
@@ -62,7 +60,7 @@ export default class StorageUtil {
     static getStorageStr(key) {
         try {
             const value = StorageUtil.parseJson(
-                localStorage.getItem(LOCAL_STORAGE_PREFIX + "_" + key)
+                localStorage.getItem(key)
             );
             if (!value || typeof value === "object") {
                 return "";
@@ -71,6 +69,19 @@ export default class StorageUtil {
         } catch (error) {
             return "";
         }
+    }
+
+    /**
+     * getUserInfo.
+     *
+     * @returns {string}
+     */
+    static getUserInfo() {
+        const userInfo = StorageUtil.getStorageObj("userInfo");
+        if (!userInfo.email) {
+            return "";
+        }
+        return userInfo;
     }
 
     /**
@@ -132,7 +143,7 @@ export default class StorageUtil {
      * @returns {void}
      */
     static removeStorage(key) {
-        localStorage.removeItem(LOCAL_STORAGE_PREFIX + "_" + key);
+        localStorage.removeItem(key);
     }
 
     /**

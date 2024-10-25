@@ -30,9 +30,10 @@ export default class NavUtil {
             };
             RequestUtil.apiCall(logoutUrl, payload, "POST")
                 .then(() => {
-                    NavUtil.cleanAndMoveToLoginPage(navigate);
+                    console.log("logout success");
                 })
                 .finally(() => {
+                    NavUtil.cleanAndMoveToLoginPage(navigate);
                     Util.toggleGlobalLoading(false);
                 });
         };
@@ -46,7 +47,8 @@ export default class NavUtil {
      */
     static cleanAndMoveToLoginPage(navigate) {
         const currentUrl = window.location.href.split("#")[1];
-        StorageUtil.removeStorage("auth");
+        StorageUtil.removeStorage("userInfo");
+        StorageUtil.removeStorage("locale");
         let loginUrl = "/login";
         if (currentUrl) {
             loginUrl = `${loginUrl}?next=${currentUrl}`;
