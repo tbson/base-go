@@ -15,7 +15,7 @@ func RegisterUrls(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.Role
 	rr := routeutil.RegisterRoute(g, roleMap)
 
 	rr("GET", "/sso/login/:tenantUid", GetAuthUrl, []string{}, "")
-	rr("GET", "/sso/logout", GetLogoutUrl, []string{}, "")
+	rr("GET", "/sso/logout/:tenantUid", GetLogoutUrl, []string{}, "")
 	rr("GET", "/sso/callback", Callback, []string{}, "")
 	rr("GET", "/sso/refresh-token", RefreshToken, []string{}, "")
 	return e, roleMap

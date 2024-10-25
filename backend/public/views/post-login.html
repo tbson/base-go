@@ -2,8 +2,10 @@
     <head>
         <title>Loading...</title>
         <script>
-            const userInfo = {{ .UserInfoJSON }};
+            const userInfo = {{ .userInfo }};
+            const tenantUid = {{ .tenantUid }};
             localStorage.setItem('userInfo', userInfo);
+            localStorage.setItem('tenantUid', tenantUid);
 
             const nextUrl = localStorage.getItem('nextUrl');
             if (nextUrl) {

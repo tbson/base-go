@@ -85,6 +85,15 @@ export default class StorageUtil {
     }
 
     /**
+     * getTenantUid.
+     *
+     * @returns {string}
+     */
+    static getTenantUid() {
+        return StorageUtil.getStorageStr("tenantUid");
+    }
+
+    /**
      * getToken.
      *
      * @returns {string}

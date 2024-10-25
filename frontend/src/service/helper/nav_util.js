@@ -1,4 +1,3 @@
-import Util from "service/helper/util";
 import StorageUtil from "service/helper/storage_util";
 import RequestUtil from "service/helper/request_util";
 
@@ -19,23 +18,15 @@ export default class NavUtil {
      *
      * @param {Navigate} navigate
      */
-    static logout(navigate) {
+    static logout() {
         return () => {
             const baseUrl = RequestUtil.getApiBaseUrl();
-            const logoutUrl = `${baseUrl}account/user/logout/`;
-            Util.toggleGlobalLoading();
-            const payload = {
-                firebase_token: "",
-                staff_id: StorageUtil.getAuthId()
-            };
-            RequestUtil.apiCall(logoutUrl, payload, "POST")
-                .then(() => {
-                    console.log("logout success");
-                })
-                .finally(() => {
-                    NavUtil.cleanAndMoveToLoginPage(navigate);
-                    Util.toggleGlobalLoading(false);
-                });
+            const tenantUid = StorageUtil.getTenantUid();
+            const logoutUrl = `${baseUrl}account/auth/sso/logout/${tenantUid}`;
+            StorageUtil.removeStorage("userInfo");
+            StorageUtil.removeStorage("tenantUid");
+            StorageUtil.removeStorage("locale");
+            window.location.href = logoutUrl;
         };
     }
 
@@ -48,6 +39,7 @@ export default class NavUtil {
     static cleanAndMoveToLoginPage(navigate) {
         const currentUrl = window.location.href.split("#")[1];
         StorageUtil.removeStorage("userInfo");
+        StorageUtil.removeStorage("tenantUid");
         StorageUtil.removeStorage("locale");
         let loginUrl = "/login";
         if (currentUrl) {
