@@ -18,16 +18,16 @@ import (
 var client *gocloak.GoCloak
 
 type SsoUserInfo struct {
-	Uid       string
-	Email     string
-	FirstName string
-	LastName  string
+	Uid       string `json:"uid"`
+	Email     string `json:"email"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
 }
 
 type TokensAndClaims struct {
-	AccessToken  string
-	RefreshToken string
-	UserInfo     SsoUserInfo
+	AccessToken  string      `json:"access_token"`
+	RefreshToken string      `json:"refresh_token"`
+	UserInfo     SsoUserInfo `json:"user_info"`
 }
 
 func Client() *gocloak.GoCloak {

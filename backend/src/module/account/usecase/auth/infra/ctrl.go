@@ -49,7 +49,6 @@ func GetLogoutUrl(c echo.Context) error {
 }
 
 func Callback(c echo.Context) error {
-	// iamRepo := iam.New(ssoutil.Client())
 	localizer := localeutil.Get()
 	code := c.QueryParam("code")
 	state := c.QueryParam("state")
@@ -59,13 +58,11 @@ func Callback(c echo.Context) error {
 	srv := app.Service{}.New(repo)
 
 	stateData, err := ssoutil.DecodeState(state)
-
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	tenantUid, ok := stateData["tenantUid"].(string)
-
 	if !ok {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.InvalidState,
@@ -73,30 +70,7 @@ func Callback(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, errutil.New("", []string{msg}))
 	}
 
-	// Decode the state
-	/*
-			stateStr := c.QueryParam("state")
-			stateData, err := decodeState(stateStr)
-			if err != nil {
-				msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-					DefaultMessage: localeutil.InvalidState,
-				})
-				return result, errutil.New("", []string{msg})
-			}
-			realm, ok := stateData["realm"].(string)
-			if !ok {
-				msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-					DefaultMessage: localeutil.NoRealmFound,
-				})
-				return result, errutil.New("", []string{msg})
-			}
-		realm := setting.KEYCLOAK_DEFAULT_REALM
-		clientId := setting.KEYCLOAK_DEFAULT_CLIENT_ID
-		clientSecret := setting.KEYCLOAK_DEFAULT_CLIENT_SECRET
-		result, err := iamRepo.ValidateCallback(c.Request().Context(), realm, clientId, clientSecret, code)
-	*/
 	result, err := srv.HandleCallback(c.Request().Context(), tenantUid, code)
-
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
