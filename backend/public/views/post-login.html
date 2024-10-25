@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <title>Loading...</title>
+        <script>
+            const userInfo = {{ .UserInfoJSON }};
+            localStorage.setItem('userInfo', userInfo);
+
+            const nextUrl = localStorage.getItem('nextUrl');
+            if (nextUrl) {
+                localStorage.removeItem('nextUrl');
+                window.location.href = nextUrl;
+            } else {
+                window.location.href = '/';
+            }
+        </script>
+    </head>
+
+    <body>
+        <p>Loading...</p>
+    </body>
+</html>

@@ -1,16 +1,17 @@
 package infra
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"src/common/setting"
 	"src/module/account/repo/iam"
+	"src/module/account/usecase/auth/app"
+	"src/util/cookieutil"
 	"src/util/dbutil"
 	"src/util/errutil"
 	"src/util/localeutil"
 	"src/util/ssoutil"
-
-	"src/module/account/usecase/auth/app"
 
 	"github.com/labstack/echo/v4"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -75,7 +76,19 @@ func Callback(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, result)
+	accessTokenCookie := cookieutil.NewAccessTokenCookie(result.AccessToken)
+	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(result.RefreshToken)
+	c.SetCookie(accessTokenCookie)
+	c.SetCookie(refreshTokenCookie)
+
+	userInfo := result.UserInfo
+
+	userInfoJson, _ := json.Marshal(userInfo)
+	data := map[string]interface{}{
+		"UserInfoJSON": string(userInfoJson),
+	}
+	// return c.JSON(http.StatusOK, result)
+	return c.Render(http.StatusOK, "post-login.html", data)
 }
 
 func RefreshToken(c echo.Context) error {

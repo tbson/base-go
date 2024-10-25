@@ -6,7 +6,7 @@ import (
 )
 
 var BASE_URL string = frameworkutil.GetEnv("BASE_URL", "")
-
+var DOMAIN string = frameworkutil.GetEnv("DOMAIN", "")
 var DB_HOST string = frameworkutil.GetEnv("DB_HOST", "")
 var DB_PORT string = frameworkutil.GetEnv("DB_PORT", "5432")
 var DB_USER string = frameworkutil.GetEnv("DB_USER", "")
