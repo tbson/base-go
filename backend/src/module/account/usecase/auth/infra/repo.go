@@ -56,13 +56,13 @@ func (r Repo) GetLogoutUrl(realm string, clientId string) string {
 	return iamRepo.GetLogoutUrl(realm, clientId)
 }
 
-func (r Repo) CheckUserByEmail(email string) error {
+func (r Repo) CheckUserAdminByEmail(email string) (bool, error) {
 	repo := user.New(r.dbClient)
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"email": email},
 	}
-	_, err := repo.Retrieve(queryOptions)
-	return err
+	user, err := repo.Retrieve(queryOptions)
+	return user.Admin, err
 }
 
 func (r Repo) CreateUser(data ctype.Dict) error {

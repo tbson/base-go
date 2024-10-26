@@ -14,7 +14,7 @@ type AuthClientInfo struct {
 }
 
 type AuthRepo interface {
-	CheckUserByEmail(email string) error
+	CheckUserAdminByEmail(email string) (bool, error)
 	CreateUser(data ctype.Dict) error
 	GetAuthClientFromTenantUid(tenantUid string) (AuthClientInfo, error)
 	GetAuthUrl(realm string, clientId string, state ctype.Dict) string

@@ -104,6 +104,7 @@ func Callback(c echo.Context) error {
 	data := map[string]interface{}{
 		"userInfo":  string(userInfoJson),
 		"tenantUid": tenantUid,
+		"userType":  "",
 	}
 	// return c.JSON(http.StatusOK, result)
 	return c.Render(http.StatusOK, "post-login.html", data)

@@ -71,7 +71,7 @@ func (srv Service) HandleCallback(
 
 	userInfo := tokensAndClaims.UserInfo
 
-	err = srv.repo.CheckUserByEmail(userInfo.Email)
+	isAdmin, err := srv.repo.CheckUserAdminByEmail(userInfo.Email)
 
 	if err != nil {
 		userData := iterutil.StructToDict(userInfo)
@@ -79,6 +79,12 @@ func (srv Service) HandleCallback(
 		err = srv.repo.CreateUser(userData)
 		if err != nil {
 			return tokensAndClaims, err
+		}
+	} else {
+		if isAdmin {
+			tokensAndClaims.UserInfo.ProfileType = "staff"
+		} else {
+			tokensAndClaims.UserInfo.ProfileType = "user"
 		}
 	}
 
