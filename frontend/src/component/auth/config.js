@@ -4,7 +4,7 @@ const urlMap = {
     base: {
         prefix: "account/auth/sso",
         endpoints: {
-            login: "login",
+            loginCheck: "login/check",
         }
     }
 };

@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { t } from 'ttag';
-import { Row, Col, Card, Button } from 'antd';
+import { Row, Col, Card } from 'antd';
+import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
 import StorageUtil from 'service/helper/storage_util';
 import LocaleSelect from 'component/common/locale_select.jsx';
@@ -22,6 +23,7 @@ export default function Login() {
     }, []);
 
     function handleLogin(tenantUid) {
+        Util.toggleGlobalLoading();
         const ssoUrl = `/api/v1/account/auth/sso/login/${tenantUid}`;
         window.location.href = ssoUrl;
     }

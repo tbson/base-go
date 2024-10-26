@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"src/common/ctype"
 	"src/common/setting"
 	"src/module/account/repo/iam"
 	"src/module/account/usecase/auth/app"
@@ -17,6 +18,22 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
+func CheckAuthUrl(c echo.Context) error {
+	tenantUid := c.Param("tenantUid")
+	dbClient := dbutil.Db()
+	ssoClient := ssoutil.Client()
+	repo := New(dbClient, ssoClient)
+
+	srv := app.Service{}.New(repo)
+
+	_, error := srv.GetAuthUrl(tenantUid)
+	if error != nil {
+		return c.JSON(http.StatusBadRequest, error)
+	}
+
+	return c.JSON(http.StatusOK, ctype.Dict{})
+}
+
 func GetAuthUrl(c echo.Context) error {
 	tenantUid := c.Param("tenantUid")
 	dbClient := dbutil.Db()
@@ -25,7 +42,7 @@ func GetAuthUrl(c echo.Context) error {
 
 	srv := app.Service{}.New(repo)
 
-	url, error := srv.BuildAuthUrl(tenantUid)
+	url, error := srv.GetAuthUrl(tenantUid)
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
@@ -41,7 +58,7 @@ func GetLogoutUrl(c echo.Context) error {
 
 	srv := app.Service{}.New(repo)
 
-	url, error := srv.BuildLogoutUrl(tenantUid)
+	url, error := srv.GetLogoutUrl(tenantUid)
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}

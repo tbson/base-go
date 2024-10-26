@@ -3,6 +3,7 @@ import { Button, Row, Col, Form, Input } from 'antd';
 import { t } from 'ttag';
 import { CheckOutlined } from '@ant-design/icons';
 import FormUtil from 'service/helper/form_util';
+import { urls } from 'component/auth/config';
 
 const formName = 'LoginForm';
 
@@ -20,6 +21,15 @@ export default function LoginForm({ onChange, children }) {
         }
     };
 
+    const checkAuthUrl = (tenantUid) => {
+        FormUtil.submit(`${urls.loginCheck}${tenantUid}`, {}, 'get')
+            .then((data) => {
+                console.log(data);
+                onChange(tenantUid);
+            })
+            .catch(FormUtil.setFormErrors(form))
+    };
+
     return (
         <Form
             form={form}
@@ -27,7 +37,7 @@ export default function LoginForm({ onChange, children }) {
             wrapperCol={{ span: 16 }}
             initialValues={{ ...initialValues }}
             onFinish={(payload) => {
-                onChange(payload.tenantUid);
+                checkAuthUrl(payload.tenantUid);
             }}
         >
             <Form.Item {...formAttrs.tenantUid}>

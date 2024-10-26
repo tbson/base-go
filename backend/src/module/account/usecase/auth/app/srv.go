@@ -16,7 +16,7 @@ func (s Service) New(repo intf.AuthRepo) Service {
 	return Service{repo}
 }
 
-func (srv Service) BuildAuthUrl(tenantUid string) (string, error) {
+func (srv Service) GetAuthUrl(tenantUid string) (string, error) {
 	state := ctype.Dict{
 		"tenantUid": tenantUid,
 	}
@@ -33,7 +33,7 @@ func (srv Service) BuildAuthUrl(tenantUid string) (string, error) {
 	return url, nil
 }
 
-func (srv Service) BuildLogoutUrl(tenantUid string) (string, error) {
+func (srv Service) GetLogoutUrl(tenantUid string) (string, error) {
 	authClientInfo, err := srv.repo.GetAuthClientFromTenantUid(tenantUid)
 	if err != nil {
 		return "", err
