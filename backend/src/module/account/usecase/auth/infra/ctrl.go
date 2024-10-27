@@ -94,8 +94,10 @@ func Callback(c echo.Context) error {
 	}
 
 	accessTokenCookie := cookieutil.NewAccessTokenCookie(result.AccessToken)
+	realmCookie := cookieutil.NewRealmCookie(result.Realm)
 	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(result.RefreshToken)
 	c.SetCookie(accessTokenCookie)
+	c.SetCookie(realmCookie)
 	c.SetCookie(refreshTokenCookie)
 
 	userInfo := result.UserInfo

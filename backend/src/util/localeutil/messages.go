@@ -127,4 +127,9 @@ var (
 		ID:    "CannotExchangeRefreshToken",
 		Other: "Can not exchange refresh token for tokens",
 	}
+
+	Unauthorized = &i18n.Message{
+		ID:    "Unauthorized",
+		Other: "Unauthorized",
+	}
 )

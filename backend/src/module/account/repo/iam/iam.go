@@ -100,7 +100,7 @@ func (r Repo) ValidateCallback(
 	accesToken := token.AccessToken
 	refreshToken := token.RefreshToken
 
-	claims, err := r.ValidateToken(idToken, realm)
+	userInfo, err := r.ValidateToken(idToken, realm)
 	if err != nil {
 		return result, err
 	}
@@ -108,20 +108,16 @@ func (r Repo) ValidateCallback(
 	result = ssoutil.TokensAndClaims{
 		AccessToken:  accesToken,
 		RefreshToken: refreshToken,
-		UserInfo: ssoutil.SsoUserInfo{
-			Uid:       claims["preferred_username"].(string),
-			Email:     claims["email"].(string),
-			FirstName: claims["given_name"].(string),
-			LastName:  claims["family_name"].(string),
-		},
+		Realm:        realm,
+		UserInfo:     userInfo,
 	}
 	return result, nil
 }
 
 // TODO: Implement checking kid
-func (r Repo) ValidateToken(tokenStr string, realm string) (ctype.Dict, error) {
+func (r Repo) ValidateToken(tokenStr string, realm string) (ssoutil.UserInfo, error) {
 	localizer := localeutil.Get()
-	var result ctype.Dict
+	result := ssoutil.UserInfo{}
 	jwksURL := getJwksUrl(realm)
 
 	// Fetch the JWKS (public keys)
@@ -133,6 +129,7 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (ctype.Dict, error) {
 	// Parse the JWT token to extract headers and claims
 	token, err := jwt.Parse([]byte(tokenStr), jwt.WithKeySet(keySet))
 	if err != nil {
+		fmt.Println(err)
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.FailedToParseToken,
 		})
@@ -148,7 +145,13 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (ctype.Dict, error) {
 	}
 
 	// If verification is successful, print the claims
-	result = token.PrivateClaims()
+	claims := token.PrivateClaims()
+	result = ssoutil.UserInfo{
+		Uid:       claims["preferred_username"].(string),
+		Email:     claims["email"].(string),
+		FirstName: claims["given_name"].(string),
+		LastName:  claims["family_name"].(string),
+	}
 
 	return result, nil
 }
@@ -186,21 +189,15 @@ func (r Repo) RefreshToken(
 	accesToken := token.AccessToken
 	refreshToken = token.RefreshToken
 
-	claims, err := r.ValidateToken(idToken, realm)
+	userInfo, err := r.ValidateToken(idToken, realm)
 	if err != nil {
 		return result, err
-	}
-
-	userInfo := ssoutil.SsoUserInfo{
-		Uid:       claims["preferred_username"].(string),
-		Email:     claims["email"].(string),
-		FirstName: claims["given_name"].(string),
-		LastName:  claims["family_name"].(string),
 	}
 
 	result = ssoutil.TokensAndClaims{
 		AccessToken:  accesToken,
 		RefreshToken: refreshToken,
+		Realm:        realm,
 		UserInfo:     userInfo,
 	}
 	return result, nil

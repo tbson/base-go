@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"src/common/ctype"
 	"src/module/account/usecase/auth/app/intf"
 	"src/util/iterutil"
@@ -87,6 +88,7 @@ func (srv Service) HandleCallback(
 			tokensAndClaims.UserInfo.ProfileType = "user"
 		}
 	}
-
+	fmt.Println("Access Token:")
+	fmt.Println(tokensAndClaims.AccessToken)
 	return tokensAndClaims, nil
 }

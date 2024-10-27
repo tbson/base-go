@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"runtime"
 	"src/common/ctype"
+	"src/middleware"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -15,7 +16,8 @@ func getFnPath(fn interface{}) string {
 	return runtime.FuncForPC(reflect.ValueOf(fn).Pointer()).Name()
 }
 
-func getFnInfo(fnPath string) (string, string) {
+func GetHandlerInfo(ctrl echo.HandlerFunc) (string, string) {
+	fnPath := getFnPath(ctrl)
 	arrResult := strings.Split(fnPath, ".")
 	module := arrResult[0]
 	action := arrResult[1]
@@ -34,20 +36,20 @@ func RegisterRoute(group *echo.Group, pemMap ctype.PemMap) RuteHandlerFunc {
 		title string,
 	) ctype.PemMap {
 		verbs := []string{verb}
-		group.Match(verbs, path, ctrl)
-		if len(profileTypes) == 0 || len(title) == 0 {
-			return pemMap
+		module, action := GetHandlerInfo(ctrl)
+		if len(profileTypes) > 0 && len(title) > 0 {
+			key := module + "." + action
+			role := ctype.Pem{
+				ProfileTypes: profileTypes,
+				Title:        title,
+				Module:       module,
+				Action:       action,
+			}
+			pemMap[key] = role
+			group.Match(verbs, path, ctrl, middleware.AuthMiddleware(module, action))
+		} else {
+			group.Match(verbs, path, ctrl)
 		}
-		fnPath := getFnPath(ctrl)
-		module, action := getFnInfo(fnPath)
-		key := module + "." + action
-		role := ctype.Pem{
-			ProfileTypes: profileTypes,
-			Title:        title,
-			Module:       module,
-			Action:       action,
-		}
-		pemMap[key] = role
 		return pemMap
 	}
 }

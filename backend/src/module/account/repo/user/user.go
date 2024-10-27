@@ -55,7 +55,7 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	}
 
 	var item Schema
-	result := r.client.Where(map[string]interface{}(filters)).First(&item)
+	result := db.Where(map[string]interface{}(filters)).First(&item)
 	err := result.Error
 	if err != nil {
 		return &item, errutil.NewGormError(err)

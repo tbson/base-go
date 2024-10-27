@@ -17,7 +17,7 @@ import (
 
 var client *gocloak.GoCloak
 
-type SsoUserInfo struct {
+type UserInfo struct {
 	Uid         string `json:"uid"`
 	Email       string `json:"email"`
 	FirstName   string `json:"first_name"`
@@ -26,9 +26,10 @@ type SsoUserInfo struct {
 }
 
 type TokensAndClaims struct {
-	AccessToken  string      `json:"access_token"`
-	RefreshToken string      `json:"refresh_token"`
-	UserInfo     SsoUserInfo `json:"user_info"`
+	AccessToken  string   `json:"access_token"`
+	RefreshToken string   `json:"refresh_token"`
+	Realm        string   `json:"realm"`
+	UserInfo     UserInfo `json:"user_info"`
 }
 
 func Client() *gocloak.GoCloak {
