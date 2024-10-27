@@ -30,3 +30,4 @@ var KEYCLOAK_DEFAULT_POST_LOGOUT_URI string = fmt.Sprintf(
 )
 
 const DEFAULT_LANG = "en"
+const ADMIN_TEANT_UID = "default"

@@ -41,8 +41,8 @@ func main() {
 	}
 	tenantData := ctype.Dict{
 		"auth_client_id": authClient.ID,
-		"uid":            "default",
-		"title":          "Default",
+		"uid":            setting.ADMIN_TEANT_UID,
+		"title":          "Admin",
 	}
 	tenant, err := tenantRepo.GetOrCreate(queryOptions, tenantData)
 	if err != nil {

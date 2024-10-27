@@ -3,8 +3,8 @@ package infra
 import (
 	"src/util/routeutil"
 
-	"src/common/constant"
 	"src/common/ctype"
+	"src/common/profiletype"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,11 +15,11 @@ func RegisterUrls(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.Role
 	g := e.Group("/account/user")
 	rr := routeutil.RegisterRoute(g, roleMap)
 
-	rr("GET", "/", List, []string{constant.ProfileTypeAdmin, constant.ProfileTypeManager}, "Get auth client list")
-	rr("GET", "/:id", Retrieve, []string{constant.ProfileTypeAdmin, constant.ProfileTypeManager}, "Get auth client detail")
-	rr("POST", "/", Create, []string{constant.ProfileTypeAdmin, constant.ProfileTypeManager}, "Create auth client")
-	rr("PUT", "/:id", Update, []string{constant.ProfileTypeAdmin, constant.ProfileTypeManager}, "Update auth client")
-	rr("DELETE", "/:id", Delete, []string{constant.ProfileTypeAdmin, constant.ProfileTypeManager}, "Delete auth client")
-	rr("DELETE", "/", DeleteList, []string{constant.ProfileTypeAdmin, constant.ProfileTypeManager}, "Delete list auth client")
+	rr("GET", "/", List, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Get user list")
+	rr("GET", "/:id", Retrieve, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Get user detail")
+	rr("POST", "/", Create, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Create user")
+	rr("PUT", "/:id", Update, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Update user")
+	rr("DELETE", "/:id", Delete, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Delete user")
+	rr("DELETE", "/", DeleteList, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Delete list user")
 	return e, roleMap
 }
