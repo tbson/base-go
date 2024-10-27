@@ -25,7 +25,7 @@ const lazyImport = (Component) => (props) => {
 
 const Login = lazyImport(lazy(() => import("component/auth/login")));
 const Profile = lazyImport(lazy(() => import("component/auth/profile")));
-const Staff = lazyImport(lazy(() => import("component/staff")));
+const Admin = lazyImport(lazy(() => import("component/admin")));
 const Role = lazyImport(lazy(() => import("component/role")));
 const Variable = lazyImport(lazy(() => import("component/variable")));
 
@@ -54,7 +54,7 @@ function Index() {
                     <Route path="/" element={<PrivateRoute />}>
                         <Route path="/" element={<MainLayout />}>
                             <Route path="/" element={<Profile />} />
-                            <Route path="/staff" element={<Staff />} />
+                            <Route path="/admin" element={<Admin />} />
                             <Route path="/role" element={<Role />} />
                             <Route path="/variable" element={<Variable />} />
                         </Route>

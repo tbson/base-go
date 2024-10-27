@@ -7,7 +7,7 @@ import FormUtil from "service/helper/form_util";
 import SelectInput from "component/common/form/ant/input/select_input.jsx";
 import CheckInput from "component/common/form/ant/input/check_input.jsx";
 import { urls, labels, emptyRecord } from "../config";
-import { staffOptionsSt } from "../states";
+import { adminOptionsSt } from "../states";
 
 /**
  * @callback FormCallback
@@ -16,20 +16,20 @@ import { staffOptionsSt } from "../states";
  * @param {number} id
  */
 
-const formName = "StaffForm";
+const formName = "AdminForm";
 
 /**
- * StaffForm.
+ * AdminForm.
  *
  * @param {Object} props
  * @param {Object} props.data
  * @param {FormCallback} props.onChange
  * @param {Object} props.formRef
  */
-export default function StaffForm({ data, onChange }) {
+export default function AdminForm({ data, onChange }) {
     const inputRef = useRef(null);
     const [form] = Form.useForm();
-    const staffOptions = useRecoilValue(staffOptionsSt);
+    const adminOptions = useRecoilValue(adminOptionsSt);
 
     const initialValues = Util.isEmpty(data) ? emptyRecord : { ...data };
     const id = initialValues.id;
@@ -96,7 +96,7 @@ export default function StaffForm({ data, onChange }) {
                 <Input />
             </Form.Item>
             <Form.Item {...formAttrs.groups}>
-                <SelectInput options={staffOptions.group} mode="multiple" block />
+                <SelectInput options={adminOptions.group} mode="multiple" block />
             </Form.Item>
             <Form.Item {...formAttrs.is_active}>
                 <CheckInput />
@@ -105,5 +105,5 @@ export default function StaffForm({ data, onChange }) {
     );
 }
 
-StaffForm.displayName = formName;
-StaffForm.formName = formName;
+AdminForm.displayName = formName;
+AdminForm.formName = formName;

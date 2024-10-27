@@ -1,4 +1,5 @@
 package constant
 
 const UsrTypeAdmin = "ADMIN"
-const UsrTypeStaff = "STAFF"
+const UsrTypeManager = "MANAGER"
+const UsrTypeUser = "USER"

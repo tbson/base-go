@@ -15,8 +15,8 @@ func RegisterUrls(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.Role
 	g := e.Group("/account/auth-client")
 	rr := routeutil.RegisterRoute(g, roleMap)
 
-	rr("GET", "/", List, []string{constant.UsrTypeAdmin, constant.UsrTypeStaff}, "Get auth client list")
-	rr("GET", "/:id", Retrieve, []string{constant.UsrTypeAdmin, constant.UsrTypeStaff}, "Get auth client detail")
+	rr("GET", "/", List, []string{constant.UsrTypeAdmin}, "Get auth client list")
+	rr("GET", "/:id", Retrieve, []string{constant.UsrTypeAdmin}, "Get auth client detail")
 	rr("POST", "/", Create, []string{constant.UsrTypeAdmin}, "Create auth client")
 	rr("PUT", "/:id", Update, []string{constant.UsrTypeAdmin}, "Update auth client")
 	rr("DELETE", "/:id", Delete, []string{constant.UsrTypeAdmin}, "Delete auth client")

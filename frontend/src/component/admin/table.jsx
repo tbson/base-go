@@ -14,17 +14,17 @@ import PemCheck from "component/common/pem_check";
 import Util from "service/helper/util";
 import RequestUtil from "service/helper/request_util";
 import Dialog from "./dialog";
-import { staffOptionsSt } from "./states";
+import { adminOptionsSt } from "./states";
 import { urls, labels, messages } from "./config";
 
-const PEM_GROUP = "staff";
+const PEM_GROUP = "admin";
 
-export default function StaffTable() {
+export default function AdminTable() {
     const [init, setInit] = useState(true);
     const [list, setList] = useState([]);
     const [ids, setIds] = useState([]);
     const [links, setLinks] = useState(defaultLinks);
-    const setStaffOptions = useSetRecoilState(staffOptionsSt);
+    const setAdminOptions = useSetRecoilState(adminOptionsSt);
 
     const getList =
         (showLoading = true) =>
@@ -34,7 +34,7 @@ export default function StaffTable() {
                 .then((resp) => {
                     setLinks(resp.data.links);
                     setList(Util.appendKey(resp.data.items));
-                    setStaffOptions(resp.data.extra.options);
+                    setAdminOptions(resp.data.extra.options);
                 })
                 .finally(() => {
                     setInit(false);
@@ -159,4 +159,4 @@ export default function StaffTable() {
     );
 }
 
-StaffTable.displayName = "StaffTable";
+AdminTable.displayName = "AdminTable";

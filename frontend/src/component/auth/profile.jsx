@@ -1,10 +1,10 @@
 import * as React from "react";
 import StorageUtil from "service/helper/storage_util";
-import StaffProfile from "component/staff/profile";
+import AdminProfile from "component/admin/profile";
 export default function Profile() {
     const userType = StorageUtil.getProfileType();
-    if (userType === "staff") {
-        return <StaffProfile />;
+    if (userType === "admin") {
+        return <AdminProfile />;
     }
     return null;
 }

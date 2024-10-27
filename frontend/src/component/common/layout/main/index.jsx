@@ -44,7 +44,7 @@ export default function MainLayout() {
      * @returns {string}
      */
     function processSelectedKey(pathname) {
-        if (pathname.startsWith("/staff")) return "/staff";
+        if (pathname.startsWith("/admin")) return "/admin";
         return pathname;
     }
 
@@ -60,16 +60,16 @@ export default function MainLayout() {
                 icon: <SettingFilled />
             });
 
-        if (PemUtil.canView(["staff", "group"])) {
+        if (PemUtil.canView(["admin", "group"])) {
             const companyGroup = {
                 label: t`Company`,
                 icon: <GoldenFilled />,
                 children: []
             };
-            PemUtil.canView("staff") &&
+            PemUtil.canView("admin") &&
                 companyGroup.children.push({
-                    label: t`Staff`,
-                    key: "/staff",
+                    label: t`Admin`,
+                    key: "/admin",
                     icon: <TeamOutlined />
                 });
             PemUtil.canView("group") &&

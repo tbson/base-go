@@ -9,7 +9,7 @@ import { urls, messages } from "../config";
 
 export class Service {
     static get toggleEvent() {
-        return "TOGGLE_STAFF_DIALOG";
+        return "TOGGLE_ADMIN_DIALOG";
     }
 
     static toggle(open = true, id = 0) {
@@ -18,12 +18,12 @@ export class Service {
 }
 
 /**
- * StaffDialog.
+ * AdminDialog.
  *
  * @param {Object} props
  * @param {function} props.onChange - (data: Dict, id: number) => void
  */
-export default function StaffDialog({ onChange }) {
+export default function AdminDialog({ onChange }) {
     const [data, setData] = useState({});
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(0);
@@ -76,5 +76,5 @@ export default function StaffDialog({ onChange }) {
     );
 }
 
-StaffDialog.displayName = "StaffDialog";
-StaffDialog.toggle = Service.toggle;
+AdminDialog.displayName = "AdminDialog";
+AdminDialog.toggle = Service.toggle;

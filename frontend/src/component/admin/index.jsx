@@ -3,7 +3,7 @@ import PageHeading from "component/common/page_heading";
 import Table from "./table";
 import { messages } from "./config";
 
-export default function Staff() {
+export default function Admin() {
     return (
         <>
             <PageHeading>
@@ -14,4 +14,4 @@ export default function Staff() {
     );
 }
 
-Staff.displayName = "Staff";
+Admin.displayName = "Admin";

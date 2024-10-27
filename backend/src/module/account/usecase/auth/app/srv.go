@@ -82,7 +82,7 @@ func (srv Service) HandleCallback(
 		}
 	} else {
 		if isAdmin {
-			tokensAndClaims.UserInfo.ProfileType = "staff"
+			tokensAndClaims.UserInfo.ProfileType = "admin"
 		} else {
 			tokensAndClaims.UserInfo.ProfileType = "user"
 		}
