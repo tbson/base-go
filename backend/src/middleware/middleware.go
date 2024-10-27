@@ -41,12 +41,12 @@ func AuthMiddleware(module string, action string) echo.MiddlewareFunc {
 			iamRepo := iam.New(ssoutil.Client())
 			userRepo := user.New(dbutil.Db())
 
-			accessToken, err := cookieutil.GetAccessToken(c)
+			accessToken, err := cookieutil.GetValue(c, "access_token")
 			if err != nil {
 				return c.JSON(401, errutil.New("", []string{msg}))
 			}
 
-			realm, err := cookieutil.GetRealm(c)
+			realm, err := cookieutil.GetValue(c, "realm")
 			if err != nil {
 				return c.JSON(401, errutil.New("", []string{msg}))
 			}

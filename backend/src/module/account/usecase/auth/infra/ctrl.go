@@ -104,9 +104,9 @@ func Callback(c echo.Context) error {
 
 	userInfoJson, _ := json.Marshal(userInfo)
 	data := map[string]interface{}{
-		"userInfo":    string(userInfoJson),
-		"tenantUid":   tenantUid,
-		"profileType": "",
+		"userInfo":     string(userInfoJson),
+		"tenantUid":    tenantUid,
+		"mapRolesPems": "{}",
 	}
 	// return c.JSON(http.StatusOK, result)
 	return c.Render(http.StatusOK, "post-login.html", data)

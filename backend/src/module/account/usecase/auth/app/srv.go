@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"src/common/ctype"
 	"src/module/account/usecase/auth/app/intf"
 	"src/util/iterutil"
@@ -72,23 +71,23 @@ func (srv Service) HandleCallback(
 
 	userInfo := tokensAndClaims.UserInfo
 
-	isAdmin, err := srv.repo.CheckUserAdminByEmail(userInfo.Email)
+	user, err := srv.repo.GetTenantUser(tenantID, userInfo.Email)
 
 	if err != nil {
 		userData := iterutil.StructToDict(userInfo)
 		userData["TenantID"] = tenantID
-		err = srv.repo.CreateUser(userData)
+		_, err = srv.repo.CreateUser(userData)
 		if err != nil {
 			return tokensAndClaims, err
 		}
-	} else {
-		if isAdmin {
-			tokensAndClaims.UserInfo.ProfileType = "admin"
-		} else {
-			tokensAndClaims.UserInfo.ProfileType = "user"
-		}
 	}
-	fmt.Println("Access Token:")
-	fmt.Println(tokensAndClaims.AccessToken)
+
+	if user.Admin {
+		tokensAndClaims.UserInfo.ProfileType = "admin"
+	} else {
+		tokensAndClaims.UserInfo.ProfileType = "user"
+	}
+
+	tokensAndClaims.UserInfo.ID = user.ID
 	return tokensAndClaims, nil
 }

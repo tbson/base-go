@@ -32,29 +32,22 @@ func NewRefreshTokenCookie(value string) *http.Cookie {
 	return newCookie("refresh_token", value, "/api/v1/account/auth/sso/refresh-token")
 }
 
-func GetAccessToken(c echo.Context) (string, error) {
-	cookieToken, err := c.Cookie("access_token")
+func GetValue(c echo.Context, name string) (string, error) {
+	cookie, err := c.Cookie(name)
 	if err == nil {
-		return cookieToken.Value, nil
+		return cookie.Value, nil
 	}
 
-	headerToken := c.Request().Header.Get("Authorization")
-	if headerToken != "" {
-		return strings.Split(headerToken, " ")[1], nil
+	if name == "refresh_token" {
+		name = "Authorization"
 	}
 
-	return "", err
-}
-
-func GetRealm(c echo.Context) (string, error) {
-	cookieRealm, err := c.Cookie("realm")
-	if err == nil {
-		return cookieRealm.Value, nil
-	}
-
-	headerRealm := c.Request().Header.Get("Realm")
-	if headerRealm != "" {
-		return headerRealm, nil
+	header := c.Request().Header.Get(name)
+	if header != "" {
+		if name == "Authorization" {
+			return strings.Split(header, " ")[1], nil
+		}
+		return header, nil
 	}
 
 	return "", err

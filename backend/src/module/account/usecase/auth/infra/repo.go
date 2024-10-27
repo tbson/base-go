@@ -46,6 +46,10 @@ func (r Repo) GetAuthClientFromTenantUid(tenantUid string) (intf.AuthClientInfo,
 	}, nil
 }
 
+func (r Repo) GetMapRolesPems() (intf.MapRolesPems, error) {
+	return nil, nil
+}
+
 func (r Repo) GetAuthUrl(realm string, clientId string, state ctype.Dict) string {
 	iamRepo := iam.New(r.iamClient)
 	return iamRepo.GetAuthUrl(realm, clientId, state)
@@ -56,17 +60,38 @@ func (r Repo) GetLogoutUrl(realm string, clientId string) string {
 	return iamRepo.GetLogoutUrl(realm, clientId)
 }
 
-func (r Repo) CheckUserAdminByEmail(email string) (bool, error) {
+func (r Repo) GetTenantUser(
+	tenantID uint,
+	email string,
+) (intf.AuthUserResult, error) {
 	repo := user.New(r.dbClient)
 	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"email": email},
+		Filters: ctype.Dict{
+			"tenant_id": tenantID,
+			"email":     email,
+		},
 	}
 	user, err := repo.Retrieve(queryOptions)
-	return user.Admin, err
+	result := intf.AuthUserResult{
+		ID:    user.ID,
+		Admin: user.Admin,
+	}
+	return result, err
 }
 
-func (r Repo) CreateUser(data ctype.Dict) error {
-	return nil
+func (r Repo) CreateUser(data ctype.Dict) (intf.AuthUserResult, error) {
+	repo := user.New(r.dbClient)
+	user, err := repo.Create(data)
+
+	if err != nil {
+		return intf.AuthUserResult{}, err
+	}
+
+	result := intf.AuthUserResult{
+		ID:    user.ID,
+		Admin: user.Admin,
+	}
+	return result, err
 }
 
 func (r Repo) ValidateCallback(

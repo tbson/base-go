@@ -1,11 +1,13 @@
 <html>
     <head>
-        <title>Loading...</title>
+        <title>Authenticating...</title>
         <script>
             const userInfo = {{ .userInfo }};
             const tenantUid = {{ .tenantUid }};
+            const mapRolesPems = {{ .mapRolesPems }};
             localStorage.setItem('userInfo', userInfo);
             localStorage.setItem('tenantUid', tenantUid);
+            localStorage.setItem('mapRolesPems', mapRolesPems);
 
             const nextUrl = localStorage.getItem('nextUrl');
             if (nextUrl) {
@@ -18,6 +20,6 @@
     </head>
 
     <body>
-        <p>Loading...</p>
+        <p>Authenticating...</p>
     </body>
 </html>

@@ -6,6 +6,13 @@ import (
 	"src/util/ssoutil"
 )
 
+type MapRolesPems map[string][]string
+
+type AuthUserResult struct {
+	ID    uint
+	Admin bool
+}
+
 type AuthClientInfo struct {
 	TenantID     uint
 	Realm        string
@@ -14,8 +21,8 @@ type AuthClientInfo struct {
 }
 
 type AuthRepo interface {
-	CheckUserAdminByEmail(email string) (bool, error)
-	CreateUser(data ctype.Dict) error
+	GetTenantUser(tenantID uint, email string) (AuthUserResult, error)
+	CreateUser(data ctype.Dict) (AuthUserResult, error)
 	GetAuthClientFromTenantUid(tenantUid string) (AuthClientInfo, error)
 	GetAuthUrl(realm string, clientId string, state ctype.Dict) string
 	GetLogoutUrl(realm string, clientId string) string
