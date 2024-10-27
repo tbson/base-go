@@ -17,6 +17,8 @@ func main() {
 		&account.Tenant{},
 		&account.AuthClient{},
 		&account.User{},
+		&account.Role{},
+		&account.Pem{},
 	)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to load gorm schema: %v\n", err)

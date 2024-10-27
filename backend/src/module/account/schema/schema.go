@@ -58,6 +58,7 @@ type User struct {
 	TenantID    uint `gorm:"not null;uniqueIndex:idx_users_tenant_uid;uniqueIndex:idx_users_tenant_email"`
 	Tenant      *Tenant
 	TenantTmpID *uint
+	Roles       []Role         `gorm:"many2many:users_roles;"`
 	Uid         string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_uid"`
 	Email       string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_email"`
 	Mobile      *string        `gorm:"type:text"`
@@ -88,5 +89,39 @@ func NewUser(data ctype.Dict) *User {
 		AvatarStr:   data["AvatarStr"].(string),
 		ExtraInfo:   datatypes.JSON(extraInfoJSON),
 		Admin:       data["Admin"].(bool),
+	}
+}
+
+type Role struct {
+	ID        uint
+	Users     []User `gorm:"many2many:users_roles;"`
+	Pems      []Pem  `gorm:"many2many:roles_pems;"`
+	TenantID  uint   `gorm:"not null;uniqueIndex:idx_roles_tenant_title"`
+	Tenant    *Tenant
+	Title     string `gorm:"type:text;not null;uniqueIndex:idx_roles_tenant_title"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+func NewRole(data ctype.Dict) *Role {
+	return &Role{
+		TenantID: data["TenantID"].(uint),
+		Title:    data["Title"].(string),
+	}
+}
+
+type Pem struct {
+	ID     uint
+	Roles  []Role `gorm:"many2many:roles_pems;"`
+	Title  string `gorm:"type:text;not null"`
+	Module string `gorm:"type:text;not null;uniqueIndex:idx_pems_module_action"`
+	Action string `gorm:"type:text;not null;uniqueIndex:idx_pems_module_action"`
+}
+
+func NewPem(data ctype.Dict) *Pem {
+	return &Pem{
+		Title:  data["Title"].(string),
+		Module: data["Module"].(string),
+		Action: data["Action"].(string),
 	}
 }
