@@ -17,18 +17,30 @@ func getFnPath(fn interface{}) string {
 
 func getFnInfo(fnPath string) (string, string) {
 	arrResult := strings.Split(fnPath, ".")
-	return arrResult[0], arrResult[1]
+	module := arrResult[0]
+	action := arrResult[1]
+
+	arrModule := strings.Split(module, "/")
+	module = arrModule[len(arrModule)-2]
+	return module, action
 }
 
 func RegisterRoute(group *echo.Group, roleMap ctype.RoleMap) RuteHandlerFunc {
-	return func(verb string, path string, ctrl echo.HandlerFunc, profileTypes []string, title string) ctype.RoleMap {
+	return func(
+		verb string,
+		path string,
+		ctrl echo.HandlerFunc,
+		profileTypes []string,
+		title string,
+	) ctype.RoleMap {
 		verbs := []string{verb}
 		group.Match(verbs, path, ctrl)
 		if len(profileTypes) == 0 || len(title) == 0 {
 			return roleMap
 		}
-		key := getFnPath(ctrl)
-		module, action := getFnInfo(key)
+		fnPath := getFnPath(ctrl)
+		module, action := getFnInfo(fnPath)
+		key := module + "." + action
 		role := ctype.Role{
 			ProfileTypes: profileTypes,
 			Title:        title,

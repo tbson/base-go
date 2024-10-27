@@ -12,9 +12,9 @@ import (
 func main() {
 	dbutil.InitDb()
 	db := dbutil.Db()
-	authClientRepo := authclient.Repo{}.New(db)
-	tenantRepo := tenant.Repo{}.New(db)
-	userRepo := user.Repo{}.New(db)
+	authClientRepo := authclient.New(db)
+	tenantRepo := tenant.New(db)
+	userRepo := user.New(db)
 
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
