@@ -11,9 +11,9 @@ import (
 
 type RoleMap map[string][]string
 
-func RegisterUrls(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.RoleMap) {
+func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
 	g := e.Group("/account/tenant")
-	rr := routeutil.RegisterRoute(g, roleMap)
+	rr := routeutil.RegisterRoute(g, pemMap)
 
 	rr("GET", "/", List, []string{profiletype.ADMIN, profiletype.STAFF}, "Get tenant list")
 	rr("GET", "/:id", Retrieve, []string{profiletype.ADMIN, profiletype.STAFF}, "Get tenant detail")
@@ -21,5 +21,5 @@ func RegisterUrls(e *echo.Group, roleMap ctype.RoleMap) (*echo.Group, ctype.Role
 	rr("PUT", "/:id", Update, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Update tenant")
 	rr("DELETE", "/:id", Delete, []string{profiletype.ADMIN, profiletype.STAFF}, "Delete tenant")
 	rr("DELETE", "/", DeleteList, []string{profiletype.ADMIN, profiletype.STAFF}, "Delete list tenant")
-	return e, roleMap
+	return e, pemMap
 }

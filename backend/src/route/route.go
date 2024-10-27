@@ -11,12 +11,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func CollectRoutes(e *echo.Group) (*echo.Group, ctype.RoleMap) {
-	roleMap := ctype.RoleMap{}
-	e, roleMap = crudvariable.RegisterUrls(e, roleMap)
-	e, roleMap = crudauthclient.RegisterUrls(e, roleMap)
-	e, roleMap = crudtenant.RegisterUrls(e, roleMap)
-	e, roleMap = cruduser.RegisterUrls(e, roleMap)
-	e, roleMap = sso.RegisterUrls(e, roleMap)
-	return e, roleMap
+func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
+	pemMap := ctype.PemMap{}
+	e, pemMap = crudvariable.RegisterUrls(e, pemMap)
+	e, pemMap = crudauthclient.RegisterUrls(e, pemMap)
+	e, pemMap = crudtenant.RegisterUrls(e, pemMap)
+	e, pemMap = cruduser.RegisterUrls(e, pemMap)
+	e, pemMap = sso.RegisterUrls(e, pemMap)
+	return e, pemMap
 }

@@ -15,9 +15,9 @@ func main() {
 
 	e := echo.New()
 	apiGroup := e.Group("/api/v1")
-	_, roleMap := route.CollectRoutes(apiGroup)
+	_, pemMap := route.CollectRoutes(apiGroup)
 
-	repo.WritePems(roleMap)
+	repo.WritePems(pemMap)
 	repo.EnsureTenantsRoles()
-	repo.EnsureRolesPems(roleMap)
+	repo.EnsureRolesPems(pemMap)
 }

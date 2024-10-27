@@ -2,14 +2,14 @@ package ctype
 
 type Dict map[string]interface{}
 
-type Role struct {
+type Pem struct {
 	ProfileTypes []string
 	Title        string
 	Module       string
 	Action       string
 }
 
-type RoleMap map[string]Role
+type PemMap map[string]Pem
 
 type QueryOptions struct {
 	Filters  Dict

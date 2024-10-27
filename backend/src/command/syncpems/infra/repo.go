@@ -23,9 +23,9 @@ func New(client *gorm.DB) Repo {
 	}
 }
 
-func (r Repo) WritePems(roleMap ctype.RoleMap) error {
+func (r Repo) WritePems(pemMap ctype.PemMap) error {
 	pemRepo := pem.New(r.client)
-	for _, pemData := range roleMap {
+	for _, pemData := range pemMap {
 		filterOptions := ctype.QueryOptions{
 			Filters: ctype.Dict{
 				"module": pemData.Module,
@@ -82,7 +82,7 @@ func (r Repo) EnsureTenantsRoles() error {
 	return nil
 }
 
-func (r Repo) EnsureRolesPems(roleMap ctype.RoleMap) error {
+func (r Repo) EnsureRolesPems(pemMap ctype.PemMap) error {
 	// get all roles
 	roleRepo := role.New(r.client)
 	pemRepo := pem.New(r.client)
@@ -95,18 +95,18 @@ func (r Repo) EnsureRolesPems(roleMap ctype.RoleMap) error {
 		newPems := []*schema.Pem{}
 		// clear all pems
 		r.client.Model(&role).Association("Pems").Clear()
-		for _, pemInfo := range roleMap {
-			pemData := ctype.QueryOptions{
+		for _, pemData := range pemMap {
+			filterOptions := ctype.QueryOptions{
 				Filters: ctype.Dict{
-					"module": pemInfo.Module,
-					"action": pemInfo.Action,
+					"module": pemData.Module,
+					"action": pemData.Action,
 				},
 			}
-			pem, err := pemRepo.Retrieve(pemData)
+			pem, err := pemRepo.Retrieve(filterOptions)
 			if err != nil {
 				return err
 			}
-			if slices.Contains(pemInfo.ProfileTypes, role.Title) {
+			if slices.Contains(pemData.ProfileTypes, role.Title) {
 				newPems = append(newPems, pem)
 			}
 		}
