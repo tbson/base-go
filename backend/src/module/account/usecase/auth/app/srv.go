@@ -91,3 +91,9 @@ func (srv Service) HandleCallback(
 	tokensAndClaims.UserInfo.ID = user.ID
 	return tokensAndClaims, nil
 }
+
+func (srv Service) GetPemModulesActionsMap(
+	userId uint,
+) (intf.PemModulesActionsMap, error) {
+	return srv.repo.GetPemModulesActionsMap(userId)
+}

@@ -17,12 +17,12 @@ export default class PemUtil {
             }
             const permissions = StorageUtil.getPermissions();
             for (const pem_group of pem_groups) {
-                if (permissions[pem_group].includes("view")) {
+                if (permissions[pem_group].includes("List")) {
                     return true;
                 }
             }
             return false;
-        } catch (_e) {
+        } catch (e) {
             return false;
         }
     }

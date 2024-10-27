@@ -3,7 +3,7 @@ import RequestUtil from "service/helper/request_util";
 
 const urlMap = {
     base: {
-        prefix: "configuration/variable",
+        prefix: "config/variable",
         endpoints: {
             crud: ""
         }
@@ -20,6 +20,6 @@ export const messages = {
 };
 
 export const labels = {
-    uid: t`Config name`,
+    key: t`Config name`,
     value: t`Config value`
 };

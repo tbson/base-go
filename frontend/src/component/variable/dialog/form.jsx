@@ -8,7 +8,7 @@ import { urls, labels } from "../config";
 const formName = "VariableForm";
 const emptyRecord = {
     id: 0,
-    uid: "",
+    key: "",
     value: ""
 };
 
@@ -36,9 +36,9 @@ export default function VariableForm({ data, onChange }) {
     const method = id ? "put" : "post";
 
     const formAttrs = {
-        uid: {
-            name: "uid",
-            label: labels.uid,
+        key: {
+            name: "key",
+            label: labels.key,
             rules: [FormUtil.ruleRequired()]
         },
         value: {
@@ -64,7 +64,7 @@ export default function VariableForm({ data, onChange }) {
                     .catch(FormUtil.setFormErrors(form))
             }
         >
-            <Form.Item {...formAttrs.uid}>
+            <Form.Item {...formAttrs.key}>
                 <Input ref={inputRef} />
             </Form.Item>
 

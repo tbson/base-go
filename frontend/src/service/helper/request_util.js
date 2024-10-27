@@ -1,8 +1,8 @@
-import axios from "axios";
-import Util from "service/helper/util";
-import NavUtil from "service/helper/nav_util";
-import StorageUtil from "service/helper/storage_util";
-import { PROTOCOL, DOMAIN, API_PREFIX } from "src/consts";
+import axios from 'axios';
+import Util from 'service/helper/util';
+import NavUtil from 'service/helper/nav_util';
+import StorageUtil from 'service/helper/storage_util';
+import { PROTOCOL, DOMAIN, API_PREFIX } from 'src/consts';
 
 export default class RequestUtil {
     /**
@@ -13,7 +13,7 @@ export default class RequestUtil {
     static getJsonPayload(data) {
         return {
             data: data,
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
         };
     }
 
@@ -30,7 +30,7 @@ export default class RequestUtil {
         }
         return {
             data: formData,
-            "Content-Type": ""
+            'Content-Type': ''
         };
     }
 
@@ -51,7 +51,9 @@ export default class RequestUtil {
      * @returns {Object}
      */
     static convertParams(method, data) {
-        if (["post", "put"].includes(method.toLowerCase())) return data;
+        if (['post', 'put'].includes(method.toLowerCase())) {
+            return data;
+        }
         return { params: data };
     }
 
@@ -62,8 +64,8 @@ export default class RequestUtil {
      * @param {string} method - method: get, post, put, delete
      * @returns {Promise} Axios response promise
      */
-    static async request(url, params = {}, method = "get", blobResponseType = false) {
-        const { data, "Content-Type": contentType } = RequestUtil.fileInObject(params)
+    static async request(url, params = {}, method = 'get', blobResponseType = false) {
+        const { data, 'Content-Type': contentType } = RequestUtil.fileInObject(params)
             ? RequestUtil.getFormDataPayload(params)
             : RequestUtil.getJsonPayload(params);
         const token = StorageUtil.getToken();
@@ -73,16 +75,16 @@ export default class RequestUtil {
             url,
             headers: {
                 Authorization: token ? `JWT ${token}` : undefined,
-                "Content-Type": contentType,
-                "Accept-Language": StorageUtil.getStorageStr("locale")
+                'Content-Type': contentType,
+                'Accept-Language': StorageUtil.getStorageStr('locale')
             }
         };
         if (blobResponseType) {
-            config.responseType = "blob";
+            config.responseType = 'blob';
         }
-        if (!Util.isEmpty(params) && method === "get") {
+        if (!Util.isEmpty(params) && method === 'get') {
             const query = new URLSearchParams(params).toString();
-            config.url = [config.url, query].join("?");
+            config.url = [config.url, query].join('?');
         } else {
             config.data = RequestUtil.convertParams(method, data);
         }
@@ -96,7 +98,7 @@ export default class RequestUtil {
      * @param {string} method - method: get, post, put, delete
      * @returns {Promise} Axios response promise
      */
-    static async apiCall(url, params = {}, method = "get", blobResponseType = false) {
+    static async apiCall(url, params = {}, method = 'get', blobResponseType = false) {
         const emptyError = {
             response: {
                 data: {}
@@ -106,15 +108,15 @@ export default class RequestUtil {
             return await RequestUtil.request(url, params, method, blobResponseType);
         } catch (err) {
             if (err.response.status === 401) {
-                const refreshUrl = "account/user/refresh-token/";
-                const checkUrl = "account/user/refresh-check/";
+                const refreshUrl = 'account/user/refresh-token/';
+                const checkUrl = 'account/user/refresh-check/';
                 try {
                     const refreshTokenResponse = await RequestUtil.request(
                         refreshUrl,
                         { refresh_token: StorageUtil.getRefreshToken() },
-                        "POST"
+                        'POST'
                     );
-                    const token = refreshTokenResponse.data.token;
+                    const { token } = refreshTokenResponse.data;
                     StorageUtil.setToken(token);
 
                     try {
@@ -165,10 +167,15 @@ export default class RequestUtil {
      * @returns {string[]}
      */
     static errorFormat(input) {
-        if (!input) return [];
-        if (typeof input === "string") return [input];
-        if (Array.isArray(input))
+        if (!input) {
+            return [];
+        }
+        if (typeof input === 'string') {
+            return [input];
+        }
+        if (Array.isArray(input)) {
             return input.filter((item) => item).map((item) => item.toString());
+        }
         return [];
     }
 
@@ -193,9 +200,9 @@ export default class RequestUtil {
         const result = {};
         for (const key in endpoints) {
             const value = endpoints[key];
-            result[key] = [prefix, value].join("/");
-            if (result[key][result[key].length - 1] !== "/") {
-                result[key] += "/";
+            result[key] = [prefix, value].join('/');
+            if (result[key][result[key].length - 1] !== '/') {
+                result[key] += '/';
             }
         }
         return result;
@@ -210,9 +217,9 @@ export default class RequestUtil {
      */
     static handleDownload(data, filename) {
         const url = window.URL.createObjectURL(new Blob([data]));
-        const link = document.createElement("a");
+        const link = document.createElement('a');
         link.href = url;
-        link.setAttribute("download", filename);
+        link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
     }

@@ -13,6 +13,13 @@ export default class NavUtil {
         };
     }
 
+    static clearAuthData() {
+        StorageUtil.removeStorage("locale");
+        StorageUtil.removeStorage("userInfo");
+        StorageUtil.removeStorage("tenantUid");
+        StorageUtil.removeStorage("pemModulesActionsMap");
+    }
+
     /**
      * logout.
      *
@@ -23,9 +30,7 @@ export default class NavUtil {
             const baseUrl = RequestUtil.getApiBaseUrl();
             const tenantUid = StorageUtil.getTenantUid();
             const logoutUrl = `${baseUrl}account/auth/sso/logout/${tenantUid}`;
-            StorageUtil.removeStorage("userInfo");
-            StorageUtil.removeStorage("tenantUid");
-            StorageUtil.removeStorage("locale");
+            NavUtil.clearAuthData();
             window.location.href = logoutUrl;
         };
     }
@@ -38,9 +43,7 @@ export default class NavUtil {
      */
     static cleanAndMoveToLoginPage(navigate) {
         const currentUrl = window.location.href.split("#")[1];
-        StorageUtil.removeStorage("userInfo");
-        StorageUtil.removeStorage("tenantUid");
-        StorageUtil.removeStorage("locale");
+        NavUtil.clearAuthData();
         let loginUrl = "/login";
         if (currentUrl) {
             loginUrl = `${loginUrl}?next=${currentUrl}`;

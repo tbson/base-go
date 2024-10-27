@@ -1,7 +1,7 @@
 import { addLocale } from "ttag";
 import StorageUtil from "service/helper/storage_util";
 
-const DEFAULT_LOCALE = "vi";
+const DEFAULT_LOCALE = "en";
 const SUPPORTED_LOCALES = ["vi", "en"];
 
 export default class LocaleUtil {

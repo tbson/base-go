@@ -52,7 +52,7 @@ export default function Pagination({ next, prev, onChange }) {
     return (
         <div className="right">
             <ActionBtn type="prev" url={prev} onChange={onChange} />
-            {next && prev && <Divider type="vertical" />}
+            {(next && prev) ? <Divider type="vertical" /> : null}
             <ActionBtn type="next" url={next} onChange={onChange} />
         </div>
     );

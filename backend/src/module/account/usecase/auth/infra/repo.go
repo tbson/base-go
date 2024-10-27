@@ -2,6 +2,7 @@ package infra
 
 import (
 	"context"
+	"slices"
 	"src/common/ctype"
 	"src/module/account/repo/iam"
 	"src/module/account/repo/tenant"
@@ -46,8 +47,33 @@ func (r Repo) GetAuthClientFromTenantUid(tenantUid string) (intf.AuthClientInfo,
 	}, nil
 }
 
-func (r Repo) GetMapRolesPems() (intf.MapRolesPems, error) {
-	return nil, nil
+func (r Repo) GetPemModulesActionsMap(userId uint) (intf.PemModulesActionsMap, error) {
+	repo := user.New(r.dbClient)
+
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"id": userId},
+		Preloads: []string{
+			"Roles.Pems",
+		},
+	}
+	user, err := repo.Retrieve(queryOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(intf.PemModulesActionsMap)
+	for _, role := range user.Roles {
+		for _, pem := range role.Pems {
+			if _, ok := result[pem.Module]; !ok {
+				result[pem.Module] = make([]string, 0)
+			}
+			if !slices.Contains(result[pem.Module], pem.Action) {
+				result[pem.Module] = append(result[pem.Module], pem.Action)
+			}
+		}
+	}
+
+	return result, nil
 }
 
 func (r Repo) GetAuthUrl(realm string, clientId string, state ctype.Dict) string {

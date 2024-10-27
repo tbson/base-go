@@ -53,13 +53,13 @@ export default function MainLayout() {
 
         result.push({ label: t`Profile`, key: "/", icon: <UserOutlined /> });
 
-        PemUtil.canView("variable") &&
+        PemUtil.canView("crudvariable") &&
             result.push({
                 label: t`Config`,
                 key: "/variable",
                 icon: <SettingFilled />
             });
-
+        /*
         if (PemUtil.canView(["admin", "group"])) {
             const companyGroup = {
                 label: t`Company`,
@@ -80,6 +80,7 @@ export default function MainLayout() {
                 });
             result.push(companyGroup);
         }
+        */
         return result;
     }
 

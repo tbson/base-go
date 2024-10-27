@@ -4,10 +4,10 @@
         <script>
             const userInfo = {{ .userInfo }};
             const tenantUid = {{ .tenantUid }};
-            const mapRolesPems = {{ .mapRolesPems }};
+            const pemModulesActionsMap = {{ .pemModulesActionsMap }};
             localStorage.setItem('userInfo', userInfo);
             localStorage.setItem('tenantUid', tenantUid);
-            localStorage.setItem('mapRolesPems', mapRolesPems);
+            localStorage.setItem('pemModulesActionsMap', pemModulesActionsMap);
 
             const nextUrl = localStorage.getItem('nextUrl');
             if (nextUrl) {

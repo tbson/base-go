@@ -6,7 +6,7 @@ import (
 	"src/util/ssoutil"
 )
 
-type MapRolesPems map[string][]string
+type PemModulesActionsMap map[string][]string
 
 type AuthUserResult struct {
 	ID    uint
@@ -26,6 +26,7 @@ type AuthRepo interface {
 	GetAuthClientFromTenantUid(tenantUid string) (AuthClientInfo, error)
 	GetAuthUrl(realm string, clientId string, state ctype.Dict) string
 	GetLogoutUrl(realm string, clientId string) string
+	GetPemModulesActionsMap(userId uint) (PemModulesActionsMap, error)
 	ValidateCallback(
 		ctx context.Context,
 		realm string,

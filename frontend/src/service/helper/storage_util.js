@@ -185,7 +185,7 @@ export default class StorageUtil {
      * @returns {string[]}
      */
     static getPermissions() {
-        const authObj = StorageUtil.getStorageObj("auth");
-        return authObj.permissions || {};
+        const authObj = StorageUtil.getStorageObj("pemModulesActionsMap");
+        return authObj || {};
     }
 }

@@ -15,13 +15,13 @@ import RequestUtil from "service/helper/request_util";
 import Dialog from "./dialog";
 import { urls, labels, messages } from "./config";
 
-const PEM_GROUP = "variable";
+const PEM_GROUP = "crudvariable";
 
 export default function VariableTable() {
     const [init, setInit] = useState(true);
     const [list, setList] = useState([]);
     const [ids, setIds] = useState([]);
-    const [links, setLinks] = useState(defaultLinks);
+    const [pages, setPages] = useState(defaultLinks);
 
     const getList =
         (showLoading = true) =>
@@ -29,8 +29,8 @@ export default function VariableTable() {
             showLoading && Util.toggleGlobalLoading();
             RequestUtil.apiCall(url ? url : urls.crud, params)
                 .then((resp) => {
-                    setLinks(resp.data.links);
-                    setList(Util.appendKey(resp.data.items));
+                    setPages(resp.data.pages);
+                    setList(resp.data.items);
                 })
                 .finally(() => {
                     setInit(false);
@@ -83,9 +83,9 @@ export default function VariableTable() {
 
     const columns = [
         {
-            key: "uid",
-            title: labels.uid,
-            dataIndex: "uid"
+            key: "key",
+            title: labels.key,
+            dataIndex: "key"
         },
         {
             key: "value",
@@ -100,10 +100,10 @@ export default function VariableTable() {
             width: 90,
             render: (_text, record) => (
                 <div className="flex-space">
-                    <PemCheck pem_group={PEM_GROUP} pem="change">
+                    <PemCheck pem_group={PEM_GROUP} pem="Update">
                         <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
                     </PemCheck>
-                    <PemCheck pem_group={PEM_GROUP} pem="delete">
+                    <PemCheck pem_group={PEM_GROUP} pem="Delete">
                         <RemoveBtn onClick={() => onDelete(record.id)} />
                     </PemCheck>
                 </div>
@@ -121,12 +121,12 @@ export default function VariableTable() {
         <div>
             <Row>
                 <Col span={12}>
-                    <PemCheck pem_group={PEM_GROUP} pem="delete">
+                    <PemCheck pem_group={PEM_GROUP} pem="DeleteList">
                         <RemoveSelectedBtn ids={ids} onClick={onBulkDelete} />
                     </PemCheck>
                 </Col>
                 <Col span={12} className="right">
-                    <PemCheck pem_group={PEM_GROUP} pem="add">
+                    <PemCheck pem_group={PEM_GROUP} pem="Create">
                         <AddNewBtn onClick={() => Dialog.toggle()} />
                     </PemCheck>
                 </Col>
@@ -145,7 +145,7 @@ export default function VariableTable() {
                 scroll={{ x: 1000 }}
                 pagination={false}
             />
-            <Pagination next={links.next} prev={links.previous} onChange={getList()} />
+            <Pagination next={pages.next} prev={pages.previous} onChange={getList()} />
             <Dialog onChange={onChange} />
         </div>
     );
