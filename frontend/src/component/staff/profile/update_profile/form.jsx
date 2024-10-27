@@ -10,9 +10,19 @@ export default function UpdateProfileForm({ data, onChange }) {
     const [form] = Form.useForm();
 
     const formAttrs = {
-        phone_number: {
-            name: "phone_number",
-            label: t`Phone number`,
+        mobile: {
+            name: "mobile",
+            label: t`Mobile`,
+            rules: [FormUtil.ruleRequired()]
+        },
+        first_name: {
+            name: "first_name",
+            label: t`First Name`,
+            rules: [FormUtil.ruleRequired()]
+        },
+        last_name: {
+            name: "last_name",
+            label: t`Last Name`,
             rules: [FormUtil.ruleRequired()]
         }
     };
@@ -30,8 +40,14 @@ export default function UpdateProfileForm({ data, onChange }) {
                     .catch(FormUtil.setFormErrors(form))
             }
         >
-            <Form.Item {...formAttrs.phone_number}>
+            <Form.Item {...formAttrs.mobile}>
                 <Input autoFocus />
+            </Form.Item>
+            <Form.Item {...formAttrs.first_name}>
+                <Input />
+            </Form.Item>
+            <Form.Item {...formAttrs.last_name}>
+                <Input />
             </Form.Item>
         </Form>
     );
