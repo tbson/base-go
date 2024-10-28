@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"src/common/ctype"
-	"src/common/setting"
 	"src/module/account/repo/iam"
 	"src/module/account/usecase/auth/app"
 	"src/util/cookieutil"
@@ -116,13 +115,26 @@ func Callback(c echo.Context) error {
 }
 
 func RefreshToken(c echo.Context) error {
+	refreshToken := cookieutil.GetValue(c, "refresh_token")
+	realm := cookieutil.GetValue(c, "realm")
+
 	iamRepo := iam.New(ssoutil.Client())
-	realm := setting.KEYCLOAK_DEFAULT_REALM
-	refreshToken := c.FormValue("refresh_token")
 	result, err := iamRepo.RefreshToken(c.Request().Context(), realm, refreshToken)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
+	accessTokenCookie := cookieutil.NewAccessTokenCookie(result.AccessToken)
+	realmCookie := cookieutil.NewRealmCookie(result.Realm)
+	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(result.RefreshToken)
+	c.SetCookie(accessTokenCookie)
+	c.SetCookie(realmCookie)
+	c.SetCookie(refreshTokenCookie)
+
+	return c.JSON(http.StatusOK, ctype.Dict{})
+}
+
+func RefreshTokenCheck(c echo.Context) error {
+	result := ctype.Dict{}
 	return c.JSON(http.StatusOK, result)
 }

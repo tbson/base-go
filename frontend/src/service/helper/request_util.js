@@ -108,14 +108,10 @@ export default class RequestUtil {
             return await RequestUtil.request(url, params, method, blobResponseType);
         } catch (err) {
             if (err.response.status === 401) {
-                const refreshUrl = 'account/user/refresh-token/';
-                const checkUrl = 'account/user/refresh-check/';
+                const refreshUrl = 'account/auth/sso/refresh-token';
+                const checkUrl = 'account/auth/sso/refresh-token-check';
                 try {
-                    const refreshTokenResponse = await RequestUtil.request(
-                        refreshUrl,
-                        { refresh_token: StorageUtil.getRefreshToken() },
-                        'POST'
-                    );
+                    const refreshTokenResponse = await RequestUtil.request(refreshUrl);
                     const { token } = refreshTokenResponse.data;
                     StorageUtil.setToken(token);
 

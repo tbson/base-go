@@ -32,10 +32,10 @@ func NewRefreshTokenCookie(value string) *http.Cookie {
 	return newCookie("refresh_token", value, "/api/v1/account/auth/sso/refresh-token")
 }
 
-func GetValue(c echo.Context, name string) (string, error) {
+func GetValue(c echo.Context, name string) string {
 	cookie, err := c.Cookie(name)
 	if err == nil {
-		return cookie.Value, nil
+		return cookie.Value
 	}
 
 	if name == "refresh_token" {
@@ -45,10 +45,10 @@ func GetValue(c echo.Context, name string) (string, error) {
 	header := c.Request().Header.Get(name)
 	if header != "" {
 		if name == "Authorization" {
-			return strings.Split(header, " ")[1], nil
+			return strings.Split(header, " ")[1]
 		}
-		return header, nil
+		return header
 	}
 
-	return "", err
+	return ""
 }

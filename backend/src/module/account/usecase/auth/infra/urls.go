@@ -14,10 +14,11 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	g := e.Group("/account/auth")
 	rr := routeutil.RegisterRoute(g, pemMap)
 
-	rr("GET", "/sso/login/check/:tenantUid", CheckAuthUrl, []string{}, "")
-	rr("GET", "/sso/login/:tenantUid", GetAuthUrl, []string{}, "")
-	rr("GET", "/sso/logout/:tenantUid", GetLogoutUrl, []string{}, "")
-	rr("GET", "/sso/callback", Callback, []string{}, "")
-	rr("GET", "/sso/refresh-token", RefreshToken, []string{}, "")
+	rr.Public("GET", "/sso/login/check/:tenantUid", CheckAuthUrl)
+	rr.Public("GET", "/sso/login/:tenantUid", GetAuthUrl)
+	rr.Public("GET", "/sso/logout/:tenantUid", GetLogoutUrl)
+	rr.Public("GET", "/sso/callback", Callback)
+	rr.Public("GET", "/sso/refresh-token", RefreshToken)
+	rr.Private("GET", "/sso/refresh-token-check", RefreshTokenCheck)
 	return e, pemMap
 }
