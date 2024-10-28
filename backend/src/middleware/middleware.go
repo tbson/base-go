@@ -64,14 +64,16 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			}
 
 			if !isRbac {
-				c.Set("user", user)
+				c.Set("userID", user.ID)
+				c.Set("tenantID", user.TenantID)
 				return next(c)
 			}
 
 			for _, role := range user.Roles {
 				for _, pem := range role.Pems {
 					if pem.Module == module && pem.Action == action {
-						c.Set("user", user)
+						c.Set("userID", user.ID)
+						c.Set("tenantID", user.TenantID)
 						return next(c)
 					}
 				}

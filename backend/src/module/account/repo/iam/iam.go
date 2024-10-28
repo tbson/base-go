@@ -129,7 +129,6 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (ssoutil.UserInfo, er
 	// Parse the JWT token to extract headers and claims
 	token, err := jwt.Parse([]byte(tokenStr), jwt.WithKeySet(keySet))
 	if err != nil {
-		fmt.Println(err)
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.FailedToParseToken,
 		})
