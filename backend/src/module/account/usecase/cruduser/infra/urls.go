@@ -9,8 +9,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type RoleMap map[string][]string
-
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
 	g := e.Group("/account/user")
 	rr := routeutil.RegisterRoute(g, pemMap)

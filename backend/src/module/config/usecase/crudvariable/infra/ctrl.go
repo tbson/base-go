@@ -15,12 +15,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type Schema = schema.Variable
+
+var NewRepo = variable.New
+
 var searchableFields = []string{"key", "value", "description"}
 var filterableFields = []string{"data_type"}
 var orderableFields = []string{"id", "key"}
 
 func List(c echo.Context) error {
-	pager := paging.New[schema.Variable](dbutil.Db())
+	pager := paging.New[Schema](dbutil.Db())
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	listResult, error := pager.Paging(options, searchableFields)
@@ -32,7 +36,7 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	cruder := variable.New(dbutil.Db())
+	cruder := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
@@ -49,7 +53,7 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	cruder := variable.New(dbutil.Db())
+	cruder := NewRepo(dbutil.Db())
 	data, error := vldtutil.ValidatePayload(c, InputData{})
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
@@ -64,7 +68,7 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	cruder := variable.New(dbutil.Db())
+	cruder := NewRepo(dbutil.Db())
 
 	data, error := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if error != nil {
@@ -81,7 +85,7 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	cruder := variable.New(dbutil.Db())
+	cruder := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	ids, error := cruder.Delete(id)
@@ -94,7 +98,7 @@ func Delete(c echo.Context) error {
 }
 
 func DeleteList(c echo.Context) error {
-	cruder := variable.New(dbutil.Db())
+	cruder := NewRepo(dbutil.Db())
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
 	ids, error := cruder.DeleteList(ids)
