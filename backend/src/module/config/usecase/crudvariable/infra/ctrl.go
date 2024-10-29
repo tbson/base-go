@@ -11,7 +11,6 @@ import (
 	"src/module/abstract/repo/paging"
 	"src/module/config/repo/variable"
 	"src/module/config/schema"
-	"src/module/config/usecase/crudvariable/app"
 
 	"github.com/labstack/echo/v4"
 )
@@ -22,10 +21,9 @@ var orderableFields = []string{"id", "key"}
 
 func List(c echo.Context) error {
 	pager := paging.New[schema.Variable](dbutil.Db())
-	srv := app.New[schema.Variable](pager)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
-	listResult, error := srv.List(options, searchableFields)
+	listResult, error := pager.Paging(options, searchableFields)
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
