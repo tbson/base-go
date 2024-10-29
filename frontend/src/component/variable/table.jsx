@@ -100,10 +100,10 @@ export default function VariableTable() {
             width: 90,
             render: (_text, record) => (
                 <div className="flex-space">
-                    <PemCheck pem_group={PEM_GROUP} pem="Update">
+                    <PemCheck pem_group={PEM_GROUP} pem="update">
                         <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
                     </PemCheck>
-                    <PemCheck pem_group={PEM_GROUP} pem="Delete">
+                    <PemCheck pem_group={PEM_GROUP} pem="delete">
                         <RemoveBtn onClick={() => onDelete(record.id)} />
                     </PemCheck>
                 </div>
@@ -121,12 +121,12 @@ export default function VariableTable() {
         <div>
             <Row>
                 <Col span={12}>
-                    <PemCheck pem_group={PEM_GROUP} pem="DeleteList">
+                    <PemCheck pem_group={PEM_GROUP} pem="delete_list">
                         <RemoveSelectedBtn ids={ids} onClick={onBulkDelete} />
                     </PemCheck>
                 </Col>
                 <Col span={12} className="right">
-                    <PemCheck pem_group={PEM_GROUP} pem="Create">
+                    <PemCheck pem_group={PEM_GROUP} pem="create">
                         <AddNewBtn onClick={() => Dialog.toggle()} />
                     </PemCheck>
                 </Col>

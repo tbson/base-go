@@ -8,6 +8,7 @@ import (
 	"src/module/account/repo/tenant"
 	"src/module/account/repo/user"
 	"src/util/ssoutil"
+	"src/util/stringutil"
 
 	"github.com/Nerzal/gocloak/v13"
 
@@ -64,11 +65,13 @@ func (r Repo) GetPemModulesActionsMap(userId uint) (intf.PemModulesActionsMap, e
 	result := make(intf.PemModulesActionsMap)
 	for _, role := range user.Roles {
 		for _, pem := range role.Pems {
-			if _, ok := result[pem.Module]; !ok {
-				result[pem.Module] = make([]string, 0)
+			module := stringutil.ToSnakeCase(pem.Module)
+			action := stringutil.ToSnakeCase(pem.Action)
+			if _, ok := result[module]; !ok {
+				result[module] = make([]string, 0)
 			}
-			if !slices.Contains(result[pem.Module], pem.Action) {
-				result[pem.Module] = append(result[pem.Module], pem.Action)
+			if !slices.Contains(result[module], action) {
+				result[module] = append(result[module], action)
 			}
 		}
 	}

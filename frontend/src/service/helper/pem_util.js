@@ -17,7 +17,7 @@ export default class PemUtil {
             }
             const permissions = StorageUtil.getPermissions();
             for (const pem_group of pem_groups) {
-                if (permissions[pem_group].includes("List")) {
+                if (permissions[pem_group].includes("list")) {
                     return true;
                 }
             }
