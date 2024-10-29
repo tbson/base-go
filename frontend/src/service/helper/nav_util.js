@@ -27,7 +27,7 @@ export default class NavUtil {
             const baseUrl = RequestUtil.getApiBaseUrl();
             const tenantUid = StorageUtil.getTenantUid();
             const logoutUrl = `${baseUrl}account/auth/sso/logout/${tenantUid}`;
-            NavUtil.clearAuthData();
+            // NavUtil.clearAuthData();
             window.location.href = logoutUrl;
         };
     }

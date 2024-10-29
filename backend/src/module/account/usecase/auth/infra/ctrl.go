@@ -117,6 +117,11 @@ func Callback(c echo.Context) error {
 	return c.Render(http.StatusOK, "post-login.html", data)
 }
 
+func PostLogout(c echo.Context) error {
+	data := map[string]interface{}{}
+	return c.Render(http.StatusOK, "post-logout.html", data)
+}
+
 func RefreshToken(c echo.Context) error {
 	refreshToken := cookieutil.GetValue(c, "refresh_token")
 	realm := cookieutil.GetValue(c, "realm")

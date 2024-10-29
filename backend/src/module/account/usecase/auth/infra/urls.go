@@ -18,6 +18,7 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	rr.Public("GET", "/sso/login/:tenantUid", GetAuthUrl)
 	rr.Public("GET", "/sso/logout/:tenantUid", GetLogoutUrl)
 	rr.Public("GET", "/sso/callback", Callback)
+	rr.Public("GET", "/sso/post-logout", PostLogout)
 	rr.Public("GET", "/sso/refresh-token", RefreshToken)
 	rr.Private("GET", "/sso/refresh-token-check", RefreshTokenCheck)
 	return e, pemMap
