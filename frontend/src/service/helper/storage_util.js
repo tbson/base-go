@@ -139,6 +139,7 @@ export default class StorageUtil {
      * @returns {string}
      */
     static getTenantUid() {
-        return StorageUtil.getStorageObj('auth').tenantUid;
+        const { userInfo } = StorageUtil.getStorageObj('auth');
+        return userInfo.tenant_uid || '';
     }
 }

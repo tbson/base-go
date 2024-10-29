@@ -1,7 +1,6 @@
 package infra
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"src/common/ctype"
@@ -9,12 +8,9 @@ import (
 	"src/module/account/usecase/auth/app"
 	"src/util/cookieutil"
 	"src/util/dbutil"
-	"src/util/errutil"
-	"src/util/localeutil"
 	"src/util/ssoutil"
 
 	"github.com/labstack/echo/v4"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 func CheckAuthUrl(c echo.Context) error {
@@ -66,7 +62,6 @@ func GetLogoutUrl(c echo.Context) error {
 }
 
 func Callback(c echo.Context) error {
-	localizer := localeutil.Get()
 	code := c.QueryParam("code")
 	state := c.QueryParam("state")
 	dbClient := dbutil.Db()
@@ -74,47 +69,11 @@ func Callback(c echo.Context) error {
 	repo := New(dbClient, ssoClient)
 	srv := app.Service{}.New(repo)
 
-	stateData, err := ssoutil.DecodeState(state)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	tenantUid, ok := stateData["tenantUid"].(string)
-	if !ok {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.InvalidState,
-		})
-		return c.JSON(http.StatusBadRequest, errutil.New("", []string{msg}))
-	}
-
-	result, err := srv.HandleCallback(c.Request().Context(), tenantUid, code)
+	result, err := srv.HandleCallback(c.Request().Context(), state, code)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-
-	accessTokenCookie := cookieutil.NewAccessTokenCookie(result.AccessToken)
-	realmCookie := cookieutil.NewRealmCookie(result.Realm)
-	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(result.RefreshToken)
-	c.SetCookie(accessTokenCookie)
-	c.SetCookie(realmCookie)
-	c.SetCookie(refreshTokenCookie)
-
-	userInfo := result.UserInfo
-
-	pemModulesActionsMap, err := srv.GetPemModulesActionsMap(userInfo.ID)
-
-	auth := ctype.Dict{
-		"userInfo":             userInfo,
-		"tenantUid":            tenantUid,
-		"pemModulesActionsMap": pemModulesActionsMap,
-	}
-	authJson, _ := json.Marshal(auth)
-
-	data := map[string]interface{}{
-		"auth": string(authJson),
-	}
-
-	return c.Render(http.StatusOK, "post-login.html", data)
+	return CallbackPres(c, result)
 }
 
 func PostLogout(c echo.Context) error {
@@ -131,15 +90,7 @@ func RefreshToken(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-
-	accessTokenCookie := cookieutil.NewAccessTokenCookie(result.AccessToken)
-	realmCookie := cookieutil.NewRealmCookie(result.Realm)
-	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(result.RefreshToken)
-	c.SetCookie(accessTokenCookie)
-	c.SetCookie(realmCookie)
-	c.SetCookie(refreshTokenCookie)
-
-	return c.JSON(http.StatusOK, ctype.Dict{})
+	return RefreshTokenPres(c, result)
 }
 
 func RefreshTokenCheck(c echo.Context) error {

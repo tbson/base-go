@@ -3,17 +3,37 @@ package app
 import (
 	"context"
 	"src/common/ctype"
-	"src/module/account/usecase/auth/app/intf"
+	"src/util/errutil"
 	"src/util/iterutil"
+	"src/util/localeutil"
 	"src/util/ssoutil"
+
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 type Service struct {
-	repo intf.AuthRepo
+	repo AuthRepo
 }
 
-func (s Service) New(repo intf.AuthRepo) Service {
+func (s Service) New(repo AuthRepo) Service {
 	return Service{repo}
+}
+
+func (srv Service) parseTenantUidFromState(state string) (string, error) {
+	localizer := localeutil.Get()
+	stateData, err := ssoutil.DecodeState(state)
+	if err != nil {
+		return "", err
+	}
+
+	tenantUid, ok := stateData["tenantUid"].(string)
+	if !ok {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.InvalidState,
+		})
+		return "", errutil.New("", []string{msg})
+	}
+	return tenantUid, nil
 }
 
 func (srv Service) GetAuthUrl(tenantUid string) (string, error) {
@@ -49,9 +69,14 @@ func (srv Service) GetLogoutUrl(tenantUid string) (string, error) {
 
 func (srv Service) HandleCallback(
 	ctx context.Context,
-	tenantUid string,
+	state string,
 	code string,
 ) (ssoutil.TokensAndClaims, error) {
+	tenantUid, err := srv.parseTenantUidFromState(state)
+	if err != nil {
+		return ssoutil.TokensAndClaims{}, err
+	}
+
 	authClientInfo, err := srv.repo.GetAuthClientFromTenantUid(tenantUid)
 	if err != nil {
 		return ssoutil.TokensAndClaims{}, err
@@ -87,13 +112,13 @@ func (srv Service) HandleCallback(
 	} else {
 		tokensAndClaims.UserInfo.ProfileType = "user"
 	}
-
+	tokensAndClaims.UserInfo.TenantUid = tenantUid
 	tokensAndClaims.UserInfo.ID = user.ID
 	return tokensAndClaims, nil
 }
 
 func (srv Service) GetPemModulesActionsMap(
 	userId uint,
-) (intf.PemModulesActionsMap, error) {
+) (PemModulesActionsMap, error) {
 	return srv.repo.GetPemModulesActionsMap(userId)
 }

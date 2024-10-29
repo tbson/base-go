@@ -12,7 +12,7 @@ import (
 
 	"github.com/Nerzal/gocloak/v13"
 
-	"src/module/account/usecase/auth/app/intf"
+	"src/module/account/usecase/auth/app"
 
 	"gorm.io/gorm"
 )
@@ -29,7 +29,7 @@ func New(dbClient *gorm.DB, iamClient *gocloak.GoCloak) Repo {
 	}
 }
 
-func (r Repo) GetAuthClientFromTenantUid(tenantUid string) (intf.AuthClientInfo, error) {
+func (r Repo) GetAuthClientFromTenantUid(tenantUid string) (app.AuthClientInfo, error) {
 	repo := tenant.New(r.dbClient)
 	queryOptions := ctype.QueryOptions{
 		Filters:  ctype.Dict{"uid": tenantUid},
@@ -37,10 +37,10 @@ func (r Repo) GetAuthClientFromTenantUid(tenantUid string) (intf.AuthClientInfo,
 	}
 	tenant, err := repo.Retrieve(queryOptions)
 	if err != nil {
-		return intf.AuthClientInfo{}, err
+		return app.AuthClientInfo{}, err
 	}
 
-	return intf.AuthClientInfo{
+	return app.AuthClientInfo{
 		TenantID:     tenant.ID,
 		Realm:        tenant.AuthClient.Partition,
 		ClientID:     tenant.AuthClient.Uid,
@@ -48,7 +48,7 @@ func (r Repo) GetAuthClientFromTenantUid(tenantUid string) (intf.AuthClientInfo,
 	}, nil
 }
 
-func (r Repo) GetPemModulesActionsMap(userId uint) (intf.PemModulesActionsMap, error) {
+func (r Repo) GetPemModulesActionsMap(userId uint) (app.PemModulesActionsMap, error) {
 	repo := user.New(r.dbClient)
 
 	queryOptions := ctype.QueryOptions{
@@ -62,7 +62,7 @@ func (r Repo) GetPemModulesActionsMap(userId uint) (intf.PemModulesActionsMap, e
 		return nil, err
 	}
 
-	result := make(intf.PemModulesActionsMap)
+	result := make(app.PemModulesActionsMap)
 	for _, role := range user.Roles {
 		for _, pem := range role.Pems {
 			module := stringutil.ToSnakeCase(pem.Module)
@@ -92,7 +92,7 @@ func (r Repo) GetLogoutUrl(realm string, clientId string) string {
 func (r Repo) GetTenantUser(
 	tenantID uint,
 	email string,
-) (intf.AuthUserResult, error) {
+) (app.AuthUserResult, error) {
 	repo := user.New(r.dbClient)
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
@@ -101,22 +101,22 @@ func (r Repo) GetTenantUser(
 		},
 	}
 	user, err := repo.Retrieve(queryOptions)
-	result := intf.AuthUserResult{
+	result := app.AuthUserResult{
 		ID:    user.ID,
 		Admin: user.Admin,
 	}
 	return result, err
 }
 
-func (r Repo) CreateUser(data ctype.Dict) (intf.AuthUserResult, error) {
+func (r Repo) CreateUser(data ctype.Dict) (app.AuthUserResult, error) {
 	repo := user.New(r.dbClient)
 	user, err := repo.Create(data)
 
 	if err != nil {
-		return intf.AuthUserResult{}, err
+		return app.AuthUserResult{}, err
 	}
 
-	result := intf.AuthUserResult{
+	result := app.AuthUserResult{
 		ID:    user.ID,
 		Admin: user.Admin,
 	}

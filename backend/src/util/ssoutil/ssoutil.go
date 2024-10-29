@@ -24,6 +24,7 @@ type UserInfo struct {
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
 	ProfileType string `json:"profile_type"`
+	TenantUid   string `json:"tenant_uid"`
 }
 
 type TokensAndClaims struct {
