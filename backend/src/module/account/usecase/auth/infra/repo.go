@@ -1,16 +1,11 @@
 package infra
 
 import (
-	"context"
 	"slices"
 	"src/common/ctype"
-	"src/module/account/repo/iam"
 	"src/module/account/repo/tenant"
 	"src/module/account/repo/user"
-	"src/util/ssoutil"
 	"src/util/stringutil"
-
-	"github.com/Nerzal/gocloak/v13"
 
 	"src/module/account/usecase/auth/app"
 
@@ -18,19 +13,36 @@ import (
 )
 
 type Repo struct {
-	dbClient  *gorm.DB
-	iamClient *gocloak.GoCloak
+	client *gorm.DB
 }
 
-func New(dbClient *gorm.DB, iamClient *gocloak.GoCloak) Repo {
+func New(client *gorm.DB) Repo {
 	return Repo{
-		dbClient:  dbClient,
-		iamClient: iamClient,
+		client: client,
 	}
 }
 
+func (r Repo) GetTenantUser(
+	tenantID uint,
+	email string,
+) (app.AuthUserResult, error) {
+	repo := user.New(r.client)
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"tenant_id": tenantID,
+			"email":     email,
+		},
+	}
+	user, err := repo.Retrieve(queryOptions)
+	result := app.AuthUserResult{
+		ID:    user.ID,
+		Admin: user.Admin,
+	}
+	return result, err
+}
+
 func (r Repo) GetAuthClientFromTenantUid(tenantUid string) (app.AuthClientInfo, error) {
-	repo := tenant.New(r.dbClient)
+	repo := tenant.New(r.client)
 	queryOptions := ctype.QueryOptions{
 		Filters:  ctype.Dict{"uid": tenantUid},
 		Preloads: []string{"AuthClient"},
@@ -49,7 +61,7 @@ func (r Repo) GetAuthClientFromTenantUid(tenantUid string) (app.AuthClientInfo, 
 }
 
 func (r Repo) GetPemModulesActionsMap(userId uint) (app.PemModulesActionsMap, error) {
-	repo := user.New(r.dbClient)
+	repo := user.New(r.client)
 
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"id": userId},
@@ -77,59 +89,4 @@ func (r Repo) GetPemModulesActionsMap(userId uint) (app.PemModulesActionsMap, er
 	}
 
 	return result, nil
-}
-
-func (r Repo) GetAuthUrl(realm string, clientId string, state ctype.Dict) string {
-	iamRepo := iam.New(r.iamClient)
-	return iamRepo.GetAuthUrl(realm, clientId, state)
-}
-
-func (r Repo) GetLogoutUrl(realm string, clientId string) string {
-	iamRepo := iam.New(r.iamClient)
-	return iamRepo.GetLogoutUrl(realm, clientId)
-}
-
-func (r Repo) GetTenantUser(
-	tenantID uint,
-	email string,
-) (app.AuthUserResult, error) {
-	repo := user.New(r.dbClient)
-	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{
-			"tenant_id": tenantID,
-			"email":     email,
-		},
-	}
-	user, err := repo.Retrieve(queryOptions)
-	result := app.AuthUserResult{
-		ID:    user.ID,
-		Admin: user.Admin,
-	}
-	return result, err
-}
-
-func (r Repo) CreateUser(data ctype.Dict) (app.AuthUserResult, error) {
-	repo := user.New(r.dbClient)
-	user, err := repo.Create(data)
-
-	if err != nil {
-		return app.AuthUserResult{}, err
-	}
-
-	result := app.AuthUserResult{
-		ID:    user.ID,
-		Admin: user.Admin,
-	}
-	return result, err
-}
-
-func (r Repo) ValidateCallback(
-	ctx context.Context,
-	realm string,
-	clientId string,
-	clientSecret string,
-	code string,
-) (ssoutil.TokensAndClaims, error) {
-	iamRepo := iam.New(r.iamClient)
-	return iamRepo.ValidateCallback(ctx, realm, clientId, clientSecret, code)
 }

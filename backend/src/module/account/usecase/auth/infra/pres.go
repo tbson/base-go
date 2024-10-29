@@ -12,9 +12,7 @@ import (
 )
 
 func CallbackPres(c echo.Context, r ssoutil.TokensAndClaims) error {
-	dbClient := dbutil.Db()
-	ssoClient := ssoutil.Client()
-	repo := New(dbClient, ssoClient)
+	authRepo := New(dbutil.Db())
 
 	accessTokenCookie := cookieutil.NewAccessTokenCookie(r.AccessToken)
 	realmCookie := cookieutil.NewRealmCookie(r.Realm)
@@ -25,7 +23,7 @@ func CallbackPres(c echo.Context, r ssoutil.TokensAndClaims) error {
 
 	userInfo := r.UserInfo
 
-	pemModulesActionsMap, err := repo.GetPemModulesActionsMap(userInfo.ID)
+	pemModulesActionsMap, err := authRepo.GetPemModulesActionsMap(userInfo.ID)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

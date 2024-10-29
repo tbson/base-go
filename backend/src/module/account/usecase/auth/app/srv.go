@@ -12,11 +12,13 @@ import (
 )
 
 type Service struct {
-	repo AuthRepo
+	userRepo UserRepo
+	iamRepo  IamRepo
+	authRepo AuthRepo
 }
 
-func (s Service) New(repo AuthRepo) Service {
-	return Service{repo}
+func New(userRepo UserRepo, iamRepo IamRepo, authRepo AuthRepo) Service {
+	return Service{userRepo, iamRepo, authRepo}
 }
 
 func (srv Service) parseTenantUidFromState(state string) (string, error) {
@@ -40,7 +42,7 @@ func (srv Service) GetAuthUrl(tenantUid string) (string, error) {
 	state := ctype.Dict{
 		"tenantUid": tenantUid,
 	}
-	authClientInfo, err := srv.repo.GetAuthClientFromTenantUid(tenantUid)
+	authClientInfo, err := srv.authRepo.GetAuthClientFromTenantUid(tenantUid)
 	if err != nil {
 		return "", err
 	}
@@ -48,13 +50,13 @@ func (srv Service) GetAuthUrl(tenantUid string) (string, error) {
 	realm := authClientInfo.Realm
 	clientId := authClientInfo.ClientID
 
-	url := srv.repo.GetAuthUrl(realm, clientId, state)
+	url := srv.iamRepo.GetAuthUrl(realm, clientId, state)
 
 	return url, nil
 }
 
 func (srv Service) GetLogoutUrl(tenantUid string) (string, error) {
-	authClientInfo, err := srv.repo.GetAuthClientFromTenantUid(tenantUid)
+	authClientInfo, err := srv.authRepo.GetAuthClientFromTenantUid(tenantUid)
 	if err != nil {
 		return "", err
 	}
@@ -62,7 +64,7 @@ func (srv Service) GetLogoutUrl(tenantUid string) (string, error) {
 	realm := authClientInfo.Realm
 	clientId := authClientInfo.ClientID
 
-	url := srv.repo.GetLogoutUrl(realm, clientId)
+	url := srv.iamRepo.GetLogoutUrl(realm, clientId)
 
 	return url, nil
 }
@@ -77,7 +79,7 @@ func (srv Service) HandleCallback(
 		return ssoutil.TokensAndClaims{}, err
 	}
 
-	authClientInfo, err := srv.repo.GetAuthClientFromTenantUid(tenantUid)
+	authClientInfo, err := srv.authRepo.GetAuthClientFromTenantUid(tenantUid)
 	if err != nil {
 		return ssoutil.TokensAndClaims{}, err
 	}
@@ -86,7 +88,7 @@ func (srv Service) HandleCallback(
 	clientId := authClientInfo.ClientID
 	clientSecret := authClientInfo.ClientSecret
 
-	tokensAndClaims, err := srv.repo.ValidateCallback(
+	tokensAndClaims, err := srv.iamRepo.ValidateCallback(
 		ctx, realm, clientId, clientSecret, code,
 	)
 
@@ -96,12 +98,12 @@ func (srv Service) HandleCallback(
 
 	userInfo := tokensAndClaims.UserInfo
 
-	user, err := srv.repo.GetTenantUser(tenantID, userInfo.Email)
+	user, err := srv.authRepo.GetTenantUser(tenantID, userInfo.Email)
 
 	if err != nil {
 		userData := iterutil.StructToDict(userInfo)
 		userData["TenantID"] = tenantID
-		_, err = srv.repo.CreateUser(userData)
+		_, err = srv.userRepo.Create(userData)
 		if err != nil {
 			return tokensAndClaims, err
 		}
@@ -115,10 +117,4 @@ func (srv Service) HandleCallback(
 	tokensAndClaims.UserInfo.TenantUid = tenantUid
 	tokensAndClaims.UserInfo.ID = user.ID
 	return tokensAndClaims, nil
-}
-
-func (srv Service) GetPemModulesActionsMap(
-	userId uint,
-) (PemModulesActionsMap, error) {
-	return srv.repo.GetPemModulesActionsMap(userId)
 }

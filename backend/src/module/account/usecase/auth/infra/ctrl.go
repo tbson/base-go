@@ -5,6 +5,7 @@ import (
 
 	"src/common/ctype"
 	"src/module/account/repo/iam"
+	"src/module/account/repo/user"
 	"src/module/account/usecase/auth/app"
 	"src/util/cookieutil"
 	"src/util/dbutil"
@@ -13,13 +14,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func getService() app.Service {
+	client := dbutil.Db()
+	userRepo := user.New(client)
+	iamRepo := iam.New(ssoutil.Client())
+	authRepo := New(client)
+	return app.New(userRepo, iamRepo, authRepo)
+}
+
 func CheckAuthUrl(c echo.Context) error {
 	tenantUid := c.Param("tenantUid")
-	dbClient := dbutil.Db()
-	ssoClient := ssoutil.Client()
-	repo := New(dbClient, ssoClient)
 
-	srv := app.Service{}.New(repo)
+	srv := getService()
 
 	_, error := srv.GetAuthUrl(tenantUid)
 	if error != nil {
@@ -31,11 +37,8 @@ func CheckAuthUrl(c echo.Context) error {
 
 func GetAuthUrl(c echo.Context) error {
 	tenantUid := c.Param("tenantUid")
-	dbClient := dbutil.Db()
-	ssoClient := ssoutil.Client()
-	repo := New(dbClient, ssoClient)
 
-	srv := app.Service{}.New(repo)
+	srv := getService()
 
 	url, error := srv.GetAuthUrl(tenantUid)
 	if error != nil {
@@ -47,11 +50,8 @@ func GetAuthUrl(c echo.Context) error {
 
 func GetLogoutUrl(c echo.Context) error {
 	tenantUid := c.Param("tenantUid")
-	dbClient := dbutil.Db()
-	ssoClient := ssoutil.Client()
-	repo := New(dbClient, ssoClient)
 
-	srv := app.Service{}.New(repo)
+	srv := getService()
 
 	url, error := srv.GetLogoutUrl(tenantUid)
 	if error != nil {
@@ -64,10 +64,8 @@ func GetLogoutUrl(c echo.Context) error {
 func Callback(c echo.Context) error {
 	code := c.QueryParam("code")
 	state := c.QueryParam("state")
-	dbClient := dbutil.Db()
-	ssoClient := ssoutil.Client()
-	repo := New(dbClient, ssoClient)
-	srv := app.Service{}.New(repo)
+
+	srv := getService()
 
 	result, err := srv.HandleCallback(c.Request().Context(), state, code)
 	if err != nil {

@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"src/common/ctype"
+	"src/module/account/schema"
 	"src/util/ssoutil"
 )
 
@@ -20,13 +21,13 @@ type AuthClientInfo struct {
 	ClientSecret string
 }
 
-type AuthRepo interface {
-	GetTenantUser(tenantID uint, email string) (AuthUserResult, error)
-	CreateUser(data ctype.Dict) (AuthUserResult, error)
-	GetAuthClientFromTenantUid(tenantUid string) (AuthClientInfo, error)
+type UserRepo interface {
+	Create(data ctype.Dict) (*schema.User, error)
+}
+
+type IamRepo interface {
 	GetAuthUrl(realm string, clientId string, state ctype.Dict) string
 	GetLogoutUrl(realm string, clientId string) string
-	GetPemModulesActionsMap(userId uint) (PemModulesActionsMap, error)
 	ValidateCallback(
 		ctx context.Context,
 		realm string,
@@ -34,4 +35,10 @@ type AuthRepo interface {
 		clientSecret string,
 		code string,
 	) (ssoutil.TokensAndClaims, error)
+}
+
+type AuthRepo interface {
+	GetTenantUser(tenantID uint, email string) (AuthUserResult, error)
+	GetAuthClientFromTenantUid(tenantUid string) (AuthClientInfo, error)
+	GetPemModulesActionsMap(userId uint) (PemModulesActionsMap, error)
 }
