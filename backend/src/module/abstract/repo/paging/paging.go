@@ -10,7 +10,7 @@ type Repo[T any] struct {
 	client *gorm.DB
 }
 
-func New[T any](client *gorm.DB, schema T) Repo[T] {
+func New[T any](client *gorm.DB) Repo[T] {
 	return Repo[T]{
 		client: client,
 	}

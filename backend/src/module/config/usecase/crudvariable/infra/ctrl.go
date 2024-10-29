@@ -21,8 +21,8 @@ var filterableFields = []string{"data_type"}
 var orderableFields = []string{"id", "key"}
 
 func List(c echo.Context) error {
-	pager := paging.New(dbutil.Db(), schema.Variable{})
-	srv := app.Service{}.NewForPaging(pager)
+	pager := paging.New[schema.Variable](dbutil.Db())
+	srv := app.New[schema.Variable](pager)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	listResult, error := srv.List(options, searchableFields)
@@ -35,14 +35,13 @@ func List(c echo.Context) error {
 
 func Retrieve(c echo.Context) error {
 	cruder := variable.New(dbutil.Db())
-	srv := app.Service{}.NewForCruding(cruder)
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"id": id},
 	}
 
-	result, error := srv.Retrieve(queryOptions)
+	result, error := cruder.Retrieve(queryOptions)
 
 	if error != nil {
 		return c.JSON(http.StatusNotFound, error)
@@ -53,12 +52,11 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	cruder := variable.New(dbutil.Db())
-	srv := app.Service{}.NewForCruding(cruder)
 	data, error := vldtutil.ValidatePayload(c, InputData{})
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
-	result, error := srv.Create(iterutil.StructToDict(data))
+	result, error := cruder.Create(iterutil.StructToDict(data))
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
@@ -69,14 +67,13 @@ func Create(c echo.Context) error {
 
 func Update(c echo.Context) error {
 	cruder := variable.New(dbutil.Db())
-	srv := app.Service{}.NewForCruding(cruder)
 
 	data, error := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
 	id := vldtutil.ValidateId(c.Param("id"))
-	result, error := srv.Update(id, data)
+	result, error := cruder.Update(id, data)
 
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
@@ -87,10 +84,9 @@ func Update(c echo.Context) error {
 
 func Delete(c echo.Context) error {
 	cruder := variable.New(dbutil.Db())
-	srv := app.Service{}.NewForCruding(cruder)
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	ids, error := srv.Delete(id)
+	ids, error := cruder.Delete(id)
 
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
@@ -101,10 +97,9 @@ func Delete(c echo.Context) error {
 
 func DeleteList(c echo.Context) error {
 	cruder := variable.New(dbutil.Db())
-	srv := app.Service{}.NewForCruding(cruder)
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
-	ids, error := srv.DeleteList(ids)
+	ids, error := cruder.DeleteList(ids)
 
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
