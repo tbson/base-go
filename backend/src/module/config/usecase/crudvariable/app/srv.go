@@ -10,36 +10,45 @@ import (
 type Schema = schema.Variable
 
 type Service struct {
-	repo intf.RestCrudRepo[Schema]
+	cruder intf.CRUDer[Schema]
+	pager  intf.Pager[Schema]
 }
 
-func (s Service) New(repo intf.RestCrudRepo[Schema]) Service {
-	return Service{repo}
+func (s Service) New(cruder intf.CRUDer[Schema], pager intf.Pager[Schema]) Service {
+	return Service{cruder, pager}
+}
+
+func (s Service) NewForPaging(pager intf.Pager[Schema]) Service {
+	return Service{nil, pager}
+}
+
+func (s Service) NewForCruding(cruder intf.CRUDer[Schema]) Service {
+	return Service{cruder, nil}
 }
 
 func (srv Service) List(
 	options restlistutil.ListOptions,
 	searchableFields []string,
 ) (restlistutil.ListRestfulResult[Schema], error) {
-	return srv.repo.List(options, searchableFields)
+	return srv.pager.Paging(options, searchableFields)
 }
 
 func (srv Service) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
-	return srv.repo.Retrieve(queryOptions)
+	return srv.cruder.Retrieve(queryOptions)
 }
 
 func (srv Service) Create(inputData ctype.Dict) (*Schema, error) {
-	return srv.repo.Create(inputData)
+	return srv.cruder.Create(inputData)
 }
 
 func (srv Service) Update(id int, inputData ctype.Dict) (*Schema, error) {
-	return srv.repo.Update(id, inputData)
+	return srv.cruder.Update(id, inputData)
 }
 
 func (srv Service) Delete(id int) ([]int, error) {
-	return srv.repo.Delete(id)
+	return srv.cruder.Delete(id)
 }
 
 func (srv Service) DeleteList(ids []int) ([]int, error) {
-	return srv.repo.DeleteList(ids)
+	return srv.cruder.DeleteList(ids)
 }

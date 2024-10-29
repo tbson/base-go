@@ -8,6 +8,9 @@ import (
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
+	"src/module/abstract/repo/paging"
+	"src/module/config/repo/variable"
+	"src/module/config/schema"
 	"src/module/config/usecase/crudvariable/app"
 
 	"github.com/labstack/echo/v4"
@@ -18,8 +21,8 @@ var filterableFields = []string{"data_type"}
 var orderableFields = []string{"id", "key"}
 
 func List(c echo.Context) error {
-	repo := New(dbutil.Db())
-	srv := app.Service{}.New(repo)
+	pager := paging.New(dbutil.Db(), schema.Variable{})
+	srv := app.Service{}.NewForPaging(pager)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	listResult, error := srv.List(options, searchableFields)
@@ -31,8 +34,8 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	repo := New(dbutil.Db())
-	srv := app.Service{}.New(repo)
+	cruder := variable.New(dbutil.Db())
+	srv := app.Service{}.NewForCruding(cruder)
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
@@ -49,8 +52,8 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	repo := New(dbutil.Db())
-	srv := app.Service{}.New(repo)
+	cruder := variable.New(dbutil.Db())
+	srv := app.Service{}.NewForCruding(cruder)
 	data, error := vldtutil.ValidatePayload(c, InputData{})
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
@@ -65,8 +68,8 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	repo := New(dbutil.Db())
-	srv := app.Service{}.New(repo)
+	cruder := variable.New(dbutil.Db())
+	srv := app.Service{}.NewForCruding(cruder)
 
 	data, error := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if error != nil {
@@ -83,8 +86,8 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	repo := New(dbutil.Db())
-	srv := app.Service{}.New(repo)
+	cruder := variable.New(dbutil.Db())
+	srv := app.Service{}.NewForCruding(cruder)
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	ids, error := srv.Delete(id)
@@ -97,8 +100,8 @@ func Delete(c echo.Context) error {
 }
 
 func DeleteList(c echo.Context) error {
-	repo := New(dbutil.Db())
-	srv := app.Service{}.New(repo)
+	cruder := variable.New(dbutil.Db())
+	srv := app.Service{}.NewForCruding(cruder)
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
 	ids, error := srv.DeleteList(ids)

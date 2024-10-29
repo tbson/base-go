@@ -5,12 +5,15 @@ import (
 	"src/util/restlistutil"
 )
 
-type RestCrudRepo[T any] interface {
-	List(
+type Pager[T any] interface {
+	Paging(
 		options restlistutil.ListOptions,
 		searchableFields []string) (
 		restlistutil.ListRestfulResult[T], error,
 	)
+}
+
+type CRUDer[T any] interface {
 	Retrieve(queryOptions ctype.QueryOptions) (*T, error)
 	Create(data ctype.Dict) (*T, error)
 	Update(key int, data ctype.Dict) (*T, error)
