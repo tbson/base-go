@@ -8,10 +8,7 @@ export default class StorageUtil {
      */
     static setStorage(key, value) {
         try {
-            localStorage.setItem(
-                key,
-                JSON.stringify(value)
-            );
+            localStorage.setItem(key, JSON.stringify(value));
         } catch (error) {
             console.log(error);
         }
@@ -38,10 +35,8 @@ export default class StorageUtil {
      */
     static getStorageObj(key) {
         try {
-            const value = StorageUtil.parseJson(
-                localStorage.getItem(key)
-            );
-            if (value && typeof value === "object") {
+            const value = StorageUtil.parseJson(localStorage.getItem(key));
+            if (value && typeof value === 'object') {
                 return value;
             }
             return {};
@@ -59,48 +54,14 @@ export default class StorageUtil {
      */
     static getStorageStr(key) {
         try {
-            const value = StorageUtil.parseJson(
-                localStorage.getItem(key)
-            );
-            if (!value || typeof value === "object") {
-                return "";
+            const value = StorageUtil.parseJson(localStorage.getItem(key));
+            if (!value || typeof value === 'object') {
+                return '';
             }
             return String(value);
         } catch (error) {
-            return "";
+            return '';
         }
-    }
-
-    /**
-     * getUserInfo.
-     *
-     * @returns {string}
-     */
-    static getUserInfo() {
-        const userInfo = StorageUtil.getStorageObj("userInfo");
-        if (!userInfo.email) {
-            return "";
-        }
-        return userInfo;
-    }
-
-    /**
-     * getTenantUid.
-     *
-     * @returns {string}
-     */
-    static getTenantUid() {
-        return StorageUtil.getStorageStr("tenantUid");
-    }
-
-    /**
-     * getToken.
-     *
-     * @returns {string}
-     */
-    static getToken() {
-        const authObj = StorageUtil.getStorageObj("auth");
-        return authObj.token || "";
     }
 
     /**
@@ -110,39 +71,9 @@ export default class StorageUtil {
      * @returns {void}
      */
     static setToken(token) {
-        const authData = StorageUtil.getStorageObj("auth");
-        authData["token"] = token;
-        StorageUtil.setStorage("auth", authData);
-    }
-
-    /**
-     * getRefreshToken.
-     *
-     * @returns {string}
-     */
-    static getRefreshToken() {
-        const authObj = StorageUtil.getStorageObj("auth");
-        return authObj.refresh_token || "";
-    }
-
-    /**
-     * getProfileType.
-     *
-     * @returns {string}
-     */
-    static getProfileType() {
-        const authObj = StorageUtil.getStorageObj("userInfo");
-        return authObj.profile_type || "user";
-    }
-
-    /**
-     * getAuthId.
-     *
-     * @returns {number}
-     */
-    static getAuthId() {
-        const authObj = StorageUtil.getStorageObj("auth");
-        return authObj.id;
+        const authData = StorageUtil.getStorageObj('auth');
+        authData['token'] = token;
+        StorageUtil.setStorage('auth', authData);
     }
 
     /**
@@ -170,13 +101,26 @@ export default class StorageUtil {
     }
 
     /**
-     * getVisibleMenus.
+     * getUserInfo.
      *
-     * @returns {string[]}
+     * @returns {string}
      */
-    static getVisibleMenus() {
-        const authObj = StorageUtil.getStorageObj("auth");
-        return authObj.visible_menus || [];
+    static getUserInfo() {
+        const { userInfo } = StorageUtil.getStorageObj('auth');
+        if (!userInfo?.email) {
+            return '';
+        }
+        return userInfo;
+    }
+
+    /**
+     * getProfileType.
+     *
+     * @returns {string}
+     */
+    static getProfileType() {
+        const { userInfo } = StorageUtil.getStorageObj('auth');
+        return userInfo.profile_type || 'user';
     }
 
     /**
@@ -185,7 +129,16 @@ export default class StorageUtil {
      * @returns {string[]}
      */
     static getPermissions() {
-        const authObj = StorageUtil.getStorageObj("pemModulesActionsMap");
-        return authObj || {};
+        const { pemModulesActionsMap } = StorageUtil.getStorageObj('auth');
+        return pemModulesActionsMap || {};
+    }
+
+    /**
+     * getTenantUid.
+     *
+     * @returns {string}
+     */
+    static getTenantUid() {
+        return StorageUtil.getStorageObj('auth').tenantUid;
     }
 }

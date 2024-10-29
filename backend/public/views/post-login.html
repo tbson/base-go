@@ -2,12 +2,8 @@
     <head>
         <title>Authenticating...</title>
         <script>
-            const userInfo = {{ .userInfo }};
-            const tenantUid = {{ .tenantUid }};
-            const pemModulesActionsMap = {{ .pemModulesActionsMap }};
-            localStorage.setItem('userInfo', userInfo);
-            localStorage.setItem('tenantUid', tenantUid);
-            localStorage.setItem('pemModulesActionsMap', pemModulesActionsMap);
+            const auth = {{ .auth }};
+            localStorage.setItem('auth', auth);
 
             const nextUrl = localStorage.getItem('nextUrl');
             if (nextUrl) {

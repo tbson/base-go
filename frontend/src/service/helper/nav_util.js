@@ -14,10 +14,7 @@ export default class NavUtil {
     }
 
     static clearAuthData() {
-        StorageUtil.removeStorage("locale");
-        StorageUtil.removeStorage("userInfo");
-        StorageUtil.removeStorage("tenantUid");
-        StorageUtil.removeStorage("pemModulesActionsMap");
+        StorageUtil.removeStorage("auth");
     }
 
     /**

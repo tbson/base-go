@@ -103,14 +103,17 @@ func Callback(c echo.Context) error {
 
 	pemModulesActionsMap, err := srv.GetPemModulesActionsMap(userInfo.ID)
 
-	userInfoJson, _ := json.Marshal(userInfo)
-	pemModulesActionsMapJson, _ := json.Marshal(pemModulesActionsMap)
-	data := map[string]interface{}{
-		"userInfo":             string(userInfoJson),
+	auth := ctype.Dict{
+		"userInfo":             userInfo,
 		"tenantUid":            tenantUid,
-		"pemModulesActionsMap": string(pemModulesActionsMapJson),
+		"pemModulesActionsMap": pemModulesActionsMap,
 	}
-	// return c.JSON(http.StatusOK, result)
+	authJson, _ := json.Marshal(auth)
+
+	data := map[string]interface{}{
+		"auth": string(authJson),
+	}
+
 	return c.Render(http.StatusOK, "post-login.html", data)
 }
 

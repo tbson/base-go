@@ -68,13 +68,11 @@ export default class RequestUtil {
         const { data, 'Content-Type': contentType } = RequestUtil.fileInObject(params)
             ? RequestUtil.getFormDataPayload(params)
             : RequestUtil.getJsonPayload(params);
-        const token = StorageUtil.getToken();
         const config = {
             method,
             baseURL: RequestUtil.getApiBaseUrl(),
             url,
             headers: {
-                Authorization: token ? `JWT ${token}` : undefined,
                 'Content-Type': contentType,
                 'Accept-Language': StorageUtil.getStorageStr('locale')
             }
