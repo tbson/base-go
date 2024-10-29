@@ -3,26 +3,25 @@ package app
 import (
 	"src/common/ctype"
 	"src/module/config/schema"
-	"src/module/config/usecase/crudvariable/app/intf"
 	"src/util/restlistutil"
 )
 
 type Schema = schema.Variable
 
 type Service struct {
-	cruder intf.CRUDer[Schema]
-	pager  intf.Pager[Schema]
+	cruder CRUDer[Schema]
+	pager  Pager[Schema]
 }
 
-func (s Service) New(cruder intf.CRUDer[Schema], pager intf.Pager[Schema]) Service {
+func (s Service) New(cruder CRUDer[Schema], pager Pager[Schema]) Service {
 	return Service{cruder, pager}
 }
 
-func (s Service) NewForPaging(pager intf.Pager[Schema]) Service {
+func (s Service) NewForPaging(pager Pager[Schema]) Service {
 	return Service{nil, pager}
 }
 
-func (s Service) NewForCruding(cruder intf.CRUDer[Schema]) Service {
+func (s Service) NewForCruding(cruder CRUDer[Schema]) Service {
 	return Service{cruder, nil}
 }
 
