@@ -34,6 +34,9 @@ func (r Repo) GetTenantUser(
 		},
 	}
 	user, err := repo.Retrieve(queryOptions)
+	if err != nil {
+		return app.AuthUserResult{}, err
+	}
 	result := app.AuthUserResult{
 		ID:    user.ID,
 		Admin: user.Admin,

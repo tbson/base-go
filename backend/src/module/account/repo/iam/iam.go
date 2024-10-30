@@ -105,6 +105,15 @@ func (r Repo) ValidateCallback(
 		return result, err
 	}
 
+	ssoUserInfo, ssoResult := r.client.GetUserInfo(ctx, token.AccessToken, realm)
+	if ssoResult != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.CannotGetUserInfo,
+		})
+		return result, errutil.New("", []string{msg})
+	}
+	userInfo.Sub = ssoUserInfo.Sub
+
 	result = ssoutil.TokensAndClaims{
 		AccessToken:  accesToken,
 		RefreshToken: refreshToken,
@@ -145,11 +154,12 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (ssoutil.UserInfo, er
 
 	// If verification is successful, print the claims
 	claims := token.PrivateClaims()
+
 	result = ssoutil.UserInfo{
-		Uid:       claims["preferred_username"].(string),
-		Email:     claims["email"].(string),
-		FirstName: claims["given_name"].(string),
-		LastName:  claims["family_name"].(string),
+		ExternalID: claims["preferred_username"].(string),
+		Email:      claims["email"].(string),
+		FirstName:  claims["given_name"].(string),
+		LastName:   claims["family_name"].(string),
 	}
 
 	return result, nil

@@ -18,13 +18,14 @@ import (
 var client *gocloak.GoCloak
 
 type UserInfo struct {
-	ID          uint   `json:"id"`
-	Uid         string `json:"uid"`
-	Email       string `json:"email"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	ProfileType string `json:"profile_type"`
-	TenantUid   string `json:"tenant_uid"`
+	ID          uint    `json:"id"`
+	ExternalID  string  `json:"external_id"`
+	Sub         *string `json:"sub"`
+	Email       string  `json:"email"`
+	FirstName   string  `json:"first_name"`
+	LastName    string  `json:"last_name"`
+	ProfileType string  `json:"profile_type"`
+	TenantUid   string  `json:"tenant_uid"`
 }
 
 type TokensAndClaims struct {

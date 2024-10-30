@@ -14,6 +14,8 @@ var DB_NAME string = frameworkutil.GetEnv("DB_NAME", "")
 var DB_PASSWORD string = frameworkutil.GetEnv("DB_PASSWORD", "")
 var TIME_ZONE string = frameworkutil.GetEnv("TIME_ZONE", "")
 
+var KEYCLOAK_ADMIN string = frameworkutil.GetEnv("KEYCLOAK_ADMIN", "")
+var KEYCLOAK_ADMIN_PASSWORD string = frameworkutil.GetEnv("KEYCLOAK_ADMIN_PASSWORD", "")
 var KEYCLOAK_URL string = frameworkutil.GetEnv("KEYCLOAK_URL", "")
 var KEYCLOAK_DEFAULT_REALM string = frameworkutil.GetEnv("KEYCLOAK_DEFAULT_REALM", "")
 var KEYCLOAK_DEFAULT_CLIENT_ID string = frameworkutil.GetEnv("KEYCLOAK_DEFAULT_CLIENT_ID", "")

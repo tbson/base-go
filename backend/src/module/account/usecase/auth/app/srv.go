@@ -99,11 +99,23 @@ func (srv Service) HandleCallback(
 	userInfo := tokensAndClaims.UserInfo
 
 	user, err := srv.authRepo.GetTenantUser(tenantID, userInfo.Email)
-
 	if err != nil {
 		userData := iterutil.StructToDict(userInfo)
+		delete(userData, "ID")
+		delete(userData, "ProfileType")
+		delete(userData, "TenantUid")
 		userData["TenantID"] = tenantID
 		_, err = srv.userRepo.Create(userData)
+		if err != nil {
+			return tokensAndClaims, err
+		}
+	} else {
+		userData := iterutil.StructToDict(userInfo)
+		delete(userData, "ID")
+		delete(userData, "ProfileType")
+		delete(userData, "TenantUid")
+		userData["TenantID"] = tenantID
+		_, err = srv.userRepo.Update(int(user.ID), userData)
 		if err != nil {
 			return tokensAndClaims, err
 		}

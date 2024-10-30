@@ -10,7 +10,7 @@ import (
 )
 
 type AuthClient struct {
-	ID          uint
+	ID          uint     `gorm:"primaryKey" json:"id"`
 	Tenants     []Tenant `gorm:"constraint:OnDelete:SET NULL;"`
 	Uid         string   `gorm:"type:text;not null;unique"`
 	Description string   `gorm:"type:text;not null;default:''"`
@@ -32,7 +32,7 @@ func NewAuthClient(data ctype.Dict) *AuthClient {
 }
 
 type Tenant struct {
-	ID           uint
+	ID           uint `gorm:"primaryKey" json:"id"`
 	AuthClientID uint
 	AuthClient   *AuthClient
 	Uid          string `gorm:"type:text;not null;unique"`
@@ -54,12 +54,13 @@ func NewTenant(data ctype.Dict) *Tenant {
 }
 
 type User struct {
-	ID          uint `json:"id"`
-	TenantID    uint `gorm:"not null;uniqueIndex:idx_users_tenant_uid;uniqueIndex:idx_users_tenant_email" json:"tenant_id"`
+	ID          uint `gorm:"primaryKey" json:"id"`
+	TenantID    uint `gorm:"not null;uniqueIndex:idx_users_tenant_external;uniqueIndex:idx_users_tenant_email" json:"tenant_id"`
 	Tenant      *Tenant
 	TenantTmpID *uint          `json:"tenant_tmp_id"`
-	Roles       []Role         `gorm:"many2many:users_roles;" json:"roles"`
-	Uid         string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_uid" json:"uid"`
+	Sub         *string        `gorm:"type:text;default:null;unique" json:"sub"`
+	Roles       []Role         `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"roles"`
+	ExternalID  string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_external" json:"uid"`
 	Email       string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_email" json:"email"`
 	Mobile      *string        `gorm:"type:text" json:"mobile"`
 	FirstName   string         `gorm:"type:text;not null;default:''" json:"first_name"`
@@ -80,7 +81,7 @@ func NewUser(data ctype.Dict) *User {
 	return &User{
 		TenantID:    data["TenantID"].(uint),
 		TenantTmpID: data["TenantTmpID"].(*uint),
-		Uid:         data["Uid"].(string),
+		ExternalID:  data["ExternalID"].(string),
 		Email:       data["Email"].(string),
 		Mobile:      data["Mobile"].(*string),
 		FirstName:   data["FirstName"].(string),
@@ -93,9 +94,9 @@ func NewUser(data ctype.Dict) *User {
 }
 
 type Role struct {
-	ID        uint
-	Users     []User `gorm:"many2many:users_roles;"`
-	Pems      []Pem  `gorm:"many2many:roles_pems;"`
+	ID        uint   `gorm:"primaryKey" json:"id"`
+	Users     []User `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
+	Pems      []Pem  `gorm:"many2many:roles_pems;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 	TenantID  uint   `gorm:"not null;uniqueIndex:idx_roles_tenant_title"`
 	Tenant    *Tenant
 	Title     string `gorm:"type:text;not null;uniqueIndex:idx_roles_tenant_title"`
@@ -111,8 +112,8 @@ func NewRole(data ctype.Dict) *Role {
 }
 
 type Pem struct {
-	ID     uint
-	Roles  []Role `gorm:"many2many:roles_pems;"`
+	ID     uint   `gorm:"primaryKey" json:"id"`
+	Roles  []Role `gorm:"many2many:roles_pems;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 	Title  string `gorm:"type:text;not null"`
 	Module string `gorm:"type:text;not null;uniqueIndex:idx_pems_module_action"`
 	Action string `gorm:"type:text;not null;uniqueIndex:idx_pems_module_action"`

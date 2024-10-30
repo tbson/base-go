@@ -132,4 +132,9 @@ var (
 		ID:    "Unauthorized",
 		Other: "Unauthorized",
 	}
+
+	CannotGetUserInfo = &i18n.Message{
+		ID:    "CannotGetUserInfo",
+		Other: "Cannot get user info",
+	}
 )

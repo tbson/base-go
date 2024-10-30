@@ -23,6 +23,7 @@ type AuthClientInfo struct {
 
 type UserRepo interface {
 	Create(data ctype.Dict) (*schema.User, error)
+	Update(id int, data ctype.Dict) (*schema.User, error)
 }
 
 type IamRepo interface {

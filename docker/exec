@@ -57,6 +57,8 @@ elif [ "$FIRST_ARG" == "fdumpmessages" ]; then
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/en.po > ../frontend/src/locale/en.po.json
 elif [ "$FIRST_ARG" == "go" ]; then
     docker compose exec "$NAME"_backend go $ARGS
+elif [ "$FIRST_ARG" == "atlas" ]; then
+    docker compose exec "$NAME"_backend atlas $ARGS --env gorm
 elif [ "$FIRST_ARG" == "command" ]; then
     docker compose exec "$NAME"_backend go run ./command/$ARGS
 elif [ "$FIRST_ARG" == "initmigrations" ]; then
