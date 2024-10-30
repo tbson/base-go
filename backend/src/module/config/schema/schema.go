@@ -18,7 +18,7 @@ var TypeDict = iterutil.FieldEnum{
 var TypeOptions = iterutil.GetFieldOptions(TypeDict)
 
 type Variable struct {
-	ID          uint      `json:"id" gorm:"primary_key"`
+	ID          uint      `json:"id"`
 	Key         string    `gorm:"type:text;not null;unique" json:"key"`
 	Value       string    `gorm:"type:text;not null;default:''" json:"value"`
 	Description string    `gorm:"type:text;not null;default:''" json:"description"`

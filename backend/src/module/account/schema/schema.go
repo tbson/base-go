@@ -54,22 +54,22 @@ func NewTenant(data ctype.Dict) *Tenant {
 }
 
 type User struct {
-	ID          uint
-	TenantID    uint `gorm:"not null;uniqueIndex:idx_users_tenant_uid;uniqueIndex:idx_users_tenant_email"`
+	ID          uint `json:"id"`
+	TenantID    uint `gorm:"not null;uniqueIndex:idx_users_tenant_uid;uniqueIndex:idx_users_tenant_email" json:"tenant_id"`
 	Tenant      *Tenant
-	TenantTmpID *uint
-	Roles       []Role         `gorm:"many2many:users_roles;"`
-	Uid         string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_uid"`
-	Email       string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_email"`
-	Mobile      *string        `gorm:"type:text"`
-	FirstName   string         `gorm:"type:text;not null;default:''"`
-	LastName    string         `gorm:"type:text;not null;default:''"`
-	Avatar      string         `gorm:"type:text;not null;default:''"`
-	AvatarStr   string         `gorm:"type:text;not null;default:''"`
-	ExtraInfo   datatypes.JSON `gorm:"type:json;not null;default:'{}'"`
-	Admin       bool           `gorm:"type:boolean;not null;default:false"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	TenantTmpID *uint          `json:"tenant_tmp_id"`
+	Roles       []Role         `gorm:"many2many:users_roles;" json:"roles"`
+	Uid         string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_uid" json:"uid"`
+	Email       string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_email" json:"email"`
+	Mobile      *string        `gorm:"type:text" json:"mobile"`
+	FirstName   string         `gorm:"type:text;not null;default:''" json:"first_name"`
+	LastName    string         `gorm:"type:text;not null;default:''" json:"last_name"`
+	Avatar      string         `gorm:"type:text;not null;default:''" json:"avatar"`
+	AvatarStr   string         `gorm:"type:text;not null;default:''" json:"avatar_str"`
+	ExtraInfo   datatypes.JSON `gorm:"type:json;not null;default:'{}'" json:"extra_info"`
+	Admin       bool           `gorm:"type:boolean;not null;default:false" json:"admin"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
 }
 
 func NewUser(data ctype.Dict) *User {

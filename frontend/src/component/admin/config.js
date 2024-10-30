@@ -3,7 +3,7 @@ import RequestUtil from "service/helper/request_util";
 
 const urlMap = {
     base: {
-        prefix: "account/admin",
+        prefix: "account",
         endpoints: {
             crud: "",
             profile: "profile"

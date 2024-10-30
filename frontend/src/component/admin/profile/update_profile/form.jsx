@@ -13,7 +13,6 @@ export default function UpdateProfileForm({ data, onChange }) {
         mobile: {
             name: "mobile",
             label: t`Mobile`,
-            rules: [FormUtil.ruleRequired()]
         },
         first_name: {
             name: "first_name",

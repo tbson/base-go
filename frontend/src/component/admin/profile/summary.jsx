@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Row, Col } from "antd";
 import { t } from "ttag";
 
 export default function ProfileSummary(data) {
@@ -14,15 +13,21 @@ export default function ProfileSummary(data) {
                 </tr>
                 <tr>
                     <td span={6}>
-                        <strong>{t`Phone number`}</strong>
+                        <strong>{t`Mobile`}</strong>
                     </td>
-                    <td span={18}>{data.phone_number}</td>
+                    <td span={18}>{data.mobile}</td>
                 </tr>
                 <tr>
                     <td span={6}>
-                        <strong>{t`Fullname`}</strong>
+                        <strong>{t`First name`}</strong>
                     </td>
-                    <td span={18}>{data.full_name}</td>
+                    <td span={18}>{data.first_name}</td>
+                </tr>
+                <tr>
+                    <td span={6}>
+                        <strong>{t`Last name`}</strong>
+                    </td>
+                    <td span={18}>{data.last_name}</td>
                 </tr>
             </tbody>
         </table>
