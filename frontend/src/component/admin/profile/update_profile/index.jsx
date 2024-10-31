@@ -37,7 +37,7 @@ export default function UpdateProfile({ onChange }) {
             keyboard={false}
             maskClosable={false}
             destroyOnClose
-            visible={open}
+            open={open}
             okButtonProps={{ form: Form.formName, key: "submit", htmlType: "submit" }}
             okText={t`Update profile`}
             onCancel={() => Service.toggle(false)}

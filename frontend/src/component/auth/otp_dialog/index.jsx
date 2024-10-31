@@ -45,7 +45,7 @@ export default function OTPDialog({ onChange }) {
             keyboard={false}
             maskClosable={false}
             destroyOnClose
-            visible={open}
+            open={open}
             okButtonProps={{ form: Form.formName, key: "submit", htmlType: "submit" }}
             okText="OK"
             onCancel={() => Service.toggle(false)}

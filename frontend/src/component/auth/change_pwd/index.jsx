@@ -34,7 +34,7 @@ export default function ChangePwd() {
             keyboard={false}
             maskClosable={false}
             destroyOnClose
-            visible={open}
+            open={open}
             okButtonProps={{ form: Form.formName, key: "submit", htmlType: "submit" }}
             okText={t`Change password`}
             onCancel={() => Service.toggle(false)}

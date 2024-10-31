@@ -45,7 +45,7 @@ export default function ResetPwd({ onChange }) {
             keyboard={false}
             maskClosable={false}
             destroyOnClose
-            visible={open}
+            open={open}
             okButtonProps={{ form: Form.formName, key: "submit", htmlType: "submit" }}
             onCancel={() => Service.toggle(false)}
             okText={t`Reset password`}

@@ -58,7 +58,7 @@ export default function RoleDialog({ pems, onChange }) {
             keyboard={false}
             maskClosable={false}
             destroyOnClose
-            visible={open}
+            open={open}
             okButtonProps={{ form: Form.formName, key: "submit", htmlType: "submit" }}
             okText={t`Save`}
             onCancel={() => Service.toggle(false)}

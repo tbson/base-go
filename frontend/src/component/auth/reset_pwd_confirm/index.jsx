@@ -29,7 +29,7 @@ export default function ResetPwdConfirm() {
     return (
         <Modal
             destroyOnClose={true}
-            visible={open}
+            open={open}
             okButtonProps={{ form: Form.formName, key: "submit", htmlType: "submit" }}
             okText="OK"
             onCancel={() => Service.toggle(false)}
