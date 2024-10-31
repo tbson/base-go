@@ -211,3 +211,17 @@ func (r Repo) RefreshToken(
 	}
 	return result, nil
 }
+
+func (r Repo) GetAdminAccessToken() (string, error) {
+	ctx := context.Background()
+	adminUser := setting.KEYCLOAK_ADMIN
+	adminPassword := setting.KEYCLOAK_ADMIN_PASSWORD
+	token, err := r.client.LoginAdmin(ctx, adminUser, adminPassword, "master")
+	if err != nil {
+		msg := localeutil.Get().MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.CannotLoginAdmin,
+		})
+		return "", errutil.New("", []string{msg})
+	}
+	return token.AccessToken, nil
+}

@@ -38,7 +38,7 @@ export default class NavUtil {
      * @returns {void}
      */
     static cleanAndMoveToLoginPage(navigate) {
-        const currentUrl = window.location.href.split("#")[1];
+        const currentUrl = window.location.pathname;
         NavUtil.clearAuthData();
         let loginUrl = "/login";
         if (currentUrl) {
@@ -47,7 +47,7 @@ export default class NavUtil {
         if (navigate) {
             NavUtil.navigateTo(navigate)(loginUrl);
         } else {
-            window.location.href = `/#${loginUrl}`;
+            window.location.href = loginUrl;
         }
     }
 }

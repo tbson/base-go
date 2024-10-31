@@ -24,7 +24,7 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 		"PUT", "/", UpdateProfile,
 	)
 	rr.Private(
-		"PUT", "/password", ChangePassword,
+		"PUT", "/password/", ChangePassword,
 	)
 	return e, pemMap
 }

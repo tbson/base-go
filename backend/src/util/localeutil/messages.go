@@ -137,4 +137,9 @@ var (
 		ID:    "CannotGetUserInfo",
 		Other: "Cannot get user info",
 	}
+
+	CannotLoginAdmin = &i18n.Message{
+		ID:    "CannotLoginAdmin",
+		Other: "Cannot login admin",
+	}
 )

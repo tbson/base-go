@@ -6,7 +6,8 @@ const urlMap = {
         prefix: "account",
         endpoints: {
             crud: "",
-            profile: "profile"
+            profile: "profile",
+            password: "profile/password"
         }
     }
 };
