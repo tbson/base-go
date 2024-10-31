@@ -1,26 +1,31 @@
-import * as React from "react";
-import { t } from "ttag";
-import { Form, Input } from "antd";
-import FormUtil from "service/helper/form_util";
-import { urls } from "../../config";
+import * as React from 'react';
+import { t } from 'ttag';
+import { Form, Input, Row, Col } from 'antd';
+import FormUtil from 'service/helper/form_util';
+import ImgInput from 'component/common/form/ant/input/img_input';
+import { urls } from '../../config';
 
-const formName = "UpdateProfileForm";
+const formName = 'UpdateProfileForm';
 
 export default function UpdateProfileForm({ data, onChange }) {
     const [form] = Form.useForm();
 
     const formAttrs = {
+        avatar: {
+            name: 'avatar',
+            label: t`Avatar`
+        },
         mobile: {
-            name: "mobile",
-            label: t`Mobile`,
+            name: 'mobile',
+            label: t`Mobile`
         },
         first_name: {
-            name: "first_name",
+            name: 'first_name',
             label: t`First Name`,
             rules: [FormUtil.ruleRequired()]
         },
         last_name: {
-            name: "last_name",
+            name: 'last_name',
             label: t`Last Name`,
             rules: [FormUtil.ruleRequired()]
         }
@@ -30,24 +35,33 @@ export default function UpdateProfileForm({ data, onChange }) {
         <Form
             form={form}
             name={formName}
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
+            layout="vertical"
             initialValues={{ ...data }}
-            onFinish={(payload) =>
-                FormUtil.submit(urls.profile, payload, "put")
+            onFinish={(payload) => {
+                console.log('payload', payload);
+                FormUtil.submit(urls.profile, payload, 'put')
                     .then((data) => onChange(data))
-                    .catch(FormUtil.setFormErrors(form))
-            }
+                    .catch(FormUtil.setFormErrors(form));
+            }}
         >
-            <Form.Item {...formAttrs.mobile}>
-                <Input autoFocus />
-            </Form.Item>
-            <Form.Item {...formAttrs.first_name}>
-                <Input />
-            </Form.Item>
-            <Form.Item {...formAttrs.last_name}>
-                <Input />
-            </Form.Item>
+            <Row>
+                <Col span={8}>
+                    <Form.Item {...formAttrs.avatar}>
+                        <ImgInput />
+                    </Form.Item>
+                </Col>
+                <Col span={16}>
+                    <Form.Item {...formAttrs.mobile}>
+                        <Input autoFocus />
+                    </Form.Item>
+                    <Form.Item {...formAttrs.first_name}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item {...formAttrs.last_name}>
+                        <Input />
+                    </Form.Item>
+                </Col>
+            </Row>
         </Form>
     );
 }

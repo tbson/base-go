@@ -1,10 +1,23 @@
-import * as React from "react";
-import { t } from "ttag";
+import * as React from 'react';
+import { t } from 'ttag';
+import Img from 'component/common/display/img';
 
 export default function ProfileSummary(data) {
     return (
         <table className="styled-table">
             <tbody>
+                <tr>
+                    <td span={6}>
+                        <strong>{t`Avatar`}</strong>
+                    </td>
+                    <td span={18}>
+                        <Img
+                            src={data.avatar}
+                            width={150}
+                            height={150}
+                        />
+                    </td>
+                </tr>
                 <tr>
                     <td span={6}>
                         <strong>{t`Email`}</strong>
@@ -33,4 +46,4 @@ export default function ProfileSummary(data) {
         </table>
     );
 }
-ProfileSummary.displayName = "ProfileSummary";
+ProfileSummary.displayName = 'ProfileSummary';
