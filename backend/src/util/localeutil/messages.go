@@ -142,4 +142,19 @@ var (
 		ID:    "CannotLoginAdmin",
 		Other: "Cannot login admin",
 	}
+
+	CannotUpdateIAMUser = &i18n.Message{
+		ID:    "CannotUpdateIAMUser",
+		Other: "Cannot update IAM user",
+	}
+
+	CannotSetPassword = &i18n.Message{
+		ID:    "CannotSetPassword",
+		Other: "Cannot set password",
+	}
+
+	PasswordsNotMatch = &i18n.Message{
+		ID:    "PasswordsNotMatch",
+		Other: "Passwords do not match",
+	}
 )

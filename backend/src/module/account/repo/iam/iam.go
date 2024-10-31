@@ -225,3 +225,48 @@ func (r Repo) GetAdminAccessToken() (string, error) {
 	}
 	return token.AccessToken, nil
 }
+
+func (r Repo) UpdateUser(
+	accessToken string,
+	realm string,
+	sub string,
+	data ctype.Dict,
+) error {
+	ctx := context.Background()
+	localizer := localeutil.Get()
+	userData := gocloak.User{
+		ID:        &sub,
+		FirstName: gocloak.StringP(data["FirstName"].(string)),
+		LastName:  gocloak.StringP(data["LastName"].(string)),
+		Attributes: &map[string][]string{
+			"mobile": {data["Mobile"].(string)},
+		},
+	}
+
+	err := r.client.UpdateUser(ctx, accessToken, realm, userData)
+	if err != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.CannotUpdateIAMUser,
+		})
+		return errutil.New("", []string{msg})
+	}
+	return nil
+}
+
+func (r Repo) SetPassword(
+	accessToken string,
+	sub string,
+	realm string,
+	password string,
+) error {
+	ctx := context.Background()
+	localizer := localeutil.Get()
+	err := r.client.SetPassword(ctx, accessToken, sub, realm, password, false)
+	if err != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.CannotSetPassword,
+		})
+		return errutil.New("", []string{msg})
+	}
+	return nil
+}
