@@ -234,24 +234,24 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 	return data, nil
 }
 
-func ValidateId(id string) int {
+func ValidateId(id string) uint {
 	if id == "" {
 		return 0
 	}
 	if id, err := strconv.Atoi(id); err == nil {
-		return id
+		return uint(id)
 	}
 	return 0
 }
 
-func ValidateIds(ids string) []int {
-	var idList []int
+func ValidateIds(ids string) []uint {
+	var idList []uint
 	if ids == "" {
 		return idList
 	}
 	for _, id := range strings.Split(ids, ",") {
 		if id, err := strconv.Atoi(id); err == nil {
-			idList = append(idList, id)
+			idList = append(idList, uint(id))
 		}
 	}
 	return idList

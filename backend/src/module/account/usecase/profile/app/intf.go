@@ -18,7 +18,7 @@ type InputPassword struct {
 
 type UserRepo interface {
 	Retrieve(opts ctype.QueryOptions) (*schema.User, error)
-	Update(id int, data ctype.Dict) (*schema.User, error)
+	Update(id uint, data ctype.Dict) (*schema.User, error)
 }
 
 type IamRepo interface {

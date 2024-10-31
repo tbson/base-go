@@ -81,7 +81,7 @@ func (r Repo) GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*Sc
 	return existItem, nil
 }
 
-func (r Repo) Update(id int, data ctype.Dict) (*Schema, error) {
+func (r Repo) Update(id uint, data ctype.Dict) (*Schema, error) {
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"id": id},
 	}
@@ -97,8 +97,8 @@ func (r Repo) Update(id int, data ctype.Dict) (*Schema, error) {
 	return item, err
 }
 
-func (r Repo) Delete(id int) ([]int, error) {
-	ids := []int{id}
+func (r Repo) Delete(id uint) ([]uint, error) {
+	ids := []uint{id}
 	result := r.client.Where("id = ?", id).Delete(&Schema{})
 	err := result.Error
 	if err != nil {
@@ -107,7 +107,7 @@ func (r Repo) Delete(id int) ([]int, error) {
 	return ids, err
 }
 
-func (r Repo) DeleteList(ids []int) ([]int, error) {
+func (r Repo) DeleteList(ids []uint) ([]uint, error) {
 	result := r.client.Where("id IN (?)", ids).Delete(&Schema{})
 	err := result.Error
 	if err != nil {

@@ -115,7 +115,7 @@ func (srv Service) HandleCallback(
 		delete(userData, "ProfileType")
 		delete(userData, "TenantUid")
 		userData["TenantID"] = tenantID
-		_, err = srv.userRepo.Update(int(user.ID), userData)
+		_, err = srv.userRepo.Update(user.ID, userData)
 		if err != nil {
 			return tokensAndClaims, err
 		}
