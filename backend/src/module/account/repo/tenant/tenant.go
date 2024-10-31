@@ -89,7 +89,7 @@ func (r Repo) Update(id int, data ctype.Dict) (*Schema, error) {
 	if err != nil {
 		return nil, err
 	}
-	result := r.client.Model(&item).Updates(map[string]interface{}(data))
+	result := r.client.Model(&item).Omit("ID").Updates(map[string]interface{}(data))
 	err = result.Error
 	if err != nil {
 		return nil, errutil.NewGormError(err)
