@@ -14,6 +14,10 @@ var DB_NAME string = frameworkutil.GetEnv("DB_NAME", "")
 var DB_PASSWORD string = frameworkutil.GetEnv("DB_PASSWORD", "")
 var TIME_ZONE string = frameworkutil.GetEnv("TIME_ZONE", "")
 
+var S3_BUCKET_NAME string = frameworkutil.GetEnv("S3_BUCKET_NAME", "")
+var S3_REGION string = frameworkutil.GetEnv("S3_REGION", "")
+var S3_ENDPOINT_URL string = frameworkutil.GetEnv("S3_ENDPOINT_URL", "")
+
 var KEYCLOAK_ADMIN string = frameworkutil.GetEnv("KEYCLOAK_ADMIN", "")
 var KEYCLOAK_ADMIN_PASSWORD string = frameworkutil.GetEnv("KEYCLOAK_ADMIN_PASSWORD", "")
 var KEYCLOAK_URL string = frameworkutil.GetEnv("KEYCLOAK_URL", "")

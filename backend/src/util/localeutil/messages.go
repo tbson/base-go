@@ -157,4 +157,14 @@ var (
 		ID:    "PasswordsNotMatch",
 		Other: "Passwords do not match",
 	}
+
+	FailedToOpenFile = &i18n.Message{
+		ID:    "FailedToOpenFile",
+		Other: "Failed to open file '{{.Filename}}'",
+	}
+
+	FailedToUploadFileToS3 = &i18n.Message{
+		ID:    "FailedToUploadFileToS3",
+		Other: "Failed to upload file to S3",
+	}
 )

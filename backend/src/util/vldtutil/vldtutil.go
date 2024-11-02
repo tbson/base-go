@@ -20,16 +20,6 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-// CustomValidator implements the echo.Validator interface
-type CustomValidator struct {
-	Validator *validator.Validate
-}
-
-// Validate validates the input struct using the validator
-func (cv *CustomValidator) Validate(i interface{}) error {
-	return cv.Validator.Struct(i)
-}
-
 // getRequiredFields extracts the required fields from the struct tags
 func GetRequiredFields(v interface{}) []string {
 	var requiredFields []string

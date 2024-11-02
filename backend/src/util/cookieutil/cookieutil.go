@@ -38,7 +38,7 @@ func GetValue(c echo.Context, name string) string {
 		return cookie.Value
 	}
 
-	if name == "refresh_token" {
+	if name == "access_token" {
 		name = "Authorization"
 	}
 
