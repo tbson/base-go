@@ -89,6 +89,8 @@ elif [ "$FIRST_ARG" == "migrate" ]; then
     docker compose exec "$NAME"_backend atlas migrate apply --env gorm
 elif [ "$FIRST_ARG" == "bserver" ]; then
     docker compose exec "$NAME"_backend air src/server.go --root src
+elif [ "$FIRST_ARG" == "btest" ]; then
+    docker compose exec "$NAME"_backend go test ./...
 elif [ "$FIRST_ARG" == "up" ]; then
     docker_up
 elif [ "$FIRST_ARG" == "down" ]; then

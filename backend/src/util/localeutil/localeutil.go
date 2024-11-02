@@ -17,8 +17,8 @@ var (
 )
 
 var languageFiles = []string{
-	"./util/localeutil/locales/active.en.json",
-	"./util/localeutil/locales/active.vi.json",
+	"/code/src/util/localeutil/locales/active.en.json",
+	"/code/src/util/localeutil/locales/active.vi.json",
 }
 
 func initBundle() {

@@ -25,7 +25,6 @@ import (
 func ValidatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
 	result := ctype.Dict{}
 	localizer := localeutil.Get()
-
 	// bind the payload to the target struct
 	if err := c.Bind(&target); err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -33,7 +32,6 @@ func ValidatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
 		})
 		return result, errutil.New("", []string{msg})
 	}
-
 	// Validate the struct
 	if err := c.Validate(target); err != nil {
 		// Map to collect messages per field
@@ -77,7 +75,6 @@ func ValidatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
 		}
 		return result, &error
 	}
-
 	result, err := uploadAndUPdateResult(c, iterutil.StructToDict(target))
 	if err != nil {
 		return result, err
@@ -170,6 +167,9 @@ func getFiles(c echo.Context) (map[string][]*multipart.FileHeader, error) {
 }
 
 func uploadAndUPdateResult(c echo.Context, result ctype.Dict) (ctype.Dict, error) {
+	if c.Request().Header.Get("Content-Type") == "application/json" {
+		return result, nil
+	}
 	s3Repo := s3.New(awsutil.S3Client())
 	files, err := getFiles(c)
 	if err != nil {

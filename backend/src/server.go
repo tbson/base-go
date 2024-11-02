@@ -24,7 +24,6 @@ type customValidator struct {
 	Validator *validator.Validate
 }
 
-// Validate validates the input struct using the validator
 func (cv *customValidator) Validate(i interface{}) error {
 	return cv.Validator.Struct(i)
 }
