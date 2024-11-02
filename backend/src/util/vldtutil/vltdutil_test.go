@@ -25,11 +25,17 @@ func (cv *customValidator) Validate(i interface{}) error {
 	return cv.Validator.Struct(i)
 }
 
+var e *echo.Echo
+
+func TestMain(m *testing.M) {
+	e = echo.New()
+	e.Validator = &customValidator{Validator: validator.New()}
+	localeutil.Init("en")
+	m.Run()
+}
+
 // Mock function to initialize the Echo context
 func createTestContext(method, path string, body string) echo.Context {
-	localeutil.Init("en")
-	e := echo.New()
-	e.Validator = &customValidator{Validator: validator.New()}
 	req := httptest.NewRequest(method, path, strings.NewReader(body))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
