@@ -6,7 +6,6 @@ import (
 	"src/util/dbutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
-	"src/util/vldtutilnew"
 
 	"src/module/abstract/repo/paging"
 	"src/module/config/repo/variable"
@@ -54,7 +53,7 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
-	data, error := vldtutilnew.ValidatePayload(c, InputData{})
+	data, error := vldtutil.ValidatePayload(c, InputData{})
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
@@ -70,7 +69,7 @@ func Create(c echo.Context) error {
 func Update(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
 
-	data, error := vldtutilnew.ValidateUpdatePayload(c, InputData{})
+	data, error := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if error != nil {
 		return c.JSON(http.StatusBadRequest, error)
 	}
