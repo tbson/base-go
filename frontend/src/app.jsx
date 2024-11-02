@@ -1,6 +1,6 @@
 import * as React from "react";
 import { lazy, useEffect, useState } from "react";
-import { RecoilRoot, useRecoilState } from "recoil";
+import { Provider, useAtom } from 'jotai'
 import { useLocale } from "ttag";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { localeSt } from "src/states";
@@ -24,14 +24,13 @@ const lazyImport = (Component) => (props) => {
 };
 
 const Login = lazyImport(lazy(() => import("component/auth/login")));
-const Profile = lazyImport(lazy(() => import("component/auth/profile")));
-const Admin = lazyImport(lazy(() => import("component/admin")));
+const Profile = lazyImport(lazy(() => import("component/profile")));
 const Role = lazyImport(lazy(() => import("component/role")));
 const Variable = lazyImport(lazy(() => import("component/variable")));
 
 function Index() {
     const [dataLoaded, setDataLoaded] = useState(false);
-    const [locale, setLocale] = useRecoilState(localeSt);
+    const [locale, setLocale] = useAtom(localeSt);
     useLocale(locale);
     useEffect(() => {
         LocaleUtil.fetchLocales().then(() => {
@@ -54,7 +53,6 @@ function Index() {
                     <Route path="/" element={<PrivateRoute />}>
                         <Route path="/" element={<MainLayout />}>
                             <Route path="/" element={<Profile />} />
-                            <Route path="/admin" element={<Admin />} />
                             <Route path="/role" element={<Role />} />
                             <Route path="/variable" element={<Variable />} />
                         </Route>
@@ -68,9 +66,9 @@ function Index() {
 
 function App() {
     return (
-        <RecoilRoot>
+        <Provider>
             <Index />
-        </RecoilRoot>
+        </Provider>
     );
 }
 

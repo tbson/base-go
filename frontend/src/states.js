@@ -1,7 +1,4 @@
-import { atom } from "recoil";
+import { atom } from "jotai";
 import LocaleUtil from "service/helper/locale_util";
 
-export const localeSt = atom({
-    key: "locale",
-    default: LocaleUtil.getLocale()
-});
+export const localeSt = atom(LocaleUtil.getLocale());

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Select } from "antd";
-import { useRecoilState } from "recoil";
+import { useAtom } from 'jotai'
 import { useLocale } from "ttag";
 import LocaleUtil from "service/helper/locale_util";
 import { localeSt } from "src/states";
@@ -8,7 +8,7 @@ import { localeSt } from "src/states";
 const { Option } = Select;
 
 export default function LocaleSelect() {
-    const [locale, setLocale] = useRecoilState(localeSt);
+    const [locale, setLocale] = useAtom(localeSt);
     useLocale(locale);
     return (
         <Select

@@ -2,7 +2,7 @@ import * as React from "react";
 import { t } from "ttag";
 import { Row, Col, Form, Input } from "antd";
 import FormUtil from "service/helper/form_util";
-import { urls } from "../../config";
+import { urls } from "../config";
 
 const formName = "ChangePwdForm";
 

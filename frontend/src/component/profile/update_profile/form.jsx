@@ -3,7 +3,7 @@ import { t } from 'ttag';
 import { Form, Input, Row, Col } from 'antd';
 import FormUtil from 'service/helper/form_util';
 import ImgInput from 'component/common/form/ant/input/img_input';
-import { urls } from '../../config';
+import { urls } from '../config';
 
 const formName = 'UpdateProfileForm';
 

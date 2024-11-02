@@ -5,7 +5,7 @@ import { t } from "ttag";
 import { KeyOutlined, UserOutlined } from "@ant-design/icons";
 import PageHeading from "component/common/page_heading";
 import RequestUtil from "service/helper/request_util";
-import { urls, messages } from "../config";
+import { urls, messages } from "./config";
 import ProfileSummary from "./summary";
 import UpdateProfile from "./update_profile";
 import ChangePwd from "./change_pwd";
