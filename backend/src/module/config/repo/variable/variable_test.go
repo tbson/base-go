@@ -9,6 +9,8 @@ import (
 
 var repo Repo
 
+var queryKey = "Key"
+
 func TestMain(m *testing.M) {
 	dbutil.InitDb()
 	repo = New(dbutil.Db())
@@ -46,8 +48,9 @@ func TestList(t *testing.T) {
 }
 
 func TestRetrieve(t *testing.T) {
+	data1 := getData(1)
 	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"key": "key1"},
+		Filters: ctype.Dict{queryKey: data1[queryKey]},
 	}
 	result, err := repo.Retrieve(queryOptions)
 	if err != nil {
@@ -73,7 +76,9 @@ func TestCreate(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	data := getData(1)
-	item, _ := repo.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"key": data["Key"]}})
+	item, _ := repo.Retrieve(
+		ctype.QueryOptions{Filters: ctype.Dict{queryKey: data[queryKey]}},
+	)
 	result, err := repo.Update(item.ID, data)
 	if err != nil {
 		t.Errorf("Error: %v", err)
@@ -87,7 +92,10 @@ func TestUpdate(t *testing.T) {
 func TestGetOrCreate(t *testing.T) {
 	t.Run("Get", func(t *testing.T) {
 		data := getData(12)
-		queryOptions := ctype.QueryOptions{Filters: ctype.Dict{"key": "key11"}}
+		data11 := getData(11)
+		queryOptions := ctype.QueryOptions{
+			Filters: ctype.Dict{queryKey: data11[queryKey]},
+		}
 		result, err := repo.GetOrCreate(queryOptions, data)
 		if err != nil {
 			t.Errorf("Error: %v", err)
@@ -99,7 +107,9 @@ func TestGetOrCreate(t *testing.T) {
 	})
 	t.Run("Create", func(t *testing.T) {
 		data := getData(14)
-		queryOptions := ctype.QueryOptions{Filters: ctype.Dict{"key": data["Key"]}}
+		queryOptions := ctype.QueryOptions{
+			Filters: ctype.Dict{queryKey: data[queryKey]},
+		}
 		result, err := repo.GetOrCreate(queryOptions, data)
 		if err != nil {
 			t.Errorf("Error: %v", err)
@@ -117,7 +127,10 @@ func TestGetOrCreate(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	item, _ := repo.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"key": "key1"}})
+	data1 := getData(1)
+	item, _ := repo.Retrieve(
+		ctype.QueryOptions{Filters: ctype.Dict{queryKey: data1[queryKey]}},
+	)
 	_, err := repo.Delete(item.ID)
 	if err != nil {
 		t.Errorf("Error: %v", err)

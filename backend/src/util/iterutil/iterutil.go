@@ -3,6 +3,7 @@ package iterutil
 import (
 	"reflect"
 	"src/common/ctype"
+	"src/util/stringutil"
 	"strings"
 	"unicode"
 )
@@ -53,5 +54,13 @@ func StructToDict(obj interface{}) ctype.Dict {
 		result[fieldName] = fieldValue
 	}
 
+	return result
+}
+
+func DictCamelToSnake(data ctype.Dict) ctype.Dict {
+	result := make(ctype.Dict)
+	for k, v := range data {
+		result[stringutil.ToSnakeCase(k)] = v
+	}
 	return result
 }
