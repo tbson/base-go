@@ -9,12 +9,12 @@ data "external_schema" "gorm" {
 
 variable "db_url" {
   type = string
-  default = getenv("DB_URL")
+  default = getenv("DB_URL_ENV_")
 }
 
 variable "db_url_atlas" {
   type = string
-  default = getenv("DB_URL_ATLAS")
+  default = getenv("DB_URL_ATLAS_ENV_")
 }
 
 env "gorm" {

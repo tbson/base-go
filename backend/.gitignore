@@ -24,3 +24,4 @@ go.work
 /pkg/
 /tmp/
 /src/tmp/
+atlas.hcl

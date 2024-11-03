@@ -4,21 +4,14 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"src/util/dbutil"
 
 	"ariga.io/atlas-provider-gorm/gormschema"
-
-	account "src/module/account/schema"
-	config "src/module/config/schema"
 )
 
 func main() {
 	stmts, err := gormschema.New("postgres").Load(
-		&config.Variable{},
-		&account.Tenant{},
-		&account.AuthClient{},
-		&account.User{},
-		&account.Role{},
-		&account.Pem{},
+		dbutil.RegisterModels()...,
 	)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to load gorm schema: %v\n", err)

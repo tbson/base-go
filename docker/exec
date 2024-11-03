@@ -16,6 +16,28 @@ docker_up () {
     COMPOSE_HTTP_TIMEOUT=512 docker compose up -d
 }
 
+migrate() {
+    cp ../backend/src/atlas.hcl.default ../backend/src/atlas.hcl
+    # replace _ENV_ string with blank string
+    sed -i '' 's/_ENV_//g' ../backend/src/atlas.hcl
+    docker compose exec "$NAME"_backend atlas migrate apply --env gorm
+}
+
+migratetest() {
+    cp ../backend/src/atlas.hcl.default ../backend/src/atlas.hcl
+    # replace _ENV_ string with _test string
+    sed -i '' 's/_ENV_/_TEST/g' ../backend/src/atlas.hcl
+    docker compose exec "$NAME"_backend atlas migrate apply --env gorm
+}
+
+preparetestdb() {
+    docker compose exec "$NAME"_db psql -U postgres -c "DROP DATABASE IF EXISTS testdb;"
+    docker compose exec "$NAME"_db psql -U postgres -c "DROP DATABASE IF EXISTS testdbatlas;"
+    docker compose exec "$NAME"_db psql -U postgres -c "CREATE DATABASE testdb;"
+    docker compose exec "$NAME"_db psql -U postgres -c "CREATE DATABASE testdbatlas;"
+    migratetest
+}
+
 help () {
     echo "build             :  build docker instance"
     echo "up                :  up docker instance"
@@ -65,6 +87,8 @@ elif [ "$FIRST_ARG" == "initmigrations" ]; then
     docker compose exec "$NAME"_backend atlas migrate hash --env gorm
 elif [ "$FIRST_ARG" == "makemigrations" ]; then
     docker compose exec "$NAME"_backend atlas migrate diff --env gorm
+elif [ "$FIRST_ARG" == "migrate" ]; then
+    migrate
 elif [ "$FIRST_ARG" == "resetmakemigrations" ]; then
     echo "[+] Delete current DB..."
     rm -rf volumes/db/dbdata
@@ -85,11 +109,10 @@ elif [ "$FIRST_ARG" == "resetmakemigrations" ]; then
 
     echo "[+] Migrate migration files..."
     docker compose exec "$NAME"_backend atlas migrate apply --env gorm
-elif [ "$FIRST_ARG" == "migrate" ]; then
-    docker compose exec "$NAME"_backend atlas migrate apply --env gorm
 elif [ "$FIRST_ARG" == "bserver" ]; then
     docker compose exec "$NAME"_backend air src/server.go --root src
 elif [ "$FIRST_ARG" == "btest" ]; then
+    preparetestdb
     docker compose exec "$NAME"_backend go test ./...
 elif [ "$FIRST_ARG" == "up" ]; then
     docker_up
