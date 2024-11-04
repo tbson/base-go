@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"src/common/ctype"
 	"src/util/dbutil"
+	"src/util/localeutil"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var repo Repo
@@ -12,6 +15,7 @@ var repo Repo
 var queryKey = "Key"
 
 func TestMain(m *testing.M) {
+	localeutil.Init("en")
 	dbutil.InitDb()
 	repo = New(dbutil.Db())
 
@@ -48,30 +52,40 @@ func TestList(t *testing.T) {
 }
 
 func TestRetrieve(t *testing.T) {
-	data1 := getData(1)
-	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{queryKey: data1[queryKey]},
-	}
-	result, err := repo.Retrieve(queryOptions)
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
-
-	if result == nil {
-		t.Errorf("Expected non-nil result, got nil")
-	}
+	t.Run("Success", func(t *testing.T) {
+		data := getData(1)
+		queryOptions := ctype.QueryOptions{
+			Filters: ctype.Dict{queryKey: data[queryKey]},
+		}
+		_, err := repo.Retrieve(queryOptions)
+		if err != nil {
+			t.Errorf("Expected nil error, got %v", err)
+		}
+	})
+	t.Run("Not found", func(t *testing.T) {
+		data := getData(99)
+		queryOptions := ctype.QueryOptions{
+			Filters: ctype.Dict{queryKey: data[queryKey]},
+		}
+		_, err := repo.Retrieve(queryOptions)
+		assert.EqualError(t, err, "record not found")
+	})
 }
 
 func TestCreate(t *testing.T) {
-	data := getData(11)
-	result, err := repo.Create(data)
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
+	t.Run("Success", func(t *testing.T) {
+		data := getData(11)
+		_, err := repo.Create(data)
+		if err != nil {
+			t.Errorf("Expected nil error, got %v", err)
+		}
+	})
 
-	if result == nil {
-		t.Errorf("Expected non-nil result, got nil")
-	}
+	t.Run("Duplicate key", func(t *testing.T) {
+		data := getData(11)
+		_, err := repo.Create(data)
+		assert.EqualError(t, err, "value already exists")
+	})
 }
 
 func TestUpdate(t *testing.T) {
@@ -127,19 +141,29 @@ func TestGetOrCreate(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	data1 := getData(1)
-	item, _ := repo.Retrieve(
-		ctype.QueryOptions{Filters: ctype.Dict{queryKey: data1[queryKey]}},
-	)
-	_, err := repo.Delete(item.ID)
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
+	t.Run("Success", func(t *testing.T) {
+		data := getData(1)
+		item, _ := repo.Retrieve(
+			ctype.QueryOptions{Filters: ctype.Dict{queryKey: data[queryKey]}},
+		)
+		_, err := repo.Delete(item.ID)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
 
-	list, _ := repo.List(ctype.QueryOptions{})
-	if len(list) != 11 {
-		t.Errorf("Expected 11 items, got %d", len(list))
-	}
+		list, _ := repo.List(ctype.QueryOptions{})
+		if len(list) != 11 {
+			t.Errorf("Expected 11 items, got %d", len(list))
+		}
+	})
+	t.Run("Fail", func(t *testing.T) {
+		_, err := repo.Delete(9999)
+		assert.EqualError(t, err, "record not found")
+		list, _ := repo.List(ctype.QueryOptions{})
+		if len(list) != 11 {
+			t.Errorf("Expected 11 items, got %d", len(list))
+		}
+	})
 }
 
 func TestDeleteList(t *testing.T) {

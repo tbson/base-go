@@ -27,9 +27,9 @@ func CheckAuthUrl(c echo.Context) error {
 
 	srv := getService()
 
-	_, error := srv.GetAuthUrl(tenantUid)
-	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+	_, err := srv.GetAuthUrl(tenantUid)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	return c.JSON(http.StatusOK, ctype.Dict{})
@@ -40,9 +40,9 @@ func GetAuthUrl(c echo.Context) error {
 
 	srv := getService()
 
-	url, error := srv.GetAuthUrl(tenantUid)
-	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+	url, err := srv.GetAuthUrl(tenantUid)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	return c.Redirect(http.StatusTemporaryRedirect, url)
@@ -53,9 +53,9 @@ func GetLogoutUrl(c echo.Context) error {
 
 	srv := getService()
 
-	url, error := srv.GetLogoutUrl(tenantUid)
-	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+	url, err := srv.GetLogoutUrl(tenantUid)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	return c.Redirect(http.StatusTemporaryRedirect, url)

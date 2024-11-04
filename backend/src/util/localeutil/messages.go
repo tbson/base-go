@@ -5,166 +5,166 @@ import "github.com/nicksnyder/go-i18n/v2/i18n"
 var (
 	CannotReadRequestBody = &i18n.Message{
 		ID:    "CannotReadRequestBody",
-		Other: "Can not read request body",
+		Other: "can not read request body",
 	}
 
 	InvalidJSONPayload = &i18n.Message{
 		ID:    "InvalidJSONPayload",
-		Other: "Invalid JSON payload",
+		Other: "invalid JSON payload",
 	}
 
 	FieldRequired = &i18n.Message{
 		ID:    "FieldRequired",
-		Other: "This field is required",
+		Other: "this field is required",
 	}
 
 	BadJson = &i18n.Message{
 		ID:    "BadJson",
-		Other: "Request body contains badly-formed JSON (at position {{.Offset}})",
+		Other: "request body contains badly-formed JSON (at position {{.Offset}})",
 	}
 
 	InvalidFieldValue = &i18n.Message{
 		ID:    "InvalidFieldValue",
-		Other: "Invalid value for field '{{.FieldName}}'. Expected type {{.Type}} but got {{.Value}}",
+		Other: "invalid value for field '{{.FieldName}}'. Expected type {{.Type}} but got {{.Value}}",
 	}
 
 	InvalidValue = &i18n.Message{
 		ID:    "InvalidValue",
-		Other: "Invalid value",
+		Other: "invalid value",
 	}
 
 	NotRecognizedField = &i18n.Message{
 		ID:    "NotRecognizedField",
-		Other: "This field is not recognized",
+		Other: "this field is not recognized",
 	}
 
 	FailToDecodeJSON = &i18n.Message{
 		ID:    "FailToDecodeJSON",
-		Other: "Failed to decode JSON",
+		Other: "failed to decode JSON",
 	}
 
 	EmptyRequestBody = &i18n.Message{
 		ID:    "EmptyRequestBody",
-		Other: "Request body must not be empty",
+		Other: "request body must not be empty",
 	}
 
 	MustBeOneOf = &i18n.Message{
 		ID:    "MustBeOneOf",
-		Other: "Must be one of: {{.Values}}",
+		Other: "must be one of: {{.Values}}",
 	}
 
 	GormDuplicateKey = &i18n.Message{
 		ID:    "GormDuplicateKey",
-		Other: "Value already exists",
+		Other: "value already exists",
 	}
 
 	InvalidState = &i18n.Message{
 		ID:    "InvalidState",
-		Other: "Invalid state",
+		Other: "invalid state",
 	}
 
 	AuthorizationCodeNotFound = &i18n.Message{
 		ID:    "AuthorizationCodeNotFound",
-		Other: "Authorization code not found",
+		Other: "authorization code not found",
 	}
 
 	CannotExchangeAuthorizationCode = &i18n.Message{
 		ID:    "CannotExchangeAuthorizationCode",
-		Other: "Can not exchange authorization code for tokens",
+		Other: "can not exchange authorization code for tokens",
 	}
 
 	FailedToFetchJWKS = &i18n.Message{
 		ID:    "FailedToFetchJWKS",
-		Other: "Failed to fetch JWKS",
+		Other: "failed to fetch JWKS",
 	}
 
 	FailedToParseToken = &i18n.Message{
 		ID:    "FailedToParseToken",
-		Other: "Failed to parse token",
+		Other: "failed to parse token",
 	}
 
 	NoKidFieldInJWTTokenHeader = &i18n.Message{
 		ID:    "NoKidFieldInJWTTokenHeader",
-		Other: "No 'kid' field in JWT token header",
+		Other: "no 'kid' field in JWT token header",
 	}
 
 	UnableToFindKeyWithKid = &i18n.Message{
 		ID:    "UnableToFindKeyWithKid",
-		Other: "Unable to find key with kid",
+		Other: "unable to find key with kid",
 	}
 
 	FailedToCreateRawKey = &i18n.Message{
 		ID:    "FailedToCreateRawKey",
-		Other: "Failed to create raw key",
+		Other: "failed to create raw key",
 	}
 
 	ExpectedRSAKey = &i18n.Message{
 		ID:    "ExpectedRSAKey",
-		Other: "Expected RSA public key but got something else",
+		Other: "expected RSA public key but got something else",
 	}
 
 	FailedToVerifyToken = &i18n.Message{
 		ID:    "FailedToVerifyToken",
-		Other: "Failed to verify token",
+		Other: "failed to verify token",
 	}
 
 	TokenHasExpired = &i18n.Message{
 		ID:    "TokenHasExpired",
-		Other: "Token has expired",
+		Other: "token has expired",
 	}
 
 	NoRealmFound = &i18n.Message{
 		ID:    "NoRealmFound",
-		Other: "No realm found",
+		Other: "no realm found",
 	}
 
 	RefreshTokenNotFound = &i18n.Message{
 		ID:    "RefreshTokenNotFound",
-		Other: "Refresh token not found",
+		Other: "fefresh token not found",
 	}
 
 	CannotExchangeRefreshToken = &i18n.Message{
 		ID:    "CannotExchangeRefreshToken",
-		Other: "Can not exchange refresh token for tokens",
+		Other: "can not exchange refresh token for tokens",
 	}
 
 	Unauthorized = &i18n.Message{
 		ID:    "Unauthorized",
-		Other: "Unauthorized",
+		Other: "unauthorized",
 	}
 
 	CannotGetUserInfo = &i18n.Message{
 		ID:    "CannotGetUserInfo",
-		Other: "Cannot get user info",
+		Other: "cannot get user info",
 	}
 
 	CannotLoginAdmin = &i18n.Message{
-		ID:    "CannotLoginAdmin",
+		ID:    "cannotLoginAdmin",
 		Other: "Cannot login admin",
 	}
 
 	CannotUpdateIAMUser = &i18n.Message{
 		ID:    "CannotUpdateIAMUser",
-		Other: "Cannot update IAM user",
+		Other: "cannot update IAM user",
 	}
 
 	CannotSetPassword = &i18n.Message{
 		ID:    "CannotSetPassword",
-		Other: "Cannot set password",
+		Other: "cannot set password",
 	}
 
 	PasswordsNotMatch = &i18n.Message{
 		ID:    "PasswordsNotMatch",
-		Other: "Passwords do not match",
+		Other: "passwords do not match",
 	}
 
 	FailedToOpenFile = &i18n.Message{
 		ID:    "FailedToOpenFile",
-		Other: "Failed to open file '{{.Filename}}'",
+		Other: "failed to open file '{{.Filename}}'",
 	}
 
 	FailedToUploadFileToS3 = &i18n.Message{
 		ID:    "FailedToUploadFileToS3",
-		Other: "Failed to upload file to S3",
+		Other: "failed to upload file to S3",
 	}
 )

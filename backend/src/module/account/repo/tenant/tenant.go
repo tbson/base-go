@@ -101,7 +101,11 @@ func (r Repo) Update(id uint, data ctype.Dict) (*Schema, error) {
 func (r Repo) Delete(id uint) ([]uint, error) {
 	ids := []uint{id}
 	result := r.client.Where("id = ?", id).Delete(&Schema{})
-	err := result.Error
+	_, err := r.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"id": id}})
+	if err != nil {
+		return ids, err
+	}
+	err = result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)
 	}

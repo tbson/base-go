@@ -72,14 +72,14 @@ func NewGormError(err error) *CustomError {
 }
 
 func New(field string, messages []string) *CustomError {
-	error := buildErrorItem(field, messages)
+	err := buildErrorItem(field, messages)
 	return &CustomError{
-		Errors: []errorItem{error},
+		Errors: []errorItem{err},
 	}
 }
 
 func (e *CustomError) Add(field string, messages []string) *CustomError {
-	error := buildErrorItem(field, messages)
-	e.Errors = append(e.Errors, error)
+	err := buildErrorItem(field, messages)
+	e.Errors = append(e.Errors, err)
 	return e
 }

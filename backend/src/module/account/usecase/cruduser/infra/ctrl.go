@@ -27,9 +27,9 @@ func List(c echo.Context) error {
 	pager := paging.New[Schema](dbutil.Db())
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
-	listResult, error := pager.Paging(options, searchableFields)
-	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+	listResult, err := pager.Paging(options, searchableFields)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	return c.JSON(http.StatusOK, listResult)
@@ -43,10 +43,10 @@ func Retrieve(c echo.Context) error {
 		Filters: ctype.Dict{"id": id},
 	}
 
-	result, error := cruder.Retrieve(queryOptions)
+	result, err := cruder.Retrieve(queryOptions)
 
-	if error != nil {
-		return c.JSON(http.StatusNotFound, error)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, err)
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -54,13 +54,13 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
-	data, error := vldtutil.ValidatePayload(c, InputData{})
-	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+	data, err := vldtutil.ValidatePayload(c, InputData{})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
-	result, error := cruder.Create(iterutil.StructToDict(data))
-	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+	result, err := cruder.Create(iterutil.StructToDict(data))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	return c.JSON(http.StatusCreated, result)
@@ -70,15 +70,15 @@ func Create(c echo.Context) error {
 func Update(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
 
-	data, error := vldtutil.ValidateUpdatePayload(c, InputData{})
-	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+	data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 	id := vldtutil.ValidateId(c.Param("id"))
-	result, error := cruder.Update(id, data)
+	result, err := cruder.Update(id, data)
 
-	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -88,10 +88,10 @@ func Delete(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	ids, error := cruder.Delete(id)
+	ids, err := cruder.Delete(id)
 
-	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	return c.JSON(http.StatusOK, ids)
@@ -101,10 +101,10 @@ func DeleteList(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
-	ids, error := cruder.DeleteList(ids)
+	ids, err := cruder.DeleteList(ids)
 
-	if error != nil {
-		return c.JSON(http.StatusBadRequest, error)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	return c.JSON(http.StatusOK, ids)
