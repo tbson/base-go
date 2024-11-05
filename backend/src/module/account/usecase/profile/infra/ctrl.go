@@ -29,6 +29,7 @@ func GetProfile(c echo.Context) error {
 }
 
 func UpdateProfile(c echo.Context) error {
+	folder := "avatar"
 	userID := c.Get("userID").(uint)
 
 	iamRepo := iam.New(ssoutil.Client())
@@ -37,6 +38,10 @@ func UpdateProfile(c echo.Context) error {
 	srv := app.New(userRepo, iamRepo)
 
 	data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

@@ -75,12 +75,8 @@ func ValidatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
 		}
 		return result, &error
 	}
-	result, err := uploadAndUPdateResult(c, iterutil.StructToDict(target))
-	if err != nil {
-		return result, err
-	}
 
-	return result, nil
+	return iterutil.StructToDict(target), nil
 }
 
 func ValidateUpdatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
@@ -113,11 +109,7 @@ func ValidateUpdatePayload[T any](c echo.Context, target T) (ctype.Dict, error) 
 		}
 	}
 
-	result, err = uploadAndUPdateResult(c, data)
-	if err != nil {
-		return result, err
-	}
-	return result, nil
+	return data, nil
 }
 
 func ValidateId(id string) uint {
@@ -166,7 +158,11 @@ func getFiles(c echo.Context) (map[string][]*multipart.FileHeader, error) {
 	return result, nil
 }
 
-func uploadAndUPdateResult(c echo.Context, result ctype.Dict) (ctype.Dict, error) {
+func UploadAndUPdatePayload(
+	c echo.Context,
+	folder string,
+	result ctype.Dict,
+) (ctype.Dict, error) {
 	if c.Request().Header.Get("Content-Type") == "application/json" {
 		return result, nil
 	}
@@ -176,7 +172,7 @@ func uploadAndUPdateResult(c echo.Context, result ctype.Dict) (ctype.Dict, error
 		return result, err
 	}
 
-	s3Result, err := s3Repo.Uploads(c.Request().Context(), files)
+	s3Result, err := s3Repo.Uploads(c.Request().Context(), folder, files)
 	for k, v := range s3Result {
 		result[k] = v
 	}

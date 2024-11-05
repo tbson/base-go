@@ -29,6 +29,7 @@ func New(client *s3.Client) Repo {
 
 func (u *Repo) Upload(
 	ctx context.Context,
+	folder string,
 	fileHeader *multipart.FileHeader,
 ) (string, error) {
 	localizer := localeutil.Get()
@@ -46,7 +47,7 @@ func (u *Repo) Upload(
 	defer file.Close()
 
 	// Unique key for each file
-	key := fmt.Sprintf("uploads/%d_%s", time.Now().Unix(), fileHeader.Filename)
+	key := fmt.Sprintf("%s/%d_%s", folder, time.Now().Unix(), fileHeader.Filename)
 	_, err = u.client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(u.bucketName),
 		Key:    aws.String(key),
@@ -62,13 +63,14 @@ func (u *Repo) Upload(
 	}
 
 	// Generate the S3 URL
-	s3URL := fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", u.bucketName, u.region, key)
+	s3URL := fmt.Sprintf("%s/%s", setting.S3_ENDPOINT_URL, key)
 	return s3URL, nil
 }
 
 // write Uploads function that receive map of fileHeaders, upload to S3 parallelly using goroutine return map of fieldName and s3URL, reuse Upload function
 func (u *Repo) Uploads(
 	ctx context.Context,
+	folder string,
 	files map[string][]*multipart.FileHeader,
 ) (map[string]string, error) {
 	result := map[string]string{}
@@ -78,7 +80,7 @@ func (u *Repo) Uploads(
 	for fieldName, fileHeaders := range files {
 		go func(fieldName string, fileHeaders []*multipart.FileHeader) {
 			for _, fileHeader := range fileHeaders {
-				s3URL, err := u.Upload(ctx, fileHeader)
+				s3URL, err := u.Upload(ctx, folder, fileHeader)
 				if err != nil {
 					errChan <- err
 					return
