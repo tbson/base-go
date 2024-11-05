@@ -73,6 +73,8 @@ services:
             S3_REGION: ${S3_REGION}
             S3_ENDPOINT_URL: ${S3_ENDPOINT_URL}
 
+            SENTRY_DSN: ${SENTRY_DSN}
+
             KEYCLOAK_URL: ${KEYCLOAK_URL}
             KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
             KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}

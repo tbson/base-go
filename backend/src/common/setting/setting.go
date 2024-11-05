@@ -5,6 +5,7 @@ import (
 	"src/util/frameworkutil"
 )
 
+var DEBUG bool = frameworkutil.GetEnv("DEBUG", "true") == "true"
 var BASE_URL string = frameworkutil.GetEnv("BASE_URL", "")
 var DOMAIN string = frameworkutil.GetEnv("DOMAIN", "")
 var DB_HOST string = frameworkutil.GetEnv("DB_HOST", "")
@@ -20,6 +21,8 @@ var S3_SECRET_ACCESS_KEY string = frameworkutil.GetEnv("S3_SECRET_ACCESS_KEY", "
 var S3_BUCKET_NAME string = frameworkutil.GetEnv("S3_BUCKET_NAME", "")
 var S3_REGION string = frameworkutil.GetEnv("S3_REGION", "")
 var S3_ENDPOINT_URL string = frameworkutil.GetEnv("S3_ENDPOINT_URL", "")
+
+var SENTRY_DSN string = frameworkutil.GetEnv("SENTRY_DSN", "")
 
 var KEYCLOAK_ADMIN string = frameworkutil.GetEnv("KEYCLOAK_ADMIN", "")
 var KEYCLOAK_ADMIN_PASSWORD string = frameworkutil.GetEnv("KEYCLOAK_ADMIN_PASSWORD", "")
