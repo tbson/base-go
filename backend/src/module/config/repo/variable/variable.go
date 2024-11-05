@@ -98,6 +98,17 @@ func (r Repo) Update(id uint, data ctype.Dict) (*Schema, error) {
 	return item, err
 }
 
+func (r Repo) UpdateOrCreate(
+	queryOptions ctype.QueryOptions,
+	data ctype.Dict,
+) (*Schema, error) {
+	existItem, err := r.Retrieve(queryOptions)
+	if err != nil {
+		return r.Create(data)
+	}
+	return r.Update(existItem.ID, data)
+}
+
 func (r Repo) Delete(id uint) ([]uint, error) {
 	ids := []uint{id}
 	_, err := r.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"id": id}})
