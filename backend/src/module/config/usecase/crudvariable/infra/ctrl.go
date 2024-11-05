@@ -22,6 +22,20 @@ var searchableFields = []string{"key", "value", "description"}
 var filterableFields = []string{"data_type"}
 var orderableFields = []string{"id", "key"}
 
+// List godoc
+//
+//	@Summary		Get list of variables
+//	@Description	Get list of variables with filtering, sorting and paging
+//	@Tags			config
+//	@Accept			json
+//	@Produce		json
+//	@Param			q	query	string		false	"Search string"
+//	@Param			page	query	int		false	"Page number"
+//	@Param			order	query	int		false	"Order by id, key"
+//	@Param			data_type	query	string	false	"Filter by data type"
+//	@Success		200	{object}	restlistutil.ListRestfulResult[schema.Variable]
+//	@Failure		404	{object}	map[string]interface{}
+//	@Router			/api/v1/config/variable/ [get]
 func List(c echo.Context) error {
 	pager := paging.New[Schema](dbutil.Db())
 

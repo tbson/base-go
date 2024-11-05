@@ -15,6 +15,10 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
+	echoSwagger "github.com/swaggo/echo-swagger"
+
+	_ "src/docs"
 )
 
 type Template struct {
@@ -34,6 +38,20 @@ func (cv *customValidator) Validate(i interface{}) error {
 	return cv.Validator.Struct(i)
 }
 
+//	@title			Simple PM API
+//	@version		1.0
+//	@description	Simple PM API document.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host		simplepm.io.io
+// @BasePath	/api/v1
 func main() {
 	dbutil.InitDb()
 	e := echo.New()
@@ -62,5 +80,6 @@ func main() {
 
 	apiGroup := e.Group("/api/v1")
 	route.CollectRoutes(apiGroup)
+	e.GET("/api/v1/swagger/*", echoSwagger.WrapHandler)
 	e.Logger.Fatal(e.Start("0.0.0.0:4000"))
 }
