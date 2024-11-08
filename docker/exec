@@ -7,6 +7,11 @@ FIRST_ARG="$1"
 shift
 ARGS="$@"
 
+# Temporarily export variables in .env for use within the script
+set -a
+source .env
+set +a
+
 docker_down () {
     COMPOSE_HTTP_TIMEOUT=512 docker compose down --volumes
     docker-clean
@@ -17,25 +22,37 @@ docker_up () {
 }
 
 migrate() {
-    cp ../backend/src/atlas.hcl.default ../backend/src/atlas.hcl
-    # replace _ENV_ string with blank string
-    sed -i '' 's/_ENV_//g' ../backend/src/atlas.hcl
     docker compose exec "$NAME"_backend atlas migrate apply --env gorm
 }
 
-migratetest() {
+setTestEnv() {
     cp ../backend/src/atlas.hcl.default ../backend/src/atlas.hcl
-    # replace _ENV_ string with _test string
     sed -i '' 's/_ENV_/_TEST/g' ../backend/src/atlas.hcl
-    docker compose exec "$NAME"_backend atlas migrate apply --env gorm
 }
 
-preparetestdb() {
-    docker compose exec "$NAME"_db psql -U postgres -c "DROP DATABASE IF EXISTS testdb;"
-    docker compose exec "$NAME"_db psql -U postgres -c "DROP DATABASE IF EXISTS testdbatlas;"
-    docker compose exec "$NAME"_db psql -U postgres -c "CREATE DATABASE testdb;"
-    docker compose exec "$NAME"_db psql -U postgres -c "CREATE DATABASE testdbatlas;"
-    migratetest
+setNonTestEnv() {
+    cp ../backend/src/atlas.hcl.default ../backend/src/atlas.hcl
+    sed -i '' 's/_ENV_//g' ../backend/src/atlas.hcl
+}
+
+prepareAtlasDb() {
+    docker compose exec "$NAME"_db psql -U postgres -c "DROP DATABASE IF EXISTS ${POSTGRES_DB}_atlas;"
+    docker compose exec "$NAME"_db psql -U postgres -c "CREATE DATABASE ${POSTGRES_DB}_atlas;"
+}
+
+prepareTestAtlasDb() {
+    docker compose exec "$NAME"_db psql -U postgres -c "DROP DATABASE IF EXISTS ${POSTGRES_DB}_atlas_test;"
+    docker compose exec "$NAME"_db psql -U postgres -c "CREATE DATABASE ${POSTGRES_DB}_atlas_test;"
+}
+
+prepareTestDb() {
+    docker compose exec "$NAME"_db psql -U postgres -c "DROP DATABASE IF EXISTS ${POSTGRES_DB}_test;"
+    docker compose exec "$NAME"_db psql -U postgres -c "CREATE DATABASE ${POSTGRES_DB}_test;"
+}
+
+prepareTestingDbs() {
+    prepareTestAtlasDb
+    prepareTestDb
 }
 
 help () {
@@ -84,13 +101,18 @@ elif [ "$FIRST_ARG" == "atlas" ]; then
 elif [ "$FIRST_ARG" == "command" ]; then
     docker compose exec "$NAME"_backend go run ./command/$ARGS
 elif [ "$FIRST_ARG" == "initmigrations" ]; then
+    prepareAtlasDb
+    setNonTestEnv
     docker compose exec "$NAME"_backend atlas migrate hash --env gorm
 elif [ "$FIRST_ARG" == "makemigrations" ]; then
+    setNonTestEnv
     docker compose exec "$NAME"_backend atlas migrate diff --env gorm
 elif [ "$FIRST_ARG" == "migrate" ]; then
+    setNonTestEnv
     migrate
 elif [ "$FIRST_ARG" == "resetmakemigrations" ]; then
     echo "[+] Delete current DB..."
+    setNonTestEnv
     rm -rf volumes/db/dbdata
     docker restart "$NAME"_db
 
@@ -112,7 +134,9 @@ elif [ "$FIRST_ARG" == "resetmakemigrations" ]; then
 elif [ "$FIRST_ARG" == "bserver" ]; then
     docker compose exec "$NAME"_backend air src/main.go --root src
 elif [ "$FIRST_ARG" == "btest" ]; then
-    preparetestdb
+    prepareTestingDbs 
+    setTestEnv
+    migrate
     docker compose exec "$NAME"_backend go test ./...
 elif [ "$FIRST_ARG" == "up" ]; then
     docker_up

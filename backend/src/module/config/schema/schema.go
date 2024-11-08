@@ -2,6 +2,7 @@ package schema
 
 import (
 	"src/common/ctype"
+	"src/util/dictutil"
 	"src/util/iterutil"
 	"time"
 )
@@ -29,9 +30,9 @@ type Variable struct {
 
 func NewVariable(data ctype.Dict) *Variable {
 	return &Variable{
-		Key:         data["Key"].(string),
-		Value:       data["Value"].(string),
-		Description: data["Description"].(string),
-		DataType:    data["DataType"].(string),
+		Key:         dictutil.GetValue[string](data, "Key"),
+		Value:       dictutil.GetValue[string](data, "Value"),
+		Description: dictutil.GetValue[string](data, "Description"),
+		DataType:    dictutil.GetValue[string](data, "DataType"),
 	}
 }

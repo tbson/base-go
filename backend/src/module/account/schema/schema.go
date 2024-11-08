@@ -24,11 +24,11 @@ type AuthClient struct {
 
 func NewAuthClient(data ctype.Dict) *AuthClient {
 	return &AuthClient{
-		Uid:         data["Uid"].(string),
-		Description: data["Description"].(string),
-		Secret:      data["Secret"].(string),
-		Partition:   data["Partition"].(string),
-		Default:     data["Default"].(bool),
+		Uid:         dictutil.GetValue[string](data, "Uid"),
+		Description: dictutil.GetValue[string](data, "Description"),
+		Secret:      dictutil.GetValue[string](data, "Secret"),
+		Partition:   dictutil.GetValue[string](data, "Partition"),
+		Default:     dictutil.GetValue[bool](data, "Default"),
 	}
 }
 
@@ -46,11 +46,11 @@ type Tenant struct {
 
 func NewTenant(data ctype.Dict) *Tenant {
 	return &Tenant{
-		AuthClientID: data["AuthClientID"].(uint),
-		Uid:          data["Uid"].(string),
-		Title:        data["Title"].(string),
-		Avatar:       data["Avatar"].(string),
-		AvatarStr:    data["AvatarStr"].(string),
+		AuthClientID: dictutil.GetValue[uint](data, "AuthClientID"),
+		Uid:          dictutil.GetValue[string](data, "Uid"),
+		Title:        dictutil.GetValue[string](data, "Title"),
+		Avatar:       dictutil.GetValue[string](data, "Avatar"),
+		AvatarStr:    dictutil.GetValue[string](data, "AvatarStr"),
 	}
 }
 
@@ -107,8 +107,8 @@ type Role struct {
 
 func NewRole(data ctype.Dict) *Role {
 	return &Role{
-		TenantID: data["TenantID"].(uint),
-		Title:    data["Title"].(string),
+		TenantID: dictutil.GetValue[uint](data, "TenantID"),
+		Title:    dictutil.GetValue[string](data, "Title"),
 	}
 }
 
@@ -122,8 +122,8 @@ type Pem struct {
 
 func NewPem(data ctype.Dict) *Pem {
 	return &Pem{
-		Title:  data["Title"].(string),
-		Module: data["Module"].(string),
-		Action: data["Action"].(string),
+		Title:  dictutil.GetValue[string](data, "Title"),
+		Module: dictutil.GetValue[string](data, "Module"),
+		Action: dictutil.GetValue[string](data, "Action"),
 	}
 }

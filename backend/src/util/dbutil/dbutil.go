@@ -36,7 +36,7 @@ func InitDb() {
 	port := setting.DB_PORT
 	timeZone := setting.TIME_ZONE
 	if testutil.IsTest() {
-		dbName = "testdb"
+		dbName = dbName + "_test"
 	}
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=%s", host, user, password, dbName, port, timeZone)
 	db, e = gorm.Open(postgres.Open(dsn), &gorm.Config{})

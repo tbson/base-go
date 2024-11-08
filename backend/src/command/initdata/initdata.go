@@ -18,15 +18,15 @@ func main() {
 
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
-			"uid": setting.KEYCLOAK_DEFAULT_CLIENT_ID,
+			"Uid": setting.KEYCLOAK_DEFAULT_CLIENT_ID,
 		},
 	}
 	authClientData := ctype.Dict{
-		"uid":         setting.KEYCLOAK_DEFAULT_CLIENT_ID,
-		"description": "Default client",
-		"secret":      setting.KEYCLOAK_DEFAULT_CLIENT_SECRET,
-		"partition":   setting.KEYCLOAK_DEFAULT_REALM,
-		"default":     true,
+		"Uid":         setting.KEYCLOAK_DEFAULT_CLIENT_ID,
+		"Description": "Default client",
+		"Secret":      setting.KEYCLOAK_DEFAULT_CLIENT_SECRET,
+		"Partition":   setting.KEYCLOAK_DEFAULT_REALM,
+		"Default":     true,
 	}
 
 	authClient, err := authClientRepo.GetOrCreate(queryOptions, authClientData)
@@ -36,31 +36,32 @@ func main() {
 
 	queryOptions = ctype.QueryOptions{
 		Filters: ctype.Dict{
-			"uid": "default",
+			"Uid": "default",
 		},
 	}
 	tenantData := ctype.Dict{
-		"auth_client_id": authClient.ID,
-		"uid":            setting.ADMIN_TEANT_UID,
-		"title":          "Admin",
+		"AuthClientID": authClient.ID,
+		"Uid":          setting.ADMIN_TEANT_UID,
+		"Title":        "Admin",
 	}
 	tenant, err := tenantRepo.GetOrCreate(queryOptions, tenantData)
 	if err != nil {
 		panic(err)
 	}
 
+	email := "admin@local.dev"
 	queryOptions = ctype.QueryOptions{
 		Filters: ctype.Dict{
-			"email": "admin@localhost",
+			"email": email,
 		},
 	}
 	userData := ctype.Dict{
-		"tenant_id":  tenant.ID,
-		"uid":        "admin@localhost",
-		"email":      "admin@localhost",
-		"first_name": "Admin",
-		"last_name":  "Admin",
-		"admin":      true,
+		"TenantID":   tenant.ID,
+		"ExternalID": email,
+		"Email":      email,
+		"FirstName":  "Admin",
+		"LastName":   "Admin",
+		"Admin":      true,
 	}
 	_, err = userRepo.GetOrCreate(queryOptions, userData)
 	if err != nil {

@@ -18,15 +18,6 @@ services:
             timeout: 5s
             retries: 18
 
-    basecode_db_atlas:
-        container_name: basecode_db_atlas
-        image: 'postgres:16.4-alpine3.20'
-        environment:
-            PGUSER: ${POSTGRES_USER}
-            POSTGRES_USER: ${POSTGRES_USER}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_DB: ${POSTGRES_DB}
-
     basecode_backend:
         container_name: basecode_backend
         build:
@@ -54,9 +45,9 @@ services:
             DB_NAME: ${POSTGRES_DB}
             DB_PASSWORD: ${POSTGRES_PASSWORD}
             DB_URL: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable'
-            DB_URL_TEST: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/testdb?sslmode=disable'
-            DB_URL_ATLAS: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST_ATLAS}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable'
-            DB_URL_ATLAS_TEST: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST_ATLAS}:${POSTGRES_PORT}/testdbatlas?sslmode=disable'
+            DB_URL_TEST: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}_test?sslmode=disable'
+            DB_URL_ATLAS: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}_atlas?sslmode=disable'
+            DB_URL_ATLAS_TEST: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}_atlas_test?sslmode=disable'
 
             EMAIL_ENABLE: ${EMAIL_ENABLE}
             EMAIL_DOMAIN: ${EMAIL_DOMAIN}
@@ -117,32 +108,3 @@ services:
             - '443:443'
         depends_on:
             - basecode_backend
-
-    # basecode_keycloak_db:
-    #    container_name: basecode_keycloak_db 
-    #    image: 'postgres:16.4-alpine3.20'
-    #    environment:
-    #        PGUSER: ${POSTGRES_USER}
-    #        POSTGRES_USER: ${POSTGRES_USER}
-    #        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    #        POSTGRES_DB: ${POSTGRES_DB}
-    #    volumes:
-    #        - ./volumes/keycloak/dbdata:/var/lib/postgresql/data/:delegated
-
-    # basecode_keycloak:
-    #    image: docker.io/bitnami/keycloak:latest
-    #    ports:
-    #        - '8080:8080'
-    #    environment:
-    #        KEYCLOAK_CREATE_ADMIN_USER: true
-    #        KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-    #        KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-    #        KEYCLOAK_DATABASE_HOST: basecode_keycloak_db
-    #        KEYCLOAK_DATABASE_PORT: 5432
-    #        KEYCLOAK_DATABASE_USER: ${POSTGRES_USER}
-    #        KEYCLOAK_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
-    #        KEYCLOAK_DATABASE_NAME: ${POSTGRES_DB}
-    #    depends_on:
-    #        - basecode_keycloak_db
-    #    volumes:
-    #        - './volumes/keycloak/theme:/opt/bitnami/keycloak/themes/mynewtheme'
