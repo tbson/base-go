@@ -23,7 +23,9 @@ export default function Login() {
     }, []);
 
     function handleLogin(tenantUid) {
-        Util.toggleGlobalLoading();
+        setTimeout(() => {
+            Util.toggleGlobalLoading();
+        }, 100);
         const ssoUrl = `/api/v1/account/auth/sso/login/${tenantUid}`;
         window.location.href = ssoUrl;
     }

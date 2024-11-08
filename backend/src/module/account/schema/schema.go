@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"src/common/ctype"
+	"src/util/dictutil"
 
 	"gorm.io/datatypes"
 )
@@ -79,17 +80,17 @@ func NewUser(data ctype.Dict) *User {
 		panic("Failed to marshal ExtraInfo")
 	}
 	return &User{
-		TenantID:    data["TenantID"].(uint),
-		TenantTmpID: data["TenantTmpID"].(*uint),
-		ExternalID:  data["ExternalID"].(string),
-		Email:       data["Email"].(string),
-		Mobile:      data["Mobile"].(*string),
-		FirstName:   data["FirstName"].(string),
-		LastName:    data["LastName"].(string),
-		Avatar:      data["Avatar"].(string),
-		AvatarStr:   data["AvatarStr"].(string),
+		TenantID:    dictutil.GetValue[uint](data, "TenantID"),
+		TenantTmpID: dictutil.GetValue[*uint](data, "TenantTmpID"),
+		ExternalID:  dictutil.GetValue[string](data, "ExternalID"),
+		Email:       dictutil.GetValue[string](data, "Email"),
+		Mobile:      dictutil.GetValue[*string](data, "Mobile"),
+		FirstName:   dictutil.GetValue[string](data, "FirstName"),
+		LastName:    dictutil.GetValue[string](data, "LastName"),
+		Avatar:      dictutil.GetValue[string](data, "Avatar"),
+		AvatarStr:   dictutil.GetValue[string](data, "AvatarStr"),
 		ExtraInfo:   datatypes.JSON(extraInfoJSON),
-		Admin:       data["Admin"].(bool),
+		Admin:       dictutil.GetValue[bool](data, "Admin"),
 	}
 }
 

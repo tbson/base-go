@@ -3,8 +3,8 @@ package pem
 import (
 	"src/common/ctype"
 	"src/module/account/schema"
+	"src/util/dictutil"
 	"src/util/errutil"
-	"src/util/iterutil"
 
 	"gorm.io/gorm"
 )
@@ -24,7 +24,7 @@ func New(client *gorm.DB) Repo {
 func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 	db := r.client
 	db = db.Order("id DESC")
-	filters := iterutil.DictCamelToSnake(queryOptions.Filters)
+	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
 	preloads := queryOptions.Preloads
 	if len(preloads) > 0 {
 		for _, preload := range preloads {
@@ -47,7 +47,7 @@ func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 
 func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	db := r.client
-	filters := iterutil.DictCamelToSnake(queryOptions.Filters)
+	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
 	preloads := queryOptions.Preloads
 	if len(preloads) > 0 {
 		for _, preload := range preloads {

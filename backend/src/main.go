@@ -61,8 +61,8 @@ func main() {
 		templates: template.Must(template.ParseGlob("/code/public/views/*.html")),
 	}
 	e.Renderer = t
-	e.Use(middleware.Recover())
 	if !setting.DEBUG {
+		e.Use(middleware.Recover())
 		e.Use(middleware.Logger())
 		// sentry setup
 		if err := sentry.Init(sentry.ClientOptions{

@@ -4,7 +4,6 @@ package iterutil
 
 import (
 	"reflect"
-	"src/common/ctype"
 	"testing"
 )
 
@@ -40,23 +39,5 @@ func TestGetFieldOptions(t *testing.T) {
 	result := GetFieldOptions(enum)
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("GetFieldOptions(%v) = %v; want %v", enum, result, expected)
-	}
-}
-
-// Test for StructToDict function
-func TestStructToDict(t *testing.T) {
-	type MockStruct struct {
-		Name  string
-		Email string
-	}
-	obj := MockStruct{"John", "john@email.com"}
-	expected := ctype.Dict{
-		"Name":  "John",
-		"Email": "john@email.com",
-	}
-
-	result := StructToDict(obj)
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("StructToDict(%v) = %v; want %v", obj, result, expected)
 	}
 }

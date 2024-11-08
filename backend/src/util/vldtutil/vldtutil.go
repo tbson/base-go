@@ -10,8 +10,8 @@ import (
 	"src/common/ctype"
 	"src/module/aws/repo/s3"
 	"src/util/awsutil"
+	"src/util/dictutil"
 	"src/util/errutil"
-	"src/util/iterutil"
 	"src/util/localeutil"
 	"src/util/stringutil"
 	"strconv"
@@ -76,7 +76,7 @@ func ValidatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
 		return result, &error
 	}
 
-	return iterutil.StructToDict(target), nil
+	return dictutil.StructToDict(target), nil
 }
 
 func ValidateUpdatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
@@ -95,7 +95,7 @@ func ValidateUpdatePayload[T any](c echo.Context, target T) (ctype.Dict, error) 
 		return result, errutil.New("", []string{msg})
 	}
 
-	data := iterutil.StructToDict(target)
+	data := dictutil.StructToDict(target)
 
 	// remove the keys that are not present in the payload, check json tags
 	for k := range data {

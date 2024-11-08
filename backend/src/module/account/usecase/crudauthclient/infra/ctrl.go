@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
-	"src/util/iterutil"
+	"src/util/dictutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
@@ -58,7 +58,7 @@ func Create(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	result, err := cruder.Create(iterutil.StructToDict(data))
+	result, err := cruder.Create(dictutil.StructToDict(data))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

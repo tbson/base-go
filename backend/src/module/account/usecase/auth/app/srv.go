@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 	"src/common/ctype"
+	"src/util/dictutil"
 	"src/util/errutil"
-	"src/util/iterutil"
 	"src/util/localeutil"
 	"src/util/ssoutil"
 
@@ -97,20 +97,23 @@ func (srv Service) HandleCallback(
 	}
 
 	userInfo := tokensAndClaims.UserInfo
-
 	user, err := srv.authRepo.GetTenantUser(tenantID, userInfo.Email)
 	if err != nil {
-		userData := iterutil.StructToDict(userInfo)
+		userData := dictutil.StructToDict(userInfo)
 		delete(userData, "ID")
 		delete(userData, "ProfileType")
 		delete(userData, "TenantUid")
 		userData["TenantID"] = tenantID
-		_, err = srv.userRepo.Create(userData)
+		newUser, err := srv.userRepo.Create(userData)
+		user = AuthUserResult{
+			ID:    newUser.ID,
+			Admin: newUser.Admin,
+		}
 		if err != nil {
 			return tokensAndClaims, err
 		}
 	} else {
-		userData := iterutil.StructToDict(userInfo)
+		userData := dictutil.StructToDict(userInfo)
 		delete(userData, "ID")
 		delete(userData, "ProfileType")
 		delete(userData, "TenantUid")
