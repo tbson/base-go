@@ -234,16 +234,15 @@ func (r Repo) UpdateUser(
 ) error {
 	ctx := context.Background()
 	localizer := localeutil.Get()
-	userData := gocloak.User{
-		ID:        &sub,
-		FirstName: gocloak.StringP(data["FirstName"].(string)),
-		LastName:  gocloak.StringP(data["LastName"].(string)),
-		Attributes: &map[string][]string{
-			"mobile": {data["Mobile"].(string)},
-		},
+
+	user, err := r.client.GetUserByID(context.Background(), accessToken, realm, sub)
+	user.FirstName = gocloak.StringP(data["FirstName"].(string))
+	user.LastName = gocloak.StringP(data["LastName"].(string))
+	user.Attributes = &map[string][]string{
+		"mobile": {data["Mobile"].(string)},
 	}
 
-	err := r.client.UpdateUser(ctx, accessToken, realm, userData)
+	err = r.client.UpdateUser(ctx, accessToken, realm, *user)
 	if err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.CannotUpdateIAMUser,
