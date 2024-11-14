@@ -8,6 +8,7 @@ import (
 	"src/util/errutil"
 	"src/util/localeutil"
 	"src/util/ssoutil"
+	"time"
 
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -136,7 +137,13 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (ssoutil.UserInfo, er
 	}
 
 	// Parse the JWT token to extract headers and claims
-	token, err := jwt.Parse([]byte(tokenStr), jwt.WithKeySet(keySet))
+	clockSkew := 2 * time.Minute
+	token, err := jwt.Parse(
+		[]byte(tokenStr),
+		jwt.WithKeySet(keySet),
+		jwt.WithClock(jwt.ClockFunc(time.Now().UTC)), // Use UTC time directly
+		jwt.WithAcceptableSkew(clockSkew),            // Set clock skew tolerance
+	)
 	if err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.FailedToParseToken,
@@ -145,7 +152,11 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (ssoutil.UserInfo, er
 	}
 
 	// Check if the token is expired by inspecting the "exp" claim
-	if err := jwt.Validate(token, jwt.WithAcceptableSkew(0)); err != nil {
+	if err := jwt.Validate(
+		token,
+		jwt.WithClock(jwt.ClockFunc(time.Now().UTC)),
+		jwt.WithAcceptableSkew(clockSkew),
+	); err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.TokenHasExpired,
 		})
