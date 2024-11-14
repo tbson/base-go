@@ -1,8 +1,8 @@
-import * as React from "react";
-import { useState } from "react";
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
-import { t } from "ttag";
-import { Layout, Menu, Row, Col } from "antd";
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Outlet, NavLink } from 'react-router-dom';
+import { t } from 'ttag';
+import { Layout, Menu, Row, Col, Button, Flex } from 'antd';
 import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
@@ -10,15 +10,18 @@ import {
     TeamOutlined,
     LogoutOutlined,
     SettingFilled,
-    UsergroupAddOutlined,
-    GoldenFilled
-} from "@ant-design/icons";
-import { LOGO_TEXT } from "src/consts";
-import StorageUtil from "service/helper/storage_util";
-import PemUtil from "service/helper/pem_util";
-import NavUtil from "service/helper/nav_util";
-import LocaleSelect from "component/common/locale_select.jsx";
-import styles from "./styles.module.css";
+    TagsOutlined,
+    SolutionOutlined,
+    SmileOutlined,
+    PushpinOutlined,
+    CalendarOutlined
+} from '@ant-design/icons';
+import { LOGO_TEXT, DOMAIN } from 'src/const';
+import StorageUtil from 'service/helper/storage_util';
+import PemUtil from 'service/helper/pem_util';
+import NavUtil from 'service/helper/nav_util';
+import LocaleSelect from 'component/common/locale_select.jsx';
+import styles from './styles.module.css';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -28,68 +31,91 @@ const { Header, Footer, Sider, Content } = Layout;
 export default function MainLayout() {
     const navigate = useNavigate();
     const location = useLocation();
+    const [menuItems, setMenuItems] = useState([]);
+    const [selectedKeys, setSelectedKeys] = useState(
+        processSelectedKeys(location.pathname)
+    );
 
     const [collapsed, setCollapsed] = useState(false);
     const toggle = () => {
         setCollapsed(!collapsed);
     };
 
+    useEffect(() => {
+        setMenuItems(getMenuItems());
+    }, []);
+
     const logout = NavUtil.logout(navigate);
     const navigateTo = NavUtil.navigateTo(navigate);
 
     /**
-     * processSelectedKey.
+     * processSelectedKeys.
      *
      * @param {string} pathname
      * @returns {string}
      */
-    function processSelectedKey(pathname) {
-        if (pathname.startsWith("/admin")) return "/admin";
-        return pathname;
+    function processSelectedKeys(pathname) {
+        if (pathname.startsWith('/user')) return '/user';
+        return [pathname];
     }
 
     function getMenuItems() {
         const result = [];
 
-        result.push({ label: t`Profile`, key: "/", icon: <UserOutlined /> });
-
-        PemUtil.canView("crudvariable") &&
+        result.push({ label: t`Profile`, key: '/', icon: <UserOutlined /> });
+        PemUtil.canView('variable') &&
             result.push({
-                label: t`Config`,
-                key: "/variable",
+                label: t`Variable`,
+                key: '/config/variable',
                 icon: <SettingFilled />
             });
-        /*
-        if (PemUtil.canView(["admin", "group"])) {
-            const companyGroup = {
-                label: t`Company`,
-                icon: <GoldenFilled />,
-                children: []
-            };
-            PemUtil.canView("admin") &&
-                companyGroup.children.push({
-                    label: t`Admin`,
-                    key: "/admin",
-                    icon: <TeamOutlined />
-                });
-            PemUtil.canView("group") &&
-                companyGroup.children.push({
-                    label: t`Group`,
-                    key: "/role",
-                    icon: <UsergroupAddOutlined />
-                });
-            result.push(companyGroup);
-        }
-        */
+
+        PemUtil.canView('user') &&
+            result.push({
+                label: t`User`,
+                key: '/account/user',
+                icon: <TeamOutlined />
+            });
+        PemUtil.canView('role') &&
+            result.push({
+                label: t`Role`,
+                key: '/account/role',
+                icon: <TagsOutlined />
+            });
+        PemUtil.canView('venue') &&
+            result.push({
+                label: t`Venue`,
+                key: '/event-generic/venue',
+                icon: <PushpinOutlined />
+            });
+        PemUtil.canView('org') &&
+            result.push({
+                label: t`Org`,
+                key: '/event-generic/org',
+                icon: <SolutionOutlined />
+            });
+        PemUtil.canView('customer') &&
+            result.push({
+                label: t`Customer`,
+                key: '/event-generic/customer',
+                icon: <SmileOutlined />
+            });
+        PemUtil.canView('event') &&
+            result.push({
+                label: t`Event`,
+                key: '/event-specific/event',
+                icon: <CalendarOutlined />
+            });
         return result;
     }
 
     return (
-        <Layout className={styles.wrapperContainer}>
+        <Layout hasSider className={styles.wrapperContainer}>
             <Sider
                 trigger={null}
                 breakpoint="lg"
-                collapsedWidth="80"
+                collapsedWidth="34"
+                theme="dark"
                 collapsible
                 collapsed={collapsed}
                 onBreakpoint={(broken) => {
@@ -97,16 +123,30 @@ export default function MainLayout() {
                 }}
             >
                 <div className="sider">
-                    <div className="logo">
-                        <div className="logo-text">{collapsed || LOGO_TEXT}</div>
-                    </div>
+                    {collapsed || (
+                        <div className="logo">
+                            <div className="logo-text">
+                                <NavLink
+                                    to="/"
+                                    onClick={() => {
+                                        setSelectedKeys(['/']);
+                                    }}
+                                >
+                                    {LOGO_TEXT}
+                                </NavLink>
+                            </div>
+                        </div>
+                    )}
                     <Menu
                         className="sidebar-nav"
-                        defaultSelectedKeys={[processSelectedKey(location.pathname)]}
+                        selectedKeys={selectedKeys}
                         theme="dark"
                         mode="inline"
-                        items={getMenuItems()}
-                        onSelect={({ key }) => navigateTo(key)}
+                        items={menuItems}
+                        onSelect={({ key }) => {
+                            navigateTo(key);
+                            setSelectedKeys([key]);
+                        }}
                     />
                 </div>
             </Sider>
@@ -117,27 +157,21 @@ export default function MainLayout() {
                             {React.createElement(
                                 collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
                                 {
-                                    className: "trigger",
+                                    className: 'trigger',
                                     onClick: toggle
                                 }
                             )}
                         </Col>
-                        <Col span={12} className="right" style={{ paddingRight: 20 }}>
-                            <span
-                                onClick={logout}
-                                onKeyDown={() => {}}
-                                onKeyUp={() => {}}
-                                onKeyPress={() => {}}
-                                className="pointer"
-                                role="button"
-                                tabIndex="0"
-                            >
-                                <span>
-                                    {StorageUtil.getStorageObj("auth").fullname}
-                                </span>
-                                &nbsp;&nbsp;
-                                <LogoutOutlined />
-                            </span>
+                        <Col span={12} style={{paddingRight: 5}}>
+                            <Flex gap={5} justify="flex-end">
+                                <span>{StorageUtil.getUserInfo().first_name}</span>
+                                <LocaleSelect />
+                                <Button
+                                    icon={<LogoutOutlined />}
+                                    onClick={logout}
+                                    danger
+                                />
+                            </Flex>
                         </Col>
                     </Row>
                 </Header>
@@ -146,7 +180,7 @@ export default function MainLayout() {
                 </Content>
                 <Footer className="layout-footer">
                     <div className="layout-footer-text">
-                        Copyright basecode.test 2023
+                        Copyright<sup>©</sup> {DOMAIN} {new Date().getFullYear()}
                     </div>
                 </Footer>
             </Layout>

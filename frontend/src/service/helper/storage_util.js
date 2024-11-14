@@ -108,7 +108,7 @@ export default class StorageUtil {
     static getUserInfo() {
         const { userInfo } = StorageUtil.getStorageObj('auth');
         if (!userInfo?.email) {
-            return '';
+            return {};
         }
         return userInfo;
     }

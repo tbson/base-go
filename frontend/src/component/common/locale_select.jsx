@@ -1,9 +1,9 @@
-import * as React from "react";
-import { Select } from "antd";
-import { useAtom } from 'jotai'
-import { useLocale } from "ttag";
-import LocaleUtil from "service/helper/locale_util";
-import { localeSt } from "src/states";
+import * as React from 'react';
+import { Select } from 'antd';
+import { useAtom } from 'jotai';
+import { useLocale } from 'ttag';
+import LocaleUtil from 'service/helper/locale_util';
+import { localeSt } from 'src/states';
 
 const { Option } = Select;
 
@@ -27,4 +27,4 @@ export default function LocaleSelect() {
     );
 }
 
-LocaleSelect.displayName = "LocaleSelect";
+LocaleSelect.displayName = 'LocaleSelect';

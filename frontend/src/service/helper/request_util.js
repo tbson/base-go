@@ -2,7 +2,7 @@ import axios from 'axios';
 import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
 import StorageUtil from 'service/helper/storage_util';
-import { PROTOCOL, DOMAIN, API_PREFIX } from 'src/consts';
+import { PROTOCOL, DOMAIN, API_PREFIX } from 'src/const';
 
 export default class RequestUtil {
     /**

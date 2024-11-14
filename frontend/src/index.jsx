@@ -1,8 +1,12 @@
-import * as React from "react";
-import { createRoot } from "react-dom/client";
-import "service/styles/main.css";
-import App from "./App";
+import * as React from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router-dom';
+import { Provider } from 'jotai'
+import 'service/styles/main.css';
+import router from './router';
 
-const container = document.getElementById("root");
-const root = createRoot(container);
-root.render(<App />);
+createRoot(document.getElementById('root')).render(
+    <Provider>
+        <RouterProvider router={router} />
+    </Provider>
+);

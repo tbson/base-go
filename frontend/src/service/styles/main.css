@@ -56,7 +56,7 @@ body {
 }
 
 .red-dot::after {
-    content: " *";
+    content: ' *';
     color: red;
 }
 
