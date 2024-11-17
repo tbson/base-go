@@ -41,7 +41,7 @@ export default function VariableForm({ data, onChange }) {
     const labels = getLabels();
 
     const initialValues = Util.isEmpty(data) ? emptyRecord : data;
-    const id = initialValues.id;
+    const { id } = initialValues;
 
     const endPoint = id ? `${urls.crud}${id}` : urls.crud;
     const method = id ? 'put' : 'post';
