@@ -4,11 +4,11 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
-	"src/util/dictutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
+	"src/module/account/repo/authclient"
 	"src/module/account/repo/tenant"
 	"src/module/account/schema"
 
@@ -18,10 +18,35 @@ import (
 type Schema = schema.Tenant
 
 var NewRepo = tenant.New
-
-var searchableFields = []string{"uid", "description", "partition"}
+var folder = "tenant/avatar"
+var searchableFields = []string{"uid", "title"}
 var filterableFields = []string{}
 var orderableFields = []string{"id", "uid"}
+
+func Option(c echo.Context) error {
+	authClientRepo := authclient.New(dbutil.Db())
+	authClients, err := authClientRepo.List(ctype.QueryOptions{})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	var authClientOptions []ctype.SelectOption[uint] = make(
+		[]ctype.SelectOption[uint],
+		len(authClients),
+	)
+	for i, authClient := range authClients {
+		authClientOptions[i] = ctype.SelectOption[uint]{
+			Value:       authClient.ID,
+			Label:       authClient.Uid,
+			Description: authClient.Partition,
+		}
+	}
+
+	result := ctype.Dict{
+		"auth_client": authClientOptions,
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
 
 func List(c echo.Context) error {
 	pager := paging.New[Schema](dbutil.Db())
@@ -58,7 +83,13 @@ func Create(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	result, err := cruder.Create(dictutil.StructToDict(data))
+
+	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	result, err := cruder.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -74,6 +105,12 @@ func Update(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+
+	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
 	id := vldtutil.ValidateId(c.Param("id"))
 	result, err := cruder.Update(id, data)
 

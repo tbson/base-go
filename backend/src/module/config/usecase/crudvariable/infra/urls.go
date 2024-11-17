@@ -21,7 +21,6 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	rr.Public(
 		"GET", "/option/", Option,
 	)
-
 	rr.Rbac(
 		"GET", "/", List,
 		[]string{profiletype.ADMIN, profiletype.STAFF},

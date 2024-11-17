@@ -11,10 +11,7 @@ import {
     LogoutOutlined,
     SettingFilled,
     TagsOutlined,
-    SolutionOutlined,
-    SmileOutlined,
-    PushpinOutlined,
-    CalendarOutlined,
+    AuditOutlined,
     LockOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
@@ -76,6 +73,12 @@ export default function MainLayout() {
                 key: '/account/auth-client',
                 icon: <LockOutlined />
             });
+        PemUtil.canView('crudtenant') &&
+            result.push({
+                label: t`Tenant`,
+                key: '/account/tenant',
+                icon: <AuditOutlined />
+            });
         PemUtil.canView('cruduser') &&
             result.push({
                 label: t`User`,
@@ -87,30 +90,6 @@ export default function MainLayout() {
                 label: t`Role`,
                 key: '/account/role',
                 icon: <TagsOutlined />
-            });
-        PemUtil.canView('venue') &&
-            result.push({
-                label: t`Venue`,
-                key: '/event-generic/venue',
-                icon: <PushpinOutlined />
-            });
-        PemUtil.canView('org') &&
-            result.push({
-                label: t`Org`,
-                key: '/event-generic/org',
-                icon: <SolutionOutlined />
-            });
-        PemUtil.canView('customer') &&
-            result.push({
-                label: t`Customer`,
-                key: '/event-generic/customer',
-                icon: <SmileOutlined />
-            });
-        PemUtil.canView('event') &&
-            result.push({
-                label: t`Event`,
-                key: '/event-specific/event',
-                icon: <CalendarOutlined />
             });
         return result;
     }

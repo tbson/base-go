@@ -11,16 +11,17 @@ import {
     RemoveBtn
 } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
+import Img from 'component/common/display/img';
 import Util from 'service/helper/util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
-import TableUtil from 'service/helper/table_util';
+import { tenantFilterSt, tenantDictSt } from 'component/account/tenant/state';
 import Dialog from './dialog';
-import { variableOptionSt } from 'component/config/variable/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
-export default function VariableTable() {
-    const variableOption = useAtomValue(variableOptionSt);
+export default function TenantTable() {
+    const tenantDict = useAtomValue(tenantDictSt);
+    const tenantFilter = useAtomValue(tenantFilterSt);
     const [searchParam, setSearchParam] = useState({});
     const [filterParam, setFilterParam] = useState({});
     const [sortParam, setSortParam] = useState({});
@@ -143,26 +144,32 @@ export default function VariableTable() {
 
     const columns = [
         {
-            key: 'key',
-            title: labels.key,
-            dataIndex: 'key',
+            key: 'auth_client_id',
+            title: labels.auth_client_id,
+            dataIndex: 'auth_client_id',
+            filterMultiple: false,
+            filters: tenantFilter.auth_client,
+            onFilter: (value, record) => record.auth_client_id === value,
+            render: (value) => tenantDict.auth_client[value] || ''
+        },
+        {
+            key: 'uid',
+            title: labels.uid,
+            dataIndex: 'uid'
+        },
+        {
+            key: 'title',
+            title: labels.title,
+            dataIndex: 'title',
             sorter: (a, b) => {
-                return a.key.localeCompare(b.key);
+                return a.title.localeCompare(b.title);
             }
         },
         {
-            key: 'value',
-            title: labels.value,
-            dataIndex: 'value'
-        },
-        {
-            key: 'data_type',
-            title: labels.data_type,
-            dataIndex: 'data_type',
-            width: 120,
-            filterMultiple: false,
-            filters: TableUtil.optionToFilter(variableOption.data_type),
-            onFilter: (value, record) => record.data_type === value
+            key: 'avatar',
+            title: labels.avatar,
+            dataIndex: 'avatar',
+            render: (value) => <Img src={value} width={30} height={30} />
         },
         {
             key: 'action',
@@ -223,4 +230,4 @@ export default function VariableTable() {
     );
 }
 
-VariableTable.displayName = 'VariableTable';
+TenantTable.displayName = 'TenantTable';

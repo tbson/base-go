@@ -5,7 +5,7 @@ import { Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import SelectInput from 'component/common/form/ant/input/select_input';
-import { variableOptionSt } from 'component/config/state';
+import { variableOptionSt } from 'component/config/variable/state';
 import { urls, getLabels } from '../config';
 
 const { TextArea } = Input;
@@ -16,7 +16,7 @@ const emptyRecord = {
     uid: '',
     value: '',
     description: '',
-    type: 'STRING'
+    data_type: 'STRING'
 };
 
 /**
@@ -37,7 +37,6 @@ export default function VariableForm({ data, onChange }) {
     const inputRef = useRef(null);
     const [form] = Form.useForm();
     const variableOption = useAtomValue(variableOptionSt);
-    console.log(variableOption);
 
     const labels = getLabels();
 

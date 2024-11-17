@@ -3,23 +3,23 @@ import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import PageHeading from 'component/common/page_heading';
 import RequestUtil from 'service/helper/request_util';
-import { variableOptionSt } from './state';
+import { tenantOptionSt } from './state';
 import { urls, getMessages } from './config';
 import Table from './table';
 
-export default function Variable() {
-    const [variableOption, setVariableOption] = useAtom(variableOptionSt);
+export default function Tenant() {
+    const [tenantOption, setTenantOption] = useAtom(tenantOptionSt);
     useEffect(() => {
-        if (!variableOption.loaded) getOption();
+        if (!tenantOption.loaded) getOption();
     }, []);
 
     function getOption() {
         RequestUtil.apiCall(urls.option)
             .then((resp) => {
-                setVariableOption({ ...resp.data, loaded: true });
+                setTenantOption({ ...resp.data, loaded: true });
             })
             .catch(() => {
-                setVariableOption((prev) => ({ ...prev, loaded: true }));
+                setTenantOption((prev) => ({ ...prev, loaded: true }));
             });
     }
 
@@ -34,4 +34,4 @@ export default function Variable() {
     );
 }
 
-Variable.displayName = 'Variable';
+Tenant.displayName = 'Tenant';
