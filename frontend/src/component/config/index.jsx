@@ -26,7 +26,7 @@ export default function Config() {
             .then((resp) => {
                 setConfigOption({...resp.data, loaded: true});
             }).catch(() => {
-                setConfigOption({loaded: true});
+                setConfigOption(prev => ({...prev, loaded: true}));
             })
     }
 

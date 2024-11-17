@@ -1,6 +1,7 @@
-import * as React from "react";
-import { Button, Divider } from "antd";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import * as React from 'react';
+import { t } from 'ttag';
+import { Button, Divider } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 /**
  * @callback onChange
@@ -8,9 +9,9 @@ import { LeftOutlined, RightOutlined } from "@ant-design/icons";
  * @returns {void}
  */
 
-export const defaultLinks = {
-    next: "",
-    previous: ""
+export const defaultPages = {
+    next: '',
+    prev: ''
 };
 
 /**
@@ -18,21 +19,21 @@ export const defaultLinks = {
  *
  * @param {Object} props
  * @param {string} props.type
- * @param {string} props.url
+ * @param {number} props.page
  * @param {onChange} props.onChange
  */
-function ActionBtn({ type, url, onChange }) {
-    if (!url) return null;
+function ActionBtn({ type, page, onChange }) {
+    if (!page) return null;
     const label = {
-        prev: "Trang trước",
-        next: "Trang tiếp"
+        prev: t`Prev`,
+        next: t`Next`
     };
     return (
         <Button
             type="primary"
             key={1}
-            icon={type === "prev" ? <LeftOutlined /> : <RightOutlined />}
-            onClick={() => onChange(url)}
+            icon={type === 'prev' ? <LeftOutlined /> : <RightOutlined />}
+            onClick={() => onChange(page)}
         >
             {label[type]}
         </Button>
@@ -51,9 +52,9 @@ function ActionBtn({ type, url, onChange }) {
 export default function Pagination({ next, prev, onChange }) {
     return (
         <div className="right">
-            <ActionBtn type="prev" url={prev} onChange={onChange} />
+            <ActionBtn type="prev" page={prev} onChange={onChange} />
             {(next && prev) ? <Divider type="vertical" /> : null}
-            <ActionBtn type="next" url={next} onChange={onChange} />
+            <ActionBtn type="next" page={next} onChange={onChange} />
         </div>
     );
 }

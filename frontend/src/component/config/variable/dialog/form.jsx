@@ -16,7 +16,7 @@ const emptyRecord = {
     uid: '',
     value: '',
     description: '',
-    type: 1
+    type: 'STRING'
 };
 
 /**
@@ -37,6 +37,7 @@ export default function VariableForm({ data, onChange }) {
     const inputRef = useRef(null);
     const [form] = Form.useForm();
     const configOption = useAtomValue(configOptionSt);
+
     const labels = getLabels();
 
     const initialValues = Util.isEmpty(data) ? emptyRecord : data;
@@ -64,15 +65,11 @@ export default function VariableForm({ data, onChange }) {
                     .catch(FormUtil.setFormErrors(form))
             }
         >
-            <Form.Item name="uid" label={labels.uid} rules={[FormUtil.ruleRequired()]}>
+            <Form.Item name="key" label={labels.key} rules={[FormUtil.ruleRequired()]}>
                 <Input ref={inputRef} />
             </Form.Item>
 
-            <Form.Item
-                name="value"
-                label={labels.value}
-                rules={[FormUtil.ruleRequired()]}
-            >
+            <Form.Item name="value" label={labels.value}>
                 <Input />
             </Form.Item>
 
@@ -81,11 +78,11 @@ export default function VariableForm({ data, onChange }) {
             </Form.Item>
 
             <Form.Item
-                name="type"
-                label={labels.type}
+                name="data_type"
+                label={labels.data_type}
                 rules={[FormUtil.ruleRequired()]}
             >
-                <SelectInput block options={configOption.type} />
+                <SelectInput block options={configOption.variable_data_type} />
             </Form.Item>
         </Form>
     );

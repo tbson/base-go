@@ -1,8 +1,8 @@
-import axios from "axios";
-import { t } from "ttag";
+import axios from 'axios';
+import { t } from 'ttag';
 
-export const DATE_REABLE_FORMAT = "DD/MM/YYYY";
-export const DATE_ISO_FORMAT = "YYYY-MM-DD";
+export const DATE_REABLE_FORMAT = 'DD/MM/YYYY';
+export const DATE_ISO_FORMAT = 'YYYY-MM-DD';
 
 export default class Util {
     /**
@@ -12,8 +12,8 @@ export default class Util {
      */
     static responseIntercept() {
         axios.defaults.withCredentials = false;
-        axios.defaults.xsrfHeaderName = "X-CSRFToken";
-        axios.defaults.xsrfCookieName = "csrftoken";
+        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+        axios.defaults.xsrfCookieName = 'csrftoken';
     }
 
     /**
@@ -24,7 +24,7 @@ export default class Util {
      */
     static getValueFromEvent(e) {
         const target = e.target;
-        return target.value || "";
+        return target.value || '';
     }
 
     /**
@@ -47,7 +47,9 @@ export default class Util {
     static removeEmptyKey(obj = {}) {
         const result = {};
         for (const [key, value] of Object.entries(obj)) {
-            if (Util.isBlank(value)) result[key] = value;
+            if (Util.isBlank(value)) {
+                result[key] = value;
+            }
         }
         return result;
     }
@@ -59,7 +61,7 @@ export default class Util {
      * @returns {boolean}
      */
     static isBlank(input) {
-        return typeof input !== "number" && !input;
+        return typeof input !== 'number' && !input;
     }
 
     /**
@@ -68,15 +70,26 @@ export default class Util {
      * @param {Object[]} list
      * @returns {Object[]}
      */
-    static appendKey(list) {
-        return list.map((item, index) => {
-            if (item.id !== undefined) {
-                item.key = item.id;
-            } else {
-                item.key = index;
-            }
+    static appendKeys(list) {
+        return list.map(Util.appendKey);
+    }
+
+    /**
+     * appendKey.
+     *
+     * @param {Object[]} list
+     * @returns {Object[]}
+     */
+    static appendKey(item, index) {
+        if (item.key !== undefined) {
             return item;
-        });
+        }
+        if (item.id !== undefined) {
+            item.key = item.id;
+        } else {
+            item.key = index;
+        }
+        return item;
     }
 
     /**
@@ -86,7 +99,9 @@ export default class Util {
      * @returns {boolean}
      */
     static isEmpty(obj) {
-        if (!obj) return true;
+        if (!obj) {
+            return true;
+        }
         return Object.keys(obj).length === 0 && obj.constructor === Object;
     }
 
@@ -99,7 +114,7 @@ export default class Util {
     static appendIdForGroupOptions(groups) {
         return groups.map((group) => {
             group.options = group.options.map((option) => {
-                option.value = [group.value, option.value].join("|");
+                option.value = [group.value, option.value].join('|');
                 return option;
             });
             return group;
@@ -141,11 +156,11 @@ export default class Util {
      */
     static dateFormat(strDate) {
         if (!strDate) return strDate;
-        if (strDate.includes("T")) {
-            strDate = strDate.split("T")[0];
+        if (strDate.includes('T')) {
+            strDate = strDate.split('T')[0];
         }
         try {
-            return strDate.split("-").reverse().join("/");
+            return strDate.split('-').reverse().join('/');
         } catch (_err) {
             return strDate;
         }
@@ -159,16 +174,16 @@ export default class Util {
      */
     static isoToReadableDatetimeStr(strDate) {
         if (!strDate) return strDate;
-        if (!strDate.includes("T")) return strDate;
-        const dateArr = strDate.split("T");
+        if (!strDate.includes('T')) return strDate;
+        const dateArr = strDate.split('T');
         let datePart = dateArr[0];
         let timePart = dateArr[1];
         try {
-            datePart = datePart.split("-").reverse().join("/");
-            timePart = timePart.split(":");
+            datePart = datePart.split('-').reverse().join('/');
+            timePart = timePart.split(':');
             timePart.pop();
-            timePart = timePart.join(":");
-            return datePart + " " + timePart;
+            timePart = timePart.join(':');
+            return datePart + ' ' + timePart;
         } catch (_err) {
             return strDate;
         }
@@ -181,7 +196,7 @@ export default class Util {
      * @returns {string}
      */
     static dateStrReadableToIso(dateStr) {
-        return dateStr.split("/").reverse().join("-");
+        return dateStr.split('/').reverse().join('-');
     }
 
     /**
@@ -192,8 +207,8 @@ export default class Util {
      */
     static ensurePk(rawPk) {
         rawPk = String(rawPk);
-        if (rawPk.includes("_")) {
-            return parseInt(rawPk.split("_")[1]);
+        if (rawPk.includes('_')) {
+            return parseInt(rawPk.split('_')[1]);
         }
         return parseInt(rawPk);
     }
@@ -243,6 +258,6 @@ export default class Util {
      * @returns {void}
      */
     static toggleGlobalLoading(spinning = true) {
-        Util.event.dispatch("TOGGLE_SPINNER", spinning);
+        Util.event.dispatch('TOGGLE_SPINNER', spinning);
     }
 }

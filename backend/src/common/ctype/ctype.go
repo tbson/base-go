@@ -15,3 +15,10 @@ type QueryOptions struct {
 	Filters  Dict
 	Preloads []string
 }
+
+type SelectOption[T any] struct {
+	Value       T      `json:"value"`
+	Label       string `json:"label"`
+	Description string `json:"description"`
+	Group       string `json:"group"`
+}

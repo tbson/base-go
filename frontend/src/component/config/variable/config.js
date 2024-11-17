@@ -20,8 +20,8 @@ export const getMessages = () => ({
 });
 
 export const getLabels = () => ({
-    uid: t`UID`,
+    key: t`Key`,
     value: t`Value`,
     description: t`Description`,
-    type: t`Type`
+    data_type: t`Data type`
 });

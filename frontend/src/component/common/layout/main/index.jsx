@@ -63,14 +63,14 @@ export default function MainLayout() {
         const result = [];
 
         result.push({ label: t`Profile`, key: '/', icon: <UserOutlined /> });
-        PemUtil.canView('variable') &&
+        PemUtil.canView('crudvariable') &&
             result.push({
                 label: t`Variable`,
                 key: '/config/variable',
                 icon: <SettingFilled />
             });
 
-        PemUtil.canView('user') &&
+        PemUtil.canView('cruduser') &&
             result.push({
                 label: t`User`,
                 key: '/account/user',

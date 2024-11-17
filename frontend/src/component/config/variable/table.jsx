@@ -11,14 +11,18 @@ import {
 } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
 import Util from 'service/helper/util';
+import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
 import Dialog from './dialog';
 import { urls, getLabels, getMessages } from './config';
 
-const PEM_GROUP = 'variable';
+const PEM_GROUP = 'crudvariable';
 
 export default function VariableTable() {
-    const [queryParam, setQueryParam] = useState({});
+    const [searchParam, setSearchParam] = useState({});
+    const [filterParam, setFilterParam] = useState({});
+    const [sortParam, setSortParam] = useState({});
+    const [pageParam, setPageParam] = useState({});
     const [init, setInit] = useState(false);
     const [list, setList] = useState([]);
     const [ids, setIds] = useState([]);
@@ -28,25 +32,77 @@ export default function VariableTable() {
 
     function getList() {
         setInit(true);
+        const queryParam = {
+            ...searchParam,
+            ...filterParam,
+            ...sortParam,
+            ...pageParam
+        };
         RequestUtil.apiCall(urls.crud, queryParam)
             .then((resp) => {
                 setPages(resp.data.pages);
-                setList(Util.appendKey(resp.data.items));
+                setList(Util.appendKeys(resp.data.items));
             })
             .finally(() => {
                 setInit(false);
             });
     }
 
-    function searchList(keyword) {
-        const qParam = { ...queryParam };
-        delete qParam.page;
-        setQueryParam({ ...qParam, q: keyword });
+    function handlePaging(page) {
+        if (!page) {
+            setPageParam({});
+        } else {
+            setPageParam({ page });
+        }
+    }
+
+    function handleSearching(keyword) {
+        setPageParam({});
+        if (!keyword) {
+            setSearchParam({});
+        } else {
+            setSearchParam({ q: keyword });
+        }
+    }
+
+    function handleFiltering(filterObj) {
+        if (DictUtil.isEmpty(filterObj)) {
+            setFilterParam({});
+        } else {
+            setFilterParam(
+                Object.entries(filterObj).reduce((acc, [key, value]) => {
+                    if (!value || value.length === 0) {
+                        return acc;
+                    }
+                    acc[key] = value[0];
+                    return acc;
+                }, {})
+            );
+        }
+    }
+
+    function handleSorting(sortObj) {
+        if (DictUtil.isEmpty(sortObj)) {
+            return setSortParam({});
+        }
+        if (!sortObj.field) {
+            return setSortParam({});
+        }
+        const sign = sortObj.order === 'descend' ? '-' : '';
+        setSortParam({
+            order: `${sign}${sortObj.field}`
+        });
+    }
+
+    function handleTableChange(_pagination, filters, sorter) {
+        setPageParam({});
+        handleFiltering(filters);
+        handleSorting(sorter);
     }
 
     useEffect(() => {
         getList();
-    }, [queryParam]);
+    }, [searchParam, filterParam, sortParam, pageParam]);
 
     function onDelete(id) {
         const r = window.confirm(messages.deleteOne);
@@ -74,7 +130,7 @@ export default function VariableTable() {
 
     function onChange(data, id) {
         if (!id) {
-            setList([{ ...data, key: data.id }, ...list]);
+            setList([{ ...Util.appendKey(data) }, ...list]);
         } else {
             const index = list.findIndex((item) => item.id === id);
             data.key = data.id;
@@ -85,9 +141,12 @@ export default function VariableTable() {
 
     const columns = [
         {
-            key: 'uid',
-            title: labels.uid,
-            dataIndex: 'uid'
+            key: 'key',
+            title: labels.key,
+            dataIndex: 'key',
+            sorter: (a, b) => {
+                return a.key.localeCompare(b.key);
+            }
         },
         {
             key: 'value',
@@ -95,10 +154,16 @@ export default function VariableTable() {
             dataIndex: 'value'
         },
         {
-            key: 'type',
-            title: labels.type,
-            dataIndex: 'type_label',
-            width: 120
+            key: 'data_type',
+            title: labels.data_type,
+            dataIndex: 'data_type',
+            width: 120,
+            filterMultiple: false,
+            filters: [
+                { value: 'STRING', text: 'String' },
+                { value: 'INTEGER', text: 'Integer' }
+            ],
+            onFilter: (value, record) => record.data_type === value
         },
         {
             key: 'action',
@@ -128,7 +193,7 @@ export default function VariableTable() {
         <div>
             <Row>
                 <Col span={12}>
-                    <PemCheck pem_group={PEM_GROUP} pem="delete">
+                    <PemCheck pem_group={PEM_GROUP} pem="delete_list">
                         <RemoveSelectedBtn ids={ids} onClick={onBulkDelete} />
                     </PemCheck>
                 </Col>
@@ -139,32 +204,21 @@ export default function VariableTable() {
                 </Col>
             </Row>
 
-            <SearchInput onChange={searchList} />
+            <SearchInput onChange={handleSearching} />
 
             <Table
                 rowSelection={{
                     type: 'checkbox',
                     ...rowSelection
                 }}
+                onChange={handleTableChange}
                 loading={init}
                 columns={columns}
                 dataSource={list}
                 scroll={{ x: 1000 }}
                 pagination={false}
             />
-            <Pagination
-                next={pages.next}
-                prev={pages.prev}
-                onChange={(page) => {
-                    const qParam = { ...queryParam };
-                    if (!page) {
-                        delete qParam.page;
-                        setQueryParam({ ...qParam });
-                    } else {
-                        setQueryParam({ ...queryParam, page });
-                    }
-                }}
-            />
+            <Pagination next={pages.next} prev={pages.prev} onChange={handlePaging} />
             <Dialog onChange={onChange} />
         </div>
     );
