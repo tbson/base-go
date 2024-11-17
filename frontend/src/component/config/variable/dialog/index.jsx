@@ -5,11 +5,11 @@ import { Modal } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import Form from './form';
-import { urls, getMessages, toggleDialogEvent } from '../config';
+import { urls, getMessages, TOGGLE_DIALOG_EVENT } from '../config';
 
 export class Service {
     static get toggleEvent() {
-        return toggleDialogEvent;
+        return TOGGLE_DIALOG_EVENT;
     }
 
     static toggle(open = true, id = 0) {

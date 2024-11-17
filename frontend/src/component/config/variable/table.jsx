@@ -14,9 +14,7 @@ import Util from 'service/helper/util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
 import Dialog from './dialog';
-import { urls, getLabels, getMessages } from './config';
-
-const PEM_GROUP = 'crudvariable';
+import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function VariableTable() {
     const [searchParam, setSearchParam] = useState({});
@@ -30,7 +28,11 @@ export default function VariableTable() {
     const labels = getLabels();
     const messages = getMessages();
 
-    function getList() {
+    useEffect(() => {
+        getList();
+    }, [searchParam, filterParam, sortParam, pageParam]);
+
+    const getList = () => {
         setInit(true);
         const queryParam = {
             ...searchParam,
@@ -46,26 +48,26 @@ export default function VariableTable() {
             .finally(() => {
                 setInit(false);
             });
-    }
+    };
 
-    function handlePaging(page) {
+    const handlePaging = (page) => {
         if (!page) {
             setPageParam({});
         } else {
             setPageParam({ page });
         }
-    }
+    };
 
-    function handleSearching(keyword) {
+    const handleSearching = (keyword) => {
         setPageParam({});
         if (!keyword) {
             setSearchParam({});
         } else {
             setSearchParam({ q: keyword });
         }
-    }
+    };
 
-    function handleFiltering(filterObj) {
+    const handleFiltering = (filterObj) => {
         if (DictUtil.isEmpty(filterObj)) {
             setFilterParam({});
         } else {
@@ -79,9 +81,9 @@ export default function VariableTable() {
                 }, {})
             );
         }
-    }
+    };
 
-    function handleSorting(sortObj) {
+    const handleSorting = (sortObj) => {
         if (DictUtil.isEmpty(sortObj)) {
             return setSortParam({});
         }
@@ -92,19 +94,26 @@ export default function VariableTable() {
         setSortParam({
             order: `${sign}${sortObj.field}`
         });
-    }
+    };
 
-    function handleTableChange(_pagination, filters, sorter) {
+    const handleTableChange = (_pagination, filters, sorter) => {
         setPageParam({});
         handleFiltering(filters);
         handleSorting(sorter);
-    }
+    };
 
-    useEffect(() => {
-        getList();
-    }, [searchParam, filterParam, sortParam, pageParam]);
+    const onChange = (data, id) => {
+        if (!id) {
+            setList([{ ...Util.appendKey(data) }, ...list]);
+        } else {
+            const index = list.findIndex((item) => item.id === id);
+            data.key = data.id;
+            list[index] = data;
+            setList([...list]);
+        }
+    };
 
-    function onDelete(id) {
+    const onDelete = (id) => {
         const r = window.confirm(messages.deleteOne);
         if (!r) return;
 
@@ -114,9 +123,9 @@ export default function VariableTable() {
                 setList([...list.filter((item) => item.id !== id)]);
             })
             .finally(() => Util.toggleGlobalLoading(false));
-    }
+    };
 
-    function onBulkDelete(ids) {
+    const onBulkDelete = (ids) => {
         const r = window.confirm(messages.deleteMultiple);
         if (!r) return;
 
@@ -126,18 +135,7 @@ export default function VariableTable() {
                 setList([...list.filter((item) => !ids.includes(item.id))]);
             })
             .finally(() => Util.toggleGlobalLoading(false));
-    }
-
-    function onChange(data, id) {
-        if (!id) {
-            setList([{ ...Util.appendKey(data) }, ...list]);
-        } else {
-            const index = list.findIndex((item) => item.id === id);
-            data.key = data.id;
-            list[index] = data;
-            setList([...list]);
-        }
-    }
+    };
 
     const columns = [
         {
