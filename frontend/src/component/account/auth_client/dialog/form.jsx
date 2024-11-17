@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { useRef, useEffect } from 'react';
-import { useAtomValue } from 'jotai';
 import { Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
-import SelectInput from 'component/common/form/ant/input/select_input';
-import { configOptionSt } from 'component/config/state';
+import CheckInput from 'component/common/form/ant/input/check_input';
 import { urls, getLabels } from '../config';
 
 const { TextArea } = Input;
@@ -14,9 +12,10 @@ const formName = 'AuthClientForm';
 const emptyRecord = {
     id: 0,
     uid: '',
-    value: '',
     description: '',
-    type: 'STRING'
+    secret: '',
+    partition: '',
+    default: false
 };
 
 /**
@@ -36,7 +35,6 @@ const emptyRecord = {
 export default function AuthClientForm({ data, onChange }) {
     const inputRef = useRef(null);
     const [form] = Form.useForm();
-    const configOption = useAtomValue(configOptionSt);
 
     const labels = getLabels();
 
@@ -65,24 +63,24 @@ export default function AuthClientForm({ data, onChange }) {
                     .catch(FormUtil.setFormErrors(form))
             }
         >
-            <Form.Item name="key" label={labels.key} rules={[FormUtil.ruleRequired()]}>
+            <Form.Item name="uid" label={labels.uid} rules={[FormUtil.ruleRequired()]}>
                 <Input ref={inputRef} />
-            </Form.Item>
-
-            <Form.Item name="value" label={labels.value}>
-                <Input />
             </Form.Item>
 
             <Form.Item name="description" label={labels.description}>
                 <TextArea />
             </Form.Item>
 
-            <Form.Item
-                name="data_type"
-                label={labels.data_type}
-                rules={[FormUtil.ruleRequired()]}
-            >
-                <SelectInput block options={configOption.authclient_data_type} />
+            <Form.Item name="secret" label={labels.secret}>
+                <Input type="password" />
+            </Form.Item>
+
+            <Form.Item name="partition" label={labels.partition}>
+                <Input />
+            </Form.Item>
+
+            <Form.Item name="default" label={labels.default}>
+                <CheckInput />
             </Form.Item>
         </Form>
     );

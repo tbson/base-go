@@ -11,15 +11,15 @@ import (
 )
 
 type AuthClient struct {
-	ID          uint     `gorm:"primaryKey" json:"id"`
-	Tenants     []Tenant `gorm:"constraint:OnDelete:SET NULL;"`
-	Uid         string   `gorm:"type:text;not null;unique"`
-	Description string   `gorm:"type:text;not null;default:''"`
-	Secret      string   `gorm:"type:text;not null"`
-	Partition   string   `gorm:"type:text;not null"`
-	Default     bool     `gorm:"type:boolean;not null;default:false"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID          uint      `gorm:"primaryKey" json:"id"`
+	Tenants     []Tenant  `gorm:"constraint:OnDelete:SET NULL;" json:"tenants"`
+	Uid         string    `gorm:"type:text;not null;unique" json:"uid"`
+	Description string    `gorm:"type:text;not null;default:''" json:"description"`
+	Secret      string    `gorm:"type:text;not null" json:"secret"`
+	Partition   string    `gorm:"type:text;not null" json:"partition"`
+	Default     bool      `gorm:"type:boolean;not null;default:false" json:"default"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 func NewAuthClient(data ctype.Dict) *AuthClient {
@@ -33,15 +33,15 @@ func NewAuthClient(data ctype.Dict) *AuthClient {
 }
 
 type Tenant struct {
-	ID           uint `gorm:"primaryKey" json:"id"`
-	AuthClientID uint
-	AuthClient   *AuthClient
-	Uid          string `gorm:"type:text;not null;unique"`
-	Title        string `gorm:"type:text;not null"`
-	Avatar       string `gorm:"type:text;not null;default:''"`
-	AvatarStr    string `gorm:"type:text;not null;default:''"`
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID           uint        `gorm:"primaryKey" json:"id"`
+	AuthClientID uint        `json:"auth_client_id"`
+	AuthClient   *AuthClient `json:"auth_client"`
+	Uid          string      `gorm:"type:text;not null;unique" json:"uid"`
+	Title        string      `gorm:"type:text;not null" json:"title"`
+	Avatar       string      `gorm:"type:text;not null;default:''" json:"avatar"`
+	AvatarStr    string      `gorm:"type:text;not null;default:''" json:"avatar_str"`
+	CreatedAt    time.Time   `json:"created_at"`
+	UpdatedAt    time.Time   `json:"updated_at"`
 }
 
 func NewTenant(data ctype.Dict) *Tenant {
@@ -95,14 +95,14 @@ func NewUser(data ctype.Dict) *User {
 }
 
 type Role struct {
-	ID        uint   `gorm:"primaryKey" json:"id"`
-	Users     []User `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
-	Pems      []Pem  `gorm:"many2many:roles_pems;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
-	TenantID  uint   `gorm:"not null;uniqueIndex:idx_roles_tenant_title"`
-	Tenant    *Tenant
-	Title     string `gorm:"type:text;not null;uniqueIndex:idx_roles_tenant_title"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	Users     []User    `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"users"`
+	Pems      []Pem     `gorm:"many2many:roles_pems;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"pems"`
+	TenantID  uint      `gorm:"not null;uniqueIndex:idx_roles_tenant_title" json:"tenant_id"`
+	Tenant    *Tenant   `json:"tenant"`
+	Title     string    `gorm:"type:text;not null;uniqueIndex:idx_roles_tenant_title" json:"title"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func NewRole(data ctype.Dict) *Role {
@@ -114,10 +114,10 @@ func NewRole(data ctype.Dict) *Role {
 
 type Pem struct {
 	ID     uint   `gorm:"primaryKey" json:"id"`
-	Roles  []Role `gorm:"many2many:roles_pems;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
-	Title  string `gorm:"type:text;not null"`
-	Module string `gorm:"type:text;not null;uniqueIndex:idx_pems_module_action"`
-	Action string `gorm:"type:text;not null;uniqueIndex:idx_pems_module_action"`
+	Roles  []Role `gorm:"many2many:roles_pems;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"roles"`
+	Title  string `gorm:"type:text;not null" json:"title"`
+	Module string `gorm:"type:text;not null;uniqueIndex:idx_pems_module_action" json:"module"`
+	Action string `gorm:"type:text;not null;uniqueIndex:idx_pems_module_action" json:"action"`
 }
 
 func NewPem(data ctype.Dict) *Pem {

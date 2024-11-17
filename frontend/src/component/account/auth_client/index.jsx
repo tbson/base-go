@@ -1,7 +1,7 @@
-import * as React from "react";
-import PageHeading from "component/common/page_heading";
-import Table from "./table";
-import { getMessages } from "./config";
+import * as React from 'react';
+import PageHeading from 'component/common/page_heading';
+import { getMessages } from './config';
+import Table from './table';
 
 export default function AuthClient() {
     const messages = getMessages();
@@ -15,4 +15,4 @@ export default function AuthClient() {
     );
 }
 
-AuthClient.displayName = "AuthClient";
+AuthClient.displayName = 'AuthClient';

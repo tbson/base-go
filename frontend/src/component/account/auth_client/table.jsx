@@ -139,29 +139,29 @@ export default function AuthClientTable() {
 
     const columns = [
         {
-            key: 'key',
-            title: labels.key,
-            dataIndex: 'key',
+            key: 'uid',
+            title: labels.uid,
+            dataIndex: 'uid',
             sorter: (a, b) => {
-                return a.key.localeCompare(b.key);
+                return a.uid.localeCompare(b.uid);
             }
         },
         {
-            key: 'value',
-            title: labels.value,
-            dataIndex: 'value'
+            key: 'description',
+            title: labels.description,
+            dataIndex: 'description'
         },
         {
-            key: 'data_type',
-            title: labels.data_type,
-            dataIndex: 'data_type',
+            key: 'partition',
+            title: labels.partition,
+            dataIndex: 'partition',
+        },
+        {
+            key: 'default',
+            title: labels.default,
+            dataIndex: 'default',
             width: 120,
-            filterMultiple: false,
-            filters: [
-                { value: 'STRING', text: 'String' },
-                { value: 'INTEGER', text: 'Integer' }
-            ],
-            onFilter: (value, record) => record.data_type === value
+            render: (text) => (text ? 'Yes' : 'No')
         },
         {
             key: 'action',

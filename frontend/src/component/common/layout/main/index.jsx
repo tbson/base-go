@@ -14,7 +14,8 @@ import {
     SolutionOutlined,
     SmileOutlined,
     PushpinOutlined,
-    CalendarOutlined
+    CalendarOutlined,
+    LockOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
 import StorageUtil from 'service/helper/storage_util';
@@ -69,7 +70,12 @@ export default function MainLayout() {
                 key: '/config/variable',
                 icon: <SettingFilled />
             });
-
+        PemUtil.canView('crudauthclient') &&
+            result.push({
+                label: t`Auth client`,
+                key: '/account/auth-client',
+                icon: <LockOutlined />
+            });
         PemUtil.canView('cruduser') &&
             result.push({
                 label: t`User`,

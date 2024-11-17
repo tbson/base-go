@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
-	"src/util/dictutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
@@ -15,7 +14,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Schema = schema.User
+type Schema = schema.AuthClient
 
 var NewRepo = authclient.New
 
@@ -58,7 +57,7 @@ func Create(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	result, err := cruder.Create(dictutil.StructToDict(data))
+	result, err := cruder.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
