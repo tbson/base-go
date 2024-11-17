@@ -11,7 +11,7 @@ import (
 
 func Option(c echo.Context) error {
 	result := ctype.Dict{
-		"variable_data_type": config.VariableDataTypeOptions,
+		"data_type": config.VariableDataTypeOptions,
 	}
 	return c.JSON(http.StatusOK, result)
 }

@@ -44,7 +44,7 @@ import { lazy, useEffect, useState } from "react";
 import { Provider, useAtom } from 'jotai'
 import { useLocale } from "ttag";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { localeSt } from "src/states";
+import { localeSt } from "src/state";
 import PrivateRoute from "component/common/route/private_route.jsx";
 import NotMatch from "component/common/route/not_match";
 import ScrollToTop from "component/common/scroll_to_top";

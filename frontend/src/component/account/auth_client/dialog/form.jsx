@@ -5,12 +5,12 @@ import { Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import SelectInput from 'component/common/form/ant/input/select_input';
-import { variableOptionSt } from 'component/config/state';
+import { configOptionSt } from 'component/config/state';
 import { urls, getLabels } from '../config';
 
 const { TextArea } = Input;
 
-const formName = 'VariableForm';
+const formName = 'AuthClientForm';
 const emptyRecord = {
     id: 0,
     uid: '',
@@ -27,17 +27,16 @@ const emptyRecord = {
  */
 
 /**
- * VariableForm.
+ * AuthClientForm.
  *
  * @param {Object} props
  * @param {Object} props.data
  * @param {FormCallback} props.onChange
  */
-export default function VariableForm({ data, onChange }) {
+export default function AuthClientForm({ data, onChange }) {
     const inputRef = useRef(null);
     const [form] = Form.useForm();
-    const variableOption = useAtomValue(variableOptionSt);
-    console.log(variableOption);
+    const configOption = useAtomValue(configOptionSt);
 
     const labels = getLabels();
 
@@ -83,11 +82,11 @@ export default function VariableForm({ data, onChange }) {
                 label={labels.data_type}
                 rules={[FormUtil.ruleRequired()]}
             >
-                <SelectInput block options={variableOption.data_type} />
+                <SelectInput block options={configOption.authclient_data_type} />
             </Form.Item>
         </Form>
     );
 }
 
-VariableForm.displayName = formName;
-VariableForm.formName = formName;
+AuthClientForm.displayName = formName;
+AuthClientForm.formName = formName;

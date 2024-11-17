@@ -8,6 +8,7 @@ import (
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
+	"src/module/config"
 	"src/module/config/repo/variable"
 	"src/module/config/schema"
 
@@ -21,6 +22,13 @@ var NewRepo = variable.New
 var searchableFields = []string{"key", "value", "description"}
 var filterableFields = []string{"data_type"}
 var orderableFields = []string{"id", "key"}
+
+func Option(c echo.Context) error {
+	result := ctype.Dict{
+		"data_type": config.VariableDataTypeOptions,
+	}
+	return c.JSON(http.StatusOK, result)
+}
 
 // List godoc
 //

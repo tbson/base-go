@@ -3,17 +3,16 @@ import RequestUtil from 'service/helper/request_util';
 
 const urlMap = {
     base: {
-        prefix: 'config/variable',
+        prefix: 'account/auth-client',
         endpoints: {
-            crud: '',
-            option: 'option'
+            crud: ''
         }
     }
 };
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_VARIABLE_DIALOG';
-export const PEM_GROUP = 'crudvariable';
-const headingTxt = t`Variable`;
+export const PEM_GROUP = 'crudauthclient';
+const headingTxt = t`Auth client`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({
     heading: headingTxt,

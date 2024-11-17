@@ -3,7 +3,7 @@ import { Select } from 'antd';
 import { useAtom } from 'jotai';
 import { useLocale } from 'ttag';
 import LocaleUtil from 'service/helper/locale_util';
-import { localeSt } from 'src/states';
+import { localeSt } from 'src/state';
 
 const { Option } = Select;
 
