@@ -14,13 +14,12 @@ import PemCheck from 'component/common/pem_check';
 import Util from 'service/helper/util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
-import TableUtil from 'service/helper/table_util';
 import Dialog from './dialog';
-import { variableOptionSt } from 'component/config/variable/state';
+import { variableFilterSt } from 'component/config/variable/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function VariableTable() {
-    const variableOption = useAtomValue(variableOptionSt);
+    const variableFilter = useAtomValue(variableFilterSt);
     const [searchParam, setSearchParam] = useState({});
     const [filterParam, setFilterParam] = useState({});
     const [sortParam, setSortParam] = useState({});
@@ -161,7 +160,7 @@ export default function VariableTable() {
             dataIndex: 'data_type',
             width: 120,
             filterMultiple: false,
-            filters: TableUtil.optionToFilter(variableOption.data_type),
+            filters: variableFilter.data_type,
             onFilter: (value, record) => record.data_type === value
         },
         {

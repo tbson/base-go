@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import TableUtil from 'service/helper/table_util';
 
 export const tenantOptionSt = atom({
     loaded: false,
@@ -7,12 +8,8 @@ export const tenantOptionSt = atom({
 
 export const tenantFilterSt = atom((get) => {
     const { auth_client } = get(tenantOptionSt);
-    const tenantFilter = auth_client.map((item) => ({
-        value: item.value,
-        text: item.label
-    }));
     return {
-        auth_client: tenantFilter
+        auth_client: TableUtil.optionToFilter(auth_client)
     };
 });
 
