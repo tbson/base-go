@@ -1,8 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
+import StorageUtil from 'service/helper/storage_util';
 import NotMatch from 'component/common/route/not_match';
 import PrivateRoute from 'component/common/route/private_route.jsx';
 import BlankLayout from 'component/common/layout/blank';
-import MainLayout from 'component/common/layout/main';
+import AdminLayout from 'component/common/layout/admin';
+import UserLayout from 'component/common/layout/user';
+
+const userInfor = StorageUtil.getUserInfo();
+
+const MainLayout = userInfor?.profile_type === "admin" ? AdminLayout : UserLayout;
 
 import App from 'src/app';
 

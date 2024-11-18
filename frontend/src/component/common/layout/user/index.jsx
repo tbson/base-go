@@ -23,9 +23,22 @@ import styles from './styles.module.css';
 const { Header, Footer, Sider, Content } = Layout;
 
 /**
- * MainLayout.
+ * processSelectedKeys.
+ *
+ * @param {string} pathname
+ * @returns {string}
  */
-export default function MainLayout() {
+function processSelectedKeys(pathname) {
+    if (pathname.startsWith('/user')) {
+        return '/user';
+    }
+    return [pathname];
+};
+
+/**
+ * UserLayout.
+ */
+export default function UserLayout() {
     const navigate = useNavigate();
     const location = useLocation();
     const [menuItems, setMenuItems] = useState([]);
@@ -45,18 +58,7 @@ export default function MainLayout() {
     const logout = NavUtil.logout(navigate);
     const navigateTo = NavUtil.navigateTo(navigate);
 
-    /**
-     * processSelectedKeys.
-     *
-     * @param {string} pathname
-     * @returns {string}
-     */
-    function processSelectedKeys(pathname) {
-        if (pathname.startsWith('/user')) return '/user';
-        return [pathname];
-    }
-
-    function getMenuItems() {
+    const getMenuItems = () => {
         const result = [];
 
         result.push({ label: t`Profile`, key: '/', icon: <UserOutlined /> });
@@ -93,7 +95,7 @@ export default function MainLayout() {
             });
         */
         return result;
-    }
+    };
 
     return (
         <Layout hasSider className={styles.wrapperContainer}>
