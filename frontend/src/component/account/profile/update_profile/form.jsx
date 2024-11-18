@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import { t } from 'ttag';
 import { Form, Input, Row, Col } from 'antd';
 import FormUtil from 'service/helper/form_util';
@@ -8,7 +9,12 @@ import { urls } from '../config';
 const formName = 'UpdateProfileForm';
 
 export default function UpdateProfileForm({ data, onChange }) {
+    const inputRef = useRef(null);
     const [form] = Form.useForm();
+
+    useEffect(() => {
+        inputRef.current.focus({ cursor: 'end' });
+    }, []);
 
     const formAttrs = {
         avatar: {
@@ -52,7 +58,7 @@ export default function UpdateProfileForm({ data, onChange }) {
                 </Col>
                 <Col span={16}>
                     <Form.Item {...formAttrs.mobile}>
-                        <Input autoFocus />
+                        <Input ref={inputRef} />
                     </Form.Item>
                     <Form.Item {...formAttrs.first_name}>
                         <Input />
