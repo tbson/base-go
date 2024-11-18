@@ -65,18 +65,18 @@ export default function TenantLayout() {
                 key: `/account/tenant/${id}`,
                 icon: <AuditOutlined />
             });
+        PemUtil.canView('crudrole') &&
+            result.push({
+                label: t`Role`,
+                key: '/account/role',
+                icon: <TagsOutlined />
+            });
         /*
         PemUtil.canView('cruduser') &&
             result.push({
                 label: t`User`,
                 key: '/account/user',
                 icon: <TeamOutlined />
-            });
-        PemUtil.canView('role') &&
-            result.push({
-                label: t`Role`,
-                key: '/account/role',
-                icon: <TagsOutlined />
             });
         */
         return result;
