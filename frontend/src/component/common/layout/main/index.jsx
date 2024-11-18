@@ -60,11 +60,11 @@ export default function MainLayout() {
         const result = [];
 
         result.push({ label: t`Profile`, key: '/', icon: <UserOutlined /> });
-        PemUtil.canView('crudvariable') &&
+        PemUtil.canView('crudtenant') &&
             result.push({
-                label: t`Variable`,
-                key: '/config/variable',
-                icon: <SettingFilled />
+                label: t`Tenant`,
+                key: '/account/tenant',
+                icon: <AuditOutlined />
             });
         PemUtil.canView('crudauthclient') &&
             result.push({
@@ -72,11 +72,11 @@ export default function MainLayout() {
                 key: '/account/auth-client',
                 icon: <LockOutlined />
             });
-        PemUtil.canView('crudtenant') &&
+        PemUtil.canView('crudvariable') &&
             result.push({
-                label: t`Tenant`,
-                key: '/account/tenant',
-                icon: <AuditOutlined />
+                label: t`Variable`,
+                key: '/config/variable',
+                icon: <SettingFilled />
             });
         /*
         PemUtil.canView('cruduser') &&
