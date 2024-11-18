@@ -169,7 +169,8 @@ export default function TenantTable() {
             key: 'avatar',
             title: labels.avatar,
             dataIndex: 'avatar',
-            render: (value) => <Img src={value} width={30} height={30} />
+            render: (value) => <Img src={value} width={30} height={30} />,
+            width: 100
         },
         {
             key: 'action',
