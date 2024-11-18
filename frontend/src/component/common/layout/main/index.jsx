@@ -7,14 +7,13 @@ import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
     UserOutlined,
-    TeamOutlined,
     LogoutOutlined,
     SettingFilled,
-    TagsOutlined,
     AuditOutlined,
     LockOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
+import Util from 'service/helper/util';
 import StorageUtil from 'service/helper/storage_util';
 import PemUtil from 'service/helper/pem_util';
 import NavUtil from 'service/helper/nav_util';
@@ -79,6 +78,7 @@ export default function MainLayout() {
                 key: '/account/tenant',
                 icon: <AuditOutlined />
             });
+        /*
         PemUtil.canView('cruduser') &&
             result.push({
                 label: t`User`,
@@ -91,6 +91,7 @@ export default function MainLayout() {
                 key: '/account/role',
                 icon: <TagsOutlined />
             });
+        */
         return result;
     }
 
@@ -147,13 +148,16 @@ export default function MainLayout() {
                                 }
                             )}
                         </Col>
-                        <Col span={12} style={{paddingRight: 5}}>
+                        <Col span={12} style={{ paddingRight: 5 }}>
                             <Flex gap={5} justify="flex-end">
                                 <span>{StorageUtil.getUserInfo().first_name}</span>
                                 <LocaleSelect />
                                 <Button
                                     icon={<LogoutOutlined />}
-                                    onClick={logout}
+                                    onClick={() => {
+                                        Util.toggleGlobalLoading();
+                                        logout();
+                                    }}
                                     danger
                                 />
                             </Flex>
