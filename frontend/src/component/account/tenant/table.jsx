@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { Row, Col, Table } from 'antd';
+import { NavLink } from 'react-router-dom';
+import { Row, Col, Table, Flex } from 'antd';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
 import {
     AddNewBtn,
     RemoveSelectedBtn,
     EditBtn,
-    RemoveBtn
+    RemoveBtn,
+    ViewBtn
 } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
 import Img from 'component/common/display/img';
@@ -178,14 +180,19 @@ export default function TenantTable() {
             fixed: 'right',
             width: 90,
             render: (_text, record) => (
-                <div className="flex-space">
+                <Flex wrap gap={5} justify="flex-end">
                     <PemCheck pem_group={PEM_GROUP} pem="update">
                         <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
                         <RemoveBtn onClick={() => onDelete(record.id)} />
                     </PemCheck>
-                </div>
+                    <PemCheck pem_group={PEM_GROUP} pem="retrieve">
+                        <NavLink to={`/account/tenant/${record.id}`}>
+                            <ViewBtn onClick={() => {}} />
+                        </NavLink>
+                    </PemCheck>
+                </Flex>
             )
         }
     ];

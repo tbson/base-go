@@ -10,10 +10,12 @@ import Table from './table';
 export default function Tenant() {
     const [tenantOption, setTenantOption] = useAtom(tenantOptionSt);
     useEffect(() => {
-        if (!tenantOption.loaded) getOption();
+        if (!tenantOption.loaded) {
+            getOption();
+        }
     }, []);
 
-    function getOption() {
+    const getOption = () => {
         RequestUtil.apiCall(urls.option)
             .then((resp) => {
                 setTenantOption({ ...resp.data, loaded: true });
@@ -21,7 +23,7 @@ export default function Tenant() {
             .catch(() => {
                 setTenantOption((prev) => ({ ...prev, loaded: true }));
             });
-    }
+    };
 
     const messages = getMessages();
     return (

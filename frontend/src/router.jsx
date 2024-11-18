@@ -5,6 +5,7 @@ import PrivateRoute from 'component/common/route/private_route.jsx';
 import BlankLayout from 'component/common/layout/blank';
 import AdminLayout from 'component/common/layout/admin';
 import UserLayout from 'component/common/layout/user';
+import TenantLayout from 'component/common/layout/tenant';
 
 const userInfor = StorageUtil.getUserInfo();
 
@@ -26,6 +27,26 @@ const router = createBrowserRouter([
                         lazy: async () => ({
                             Component: (await import('component/auth/login')).default
                         })
+                    }
+                ]
+            },
+            {
+                path: 'account/tenant/:id',
+                element: <TenantLayout />,
+                children: [
+                    {
+                        path: '',
+                        element: <PrivateRoute />,
+                        children: [
+                            {
+                                path: '',
+                                lazy: async () => ({
+                                    Component: (
+                                        await import('component/account/tenant/detail')
+                                    ).default
+                                })
+                            }
+                        ]
                     }
                 ]
             },

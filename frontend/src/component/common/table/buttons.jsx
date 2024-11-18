@@ -1,7 +1,14 @@
-import * as React from "react";
-import { t } from "ttag";
-import { Button, Tooltip } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import * as React from 'react';
+import { t } from 'ttag';
+import { Button, Tooltip } from 'antd';
+import {
+    EditOutlined,
+    EyeOutlined,
+    DeleteOutlined,
+    GlobalOutlined,
+    CheckOutlined,
+    PlusOutlined
+} from '@ant-design/icons';
 
 export function AddNewBtn({ onClick }) {
     return (
@@ -48,6 +55,49 @@ export function RemoveBtn({ onClick }) {
                 type="default"
                 htmlType="button"
                 icon={<DeleteOutlined />}
+                size="small"
+                onClick={onClick}
+            />
+        </Tooltip>
+    );
+}
+
+export function ViewBtn({ onClick }) {
+    return (
+        <Tooltip title={t`View`}>
+            <Button
+                type="default"
+                htmlType="button"
+                icon={<EyeOutlined />}
+                size="small"
+                onClick={onClick}
+            />
+        </Tooltip>
+    );
+}
+
+export function LinkBtn({ onClick }) {
+    return (
+        <Tooltip title={t`Link`}>
+            <Button
+                type="default"
+                htmlType="button"
+                icon={<GlobalOutlined />}
+                size="small"
+                onClick={onClick}
+            />
+        </Tooltip>
+    );
+}
+
+export function CheckBtn({ onClick, disabled }) {
+    return (
+        <Tooltip title={t`Check`}>
+            <Button
+                type="default"
+                htmlType="button"
+                icon={<CheckOutlined />}
+                disabled={disabled}
                 size="small"
                 onClick={onClick}
             />
