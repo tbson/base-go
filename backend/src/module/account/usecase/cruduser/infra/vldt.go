@@ -3,15 +3,14 @@ package infra
 import "src/common/ctype"
 
 type InputData struct {
-	TenantID    uint       `json:"tenant_id" validate:"required"`
-	TenantTmpID *uint      `json:"tenant_tmp_id"`
-	Uid         string     `json:"uid" validate:"required"`
-	Email       string     `json:"email" validate:"required"`
-	Mobile      *string    `json:"mobile"`
-	FirstName   string     `json:"first_name"`
-	LastName    string     `json:"last_name"`
-	Avatar      string     `json:"avatar"`
-	AvatarStr   string     `json:"avatar_str"`
-	ExtraInfo   ctype.Dict `json:"extra_info"`
-	Admin       bool       `json:"admin"`
+	TenantID    uint       `json:"tenant_id" form:"tenant_id" validate:"required"`
+	TenantTmpID *uint      `json:"tenant_tmp_id" form:"tenant_tmp_id"`
+	Uid         string     `json:"uid" form:"uid" validate:"required"`
+	Email       string     `json:"email" form:"email" validate:"required"`
+	Mobile      *string    `json:"mobile" form:"mobile"`
+	FirstName   string     `json:"first_name" form:"first_name"`
+	LastName    string     `json:"last_name" form:"last_name"`
+	AvatarStr   string     `json:"avatar_str" form:"avatar_str"`
+	ExtraInfo   ctype.Dict `json:"extra_info" form:"extra_info"`
+	Admin       bool       `json:"admin" form:"admin"`
 }
