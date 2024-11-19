@@ -23,6 +23,10 @@ var filterableFields = []string{}
 var orderableFields = []string{"id", "uid"}
 
 func List(c echo.Context) error {
+	if err := CheckRequiredFilter(c, "tenant_id"); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
 	pager := paging.New[Schema](dbutil.Db())
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
@@ -58,11 +62,6 @@ func Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
 	result, err := cruder.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -76,11 +75,6 @@ func Update(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
 
 	data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

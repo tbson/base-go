@@ -9,7 +9,7 @@ import TenantLayout from 'component/common/layout/tenant';
 
 const userInfor = StorageUtil.getUserInfo();
 
-const MainLayout = userInfor?.profile_type === "admin" ? AdminLayout : UserLayout;
+const MainLayout = userInfor?.profile_type === 'admin' ? AdminLayout : UserLayout;
 
 import App from 'src/app';
 
@@ -43,6 +43,14 @@ const router = createBrowserRouter([
                                 lazy: async () => ({
                                     Component: (
                                         await import('component/account/tenant/detail')
+                                    ).default
+                                })
+                            },
+                            {
+                                path: 'role',
+                                lazy: async () => ({
+                                    Component: (
+                                        await import('component/account/role')
                                     ).default
                                 })
                             }

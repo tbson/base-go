@@ -167,4 +167,9 @@ var (
 		ID:    "FailedToUploadFileToS3",
 		Other: "failed to upload file to S3",
 	}
+
+	MissingTenantID = &i18n.Message{
+		ID:    "MissingTenantID",
+		Other: "missing tenant ID",
+	}
 )

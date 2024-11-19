@@ -5,11 +5,11 @@ import { Modal } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import Form from './form';
-import { urls, emptyRecord, getMessages } from '../config';
+import { urls, getMessages, TOGGLE_DIALOG_EVENT } from '../config';
 
 export class Service {
     static get toggleEvent() {
-        return 'TOGGLE_ROLE_DIALOG';
+        return TOGGLE_DIALOG_EVENT;
     }
 
     static toggle(open = true, id = 0) {
@@ -24,13 +24,15 @@ export class Service {
  * @param {function} props.onChange - (data: Dict, id: number) => void
  */
 export default function RoleDialog({ onChange }) {
-    const [data, setData] = useState({ ...emptyRecord });
+    const [data, setData] = useState({});
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(0);
     const messages = getMessages();
 
     const handleToggle = ({ detail: { open, id } }) => {
-        if (!open) return setOpen(false);
+        if (!open) {
+            return setOpen(false);
+        }
         setId(id);
         if (id) {
             Util.toggleGlobalLoading();
@@ -41,7 +43,7 @@ export default function RoleDialog({ onChange }) {
                 })
                 .finally(() => Util.toggleGlobalLoading(false));
         } else {
-            setData({ ...emptyRecord });
+            setData({});
             setOpen(true);
         }
     };
@@ -64,7 +66,6 @@ export default function RoleDialog({ onChange }) {
             onCancel={() => Service.toggle(false)}
             cancelText={t`Cancel`}
             title={Util.getDialogTitle(id, messages)}
-            width={1024}
         >
             <Form
                 data={data}

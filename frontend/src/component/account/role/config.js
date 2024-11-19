@@ -5,12 +5,14 @@ const urlMap = {
     base: {
         prefix: 'account/role',
         endpoints: {
-            crud: ''
+            crud: '',
+            option: 'option'
         }
     }
 };
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
-
+export const TOGGLE_DIALOG_EVENT = 'TOGGLE_TENANT_DIALOG';
+export const PEM_GROUP = 'crudrole';
 const headingTxt = t`Role`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({
@@ -19,15 +21,7 @@ export const getMessages = () => ({
     deleteMultiple: t`Do you want to remote these ${name}?`
 });
 
-export const emptyRecord = {
-    id: 0,
-    title: '',
-    profile_type: null,
-    pem_ids: []
-};
-
 export const getLabels = () => ({
-    title: t`Role name`,
-    profile_type: t`Profile type`,
-    pem_ids: t`Permissions`
+    tenant_id: t`Tenant`,
+    title: t`Title`,
 });

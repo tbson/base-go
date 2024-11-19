@@ -8,6 +8,7 @@ import (
 	"src/util/dbutil"
 	"src/util/errutil"
 	"src/util/localeutil"
+	"src/util/numberutil"
 	"src/util/ssoutil"
 
 	"github.com/labstack/echo/v4"
@@ -63,9 +64,24 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 				return c.JSON(401, errutil.New("", []string{msg}))
 			}
 
+			// check cross tenant query
+			// only admin can do it
+			var tenantID uint = user.TenantID
+			if user.Admin == true && user.TenantTmpID != nil {
+				tenantID = *user.TenantTmpID
+			}
+			specificTenantIDStr := c.QueryParam("tenant_id")
+			if specificTenantIDStr != "" {
+				specificTenantID := numberutil.StrToUint(specificTenantIDStr, 0)
+				if user.Admin == false && specificTenantID != tenantID {
+					return c.JSON(401, errutil.New("", []string{msg}))
+				}
+				tenantID = specificTenantID
+			}
+
 			if !isRbac {
 				c.Set("userID", user.ID)
-				c.Set("tenantID", user.TenantID)
+				c.Set("tenantID", tenantID)
 				return next(c)
 			}
 
@@ -73,7 +89,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 				for _, pem := range role.Pems {
 					if pem.Module == module && pem.Action == action {
 						c.Set("userID", user.ID)
-						c.Set("tenantID", user.TenantID)
+						c.Set("tenantID", tenantID)
 						return next(c)
 					}
 				}

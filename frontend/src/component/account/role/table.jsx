@@ -1,24 +1,30 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Row, Col, Table } from 'antd';
+import { NavLink, useParams } from 'react-router-dom';
+import { Row, Col, Table, Flex } from 'antd';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
 import {
     AddNewBtn,
     RemoveSelectedBtn,
     EditBtn,
-    RemoveBtn
+    RemoveBtn,
+    ViewBtn
 } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
 import Util from 'service/helper/util';
+import DictUtil from 'service/helper/dict_util';
+import FormUtil from 'service/helper/form_util';
 import RequestUtil from 'service/helper/request_util';
 import Dialog from './dialog';
-import { urls, getLabels, getMessages } from './config';
-
-const PEM_GROUP = 'role';
+import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function RoleTable() {
-    const [queryParam, setQueryParam] = useState({});
+    const { id } = useParams();
+    const [searchParam, setSearchParam] = useState({});
+    const [filterParam, setFilterParam] = useState({tenant_id: id});
+    const [sortParam, setSortParam] = useState({});
+    const [pageParam, setPageParam] = useState({});
     const [init, setInit] = useState(false);
     const [list, setList] = useState([]);
     const [ids, setIds] = useState([]);
@@ -26,27 +32,92 @@ export default function RoleTable() {
     const labels = getLabels();
     const messages = getMessages();
 
-    function getList() {
+    useEffect(() => {
+        getList();
+    }, [searchParam, filterParam, sortParam, pageParam]);
+
+    const getList = () => {
         setInit(true);
+        const queryParam = {
+            ...searchParam,
+            ...filterParam,
+            ...sortParam,
+            ...pageParam
+        };
         RequestUtil.apiCall(urls.crud, queryParam)
             .then((resp) => {
                 setPages(resp.data.pages);
-                setList(Util.appendKey(resp.data.items));
+                setList(Util.appendKeys(resp.data.items));
+            }).catch((err) => {
+                FormUtil.setFormErrors()(err.response.data);
             })
             .finally(() => {
                 setInit(false);
             });
-    }
+    };
 
-    function searchList(keyword) {
-        const qParam = { ...queryParam };
-        delete qParam.page;
-        setQueryParam({ ...qParam, q: keyword });
-    }
+    const handlePaging = (page) => {
+        if (!page) {
+            setPageParam({});
+        } else {
+            setPageParam({ page });
+        }
+    };
 
-    useEffect(() => {
-        getList();
-    }, [queryParam]);
+    const handleSearching = (keyword) => {
+        setPageParam({});
+        if (!keyword) {
+            setSearchParam({});
+        } else {
+            setSearchParam({ q: keyword });
+        }
+    };
+
+    const handleFiltering = (filterObj) => {
+        if (DictUtil.isEmpty(filterObj)) {
+            setFilterParam({});
+        } else {
+            setFilterParam(
+                Object.entries(filterObj).reduce((acc, [key, value]) => {
+                    if (!value || value.length === 0) {
+                        return acc;
+                    }
+                    acc[key] = value[0];
+                    return acc;
+                }, {})
+            );
+        }
+    };
+
+    const handleSorting = (sortObj) => {
+        if (DictUtil.isEmpty(sortObj)) {
+            return setSortParam({});
+        }
+        if (!sortObj.field) {
+            return setSortParam({});
+        }
+        const sign = sortObj.order === 'descend' ? '-' : '';
+        setSortParam({
+            order: `${sign}${sortObj.field}`
+        });
+    };
+
+    const handleTableChange = (_pagination, filters, sorter) => {
+        setPageParam({});
+        handleFiltering(filters);
+        handleSorting(sorter);
+    };
+
+    const onChange = (data, id) => {
+        if (!id) {
+            setList([{ ...Util.appendKey(data) }, ...list]);
+        } else {
+            const index = list.findIndex((item) => item.id === id);
+            data.key = data.id;
+            list[index] = data;
+            setList([...list]);
+        }
+    };
 
     const onDelete = (id) => {
         const r = window.confirm(messages.deleteOne);
@@ -72,27 +143,14 @@ export default function RoleTable() {
             .finally(() => Util.toggleGlobalLoading(false));
     };
 
-    const onChange = (data, id) => {
-        if (!id) {
-            setList([{ ...data, key: data.id }, ...list]);
-        } else {
-            const index = list.findIndex((item) => item.id === id);
-            data.key = data.id;
-            list[index] = data;
-            setList([...list]);
-        }
-    };
     const columns = [
         {
             key: 'title',
             title: labels.title,
-            dataIndex: 'title'
-        },
-        {
-            key: 'profile_type',
-            title: labels.profile_type,
-            dataIndex: 'profile_type_label',
-            width: 200
+            dataIndex: 'title',
+            sorter: (a, b) => {
+                return a.title.localeCompare(b.title);
+            }
         },
         {
             key: 'action',
@@ -100,14 +158,19 @@ export default function RoleTable() {
             fixed: 'right',
             width: 90,
             render: (_text, record) => (
-                <div className="flex-space">
+                <Flex wrap gap={5} justify="flex-end">
                     <PemCheck pem_group={PEM_GROUP} pem="update">
                         <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
                         <RemoveBtn onClick={() => onDelete(record.id)} />
                     </PemCheck>
-                </div>
+                    <PemCheck pem_group={PEM_GROUP} pem="retrieve">
+                        <NavLink to={`/account/role/${record.id}`}>
+                            <ViewBtn onClick={() => {}} />
+                        </NavLink>
+                    </PemCheck>
+                </Flex>
             )
         }
     ];
@@ -122,7 +185,7 @@ export default function RoleTable() {
         <div>
             <Row>
                 <Col span={12}>
-                    <PemCheck pem_group={PEM_GROUP} pem="delete">
+                    <PemCheck pem_group={PEM_GROUP} pem="delete_list">
                         <RemoveSelectedBtn ids={ids} onClick={onBulkDelete} />
                     </PemCheck>
                 </Col>
@@ -133,32 +196,21 @@ export default function RoleTable() {
                 </Col>
             </Row>
 
-            <SearchInput onChange={searchList} />
+            <SearchInput onChange={handleSearching} />
 
             <Table
                 rowSelection={{
                     type: 'checkbox',
                     ...rowSelection
                 }}
+                onChange={handleTableChange}
                 loading={init}
                 columns={columns}
                 dataSource={list}
                 scroll={{ x: 1000 }}
                 pagination={false}
             />
-            <Pagination
-                next={pages.next}
-                prev={pages.prev}
-                onChange={(page) => {
-                    const qParam = { ...queryParam };
-                    if (!page) {
-                        delete qParam.page;
-                        setQueryParam({ ...qParam });
-                    } else {
-                        setQueryParam({ ...queryParam, page });
-                    }
-                }}
-            />
+            <Pagination next={pages.next} prev={pages.prev} onChange={handlePaging} />
             <Dialog onChange={onChange} />
         </div>
     );
