@@ -23,7 +23,11 @@ func New(client *gorm.DB) Repo {
 
 func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 	db := r.client
-	db = db.Order("id DESC")
+	if queryOptions.Order == "" {
+		db = db.Order("id DESC")
+	} else {
+		db = db.Order(queryOptions.Order)
+	}
 	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
 	preloads := queryOptions.Preloads
 	if len(preloads) > 0 {
