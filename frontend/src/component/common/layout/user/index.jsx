@@ -152,7 +152,7 @@ export default function UserLayout() {
                         </Col>
                         <Col span={12} style={{ paddingRight: 5 }}>
                             <Flex gap={5} justify="flex-end">
-                                <span>{StorageUtil.getUserInfo().first_name}</span>
+                                <span>{StorageUtil.getUserInfo()?.first_name}</span>
                                 <LocaleSelect />
                                 <Button
                                     icon={<LogoutOutlined />}

@@ -38,7 +38,10 @@ export default function RoleDialog({ onChange }) {
             Util.toggleGlobalLoading();
             RequestUtil.apiCall(`${urls.crud}${id}`)
                 .then((resp) => {
-                    setData(resp.data);
+                    const data = resp.data;
+                    data.pem_ids = data.pems.map(({ id }) => id);
+                    delete data.pems;
+                    setData(data);
                     setOpen(true);
                 })
                 .finally(() => Util.toggleGlobalLoading(false));
@@ -66,6 +69,7 @@ export default function RoleDialog({ onChange }) {
             onCancel={() => Service.toggle(false)}
             cancelText={t`Cancel`}
             title={Util.getDialogTitle(id, messages)}
+            width="70%"
         >
             <Form
                 data={data}

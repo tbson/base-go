@@ -8,8 +8,10 @@ import (
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
+	"src/module/account/repo/pem"
 	"src/module/account/repo/role"
 	"src/module/account/schema"
+	"src/module/account/usecase/crudrole/app"
 
 	"github.com/labstack/echo/v4"
 )
@@ -19,8 +21,36 @@ type Schema = schema.Role
 var NewRepo = role.New
 var folder = "role/avatar"
 var searchableFields = []string{"uid", "title"}
-var filterableFields = []string{}
+var filterableFields = []string{"tenant_id"}
 var orderableFields = []string{"id", "uid"}
+
+func Option(c echo.Context) error {
+	admin := c.Get("Admin").(bool)
+	pemRepo := pem.New(dbutil.Db())
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{},
+		Order:   "module ASC",
+	}
+	if !admin {
+		queryOptions.Filters["admin"] = false
+	}
+	items, err := pemRepo.List(queryOptions)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	pemOptions := []ctype.SelectOption[uint]{}
+	for _, item := range items {
+		pemOptions = append(pemOptions, ctype.SelectOption[uint]{
+			Value:       item.ID,
+			Label:       item.Module,
+			Description: item.Title,
+		})
+	}
+	result := ctype.Dict{
+		"pem": pemOptions,
+	}
+	return c.JSON(http.StatusOK, result)
+}
 
 func List(c echo.Context) error {
 	if err := CheckRequiredFilter(c, "tenant_id"); err != nil {
@@ -43,7 +73,8 @@ func Retrieve(c echo.Context) error {
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"id": id},
+		Filters:  ctype.Dict{"id": id},
+		Preloads: []string{"Pems"},
 	}
 
 	result, err := cruder.Retrieve(queryOptions)
@@ -56,13 +87,17 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	roleRepo := NewRepo(dbutil.Db())
+	crudRoleRepo := New(dbutil.Db())
+
+	srv := app.New(roleRepo, crudRoleRepo)
+
 	data, err := vldtutil.ValidatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	result, err := cruder.Create(data)
+	result, err := srv.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -72,15 +107,18 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	roleRepo := NewRepo(dbutil.Db())
+	crudRoleRepo := New(dbutil.Db())
 
+	srv := app.New(roleRepo, crudRoleRepo)
+
+	id := vldtutil.ValidateId(c.Param("id"))
 	data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	id := vldtutil.ValidateId(c.Param("id"))
-	result, err := cruder.Update(id, data)
+	result, err := srv.Update(id, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

@@ -14,6 +14,7 @@ type PemMap map[string]Pem
 type QueryOptions struct {
 	Filters  Dict
 	Preloads []string
+	Order    string
 }
 
 type SelectOption[T any] struct {

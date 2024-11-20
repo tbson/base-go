@@ -13,14 +13,14 @@ import Summary from './summary';
 import Dialog from '../dialog';
 
 export default function Tenant() {
-    const { id } = useParams();
+    const { tenant_id } = useParams();
     const [item, setItem] = useState({});
     const [tenantOption, setTenantOption] = useAtom(tenantOptionSt);
     useEffect(() => {
         if (!tenantOption.loaded) {
             getOption();
         }
-        getItem(id);
+        getItem(tenant_id);
     }, []);
 
     const getOption = () => {
@@ -33,8 +33,8 @@ export default function Tenant() {
             });
     };
 
-    const getItem = (id) => {
-        return RequestUtil.apiCall(`${urls.crud}${id}`).then((resp) => {
+    const getItem = (tenant_id) => {
+        return RequestUtil.apiCall(`${urls.crud}${tenant_id}`).then((resp) => {
             setItem(resp.data);
         });
     };
@@ -56,7 +56,7 @@ export default function Tenant() {
                     htmlType="button"
                     type="primary"
                     icon={<EditOutlined />}
-                    onClick={() => Dialog.toggle(true, id)}
+                    onClick={() => Dialog.toggle(true, tenant_id)}
                 >
                     {t`Update tenant`}
                 </Button>

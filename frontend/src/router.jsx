@@ -31,7 +31,7 @@ const router = createBrowserRouter([
                 ]
             },
             {
-                path: 'account/tenant/:id',
+                path: 'account/tenant/:tenant_id',
                 element: <TenantLayout />,
                 children: [
                     {

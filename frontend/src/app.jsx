@@ -15,9 +15,9 @@ const themeConfig = {
     components: { Menu: { itemHeight: 34 } },
     token: {
         fontFamily: 'Montserrat',
-        colorPrimary: '#129679',
-        colorLink: '#129679',
-        borderRadius: 0,
+        colorPrimary: '#006576',
+        colorLink: '#006576',
+        borderRadius: 3,
     }
 };
 

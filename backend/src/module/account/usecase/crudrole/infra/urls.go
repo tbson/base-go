@@ -18,6 +18,9 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
 	rr := routeutil.RegisterRoute(g, pemMap)
 
+	rr.Private(
+		"GET", "/option/", Option,
+	)
 	rr.Rbac(
 		"GET", "/", List,
 		[]string{profiletype.ADMIN, profiletype.STAFF},

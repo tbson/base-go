@@ -37,7 +37,7 @@ function processSelectedKeys(pathname) {
  * TenantLayout.
  */
 export default function TenantLayout() {
-    const { id } = useParams();
+    const { tenant_id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
     const [menuItems, setMenuItems] = useState([]);
@@ -63,13 +63,13 @@ export default function TenantLayout() {
         PemUtil.canView('crudtenant') &&
             result.push({
                 label: t`Tenant`,
-                key: `/account/tenant/${id}`,
+                key: `/account/tenant/${tenant_id}`,
                 icon: <AuditOutlined />
             });
         PemUtil.canView('crudrole') &&
             result.push({
                 label: t`Role`,
-                key: `/account/tenant/${id}/role`,
+                key: `/account/tenant/${tenant_id}/role`,
                 icon: <TagsOutlined />
             });
         /*

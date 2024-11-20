@@ -22,6 +22,6 @@ export const getMessages = () => ({
 });
 
 export const getLabels = () => ({
-    tenant_id: t`Tenant`,
     title: t`Title`,
+    pem_ids: t`Permissions`,
 });

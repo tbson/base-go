@@ -109,6 +109,7 @@ func NewRole(data ctype.Dict) *Role {
 	return &Role{
 		TenantID: dictutil.GetValue[uint](data, "TenantID"),
 		Title:    dictutil.GetValue[string](data, "Title"),
+		Pems:     dictutil.GetValue[[]Pem](data, "Pems"),
 	}
 }
 
@@ -118,6 +119,7 @@ type Pem struct {
 	Title  string `gorm:"type:text;not null" json:"title"`
 	Module string `gorm:"type:text;not null;uniqueIndex:idx_pems_module_action" json:"module"`
 	Action string `gorm:"type:text;not null;uniqueIndex:idx_pems_module_action" json:"action"`
+	Admin  bool   `gorm:"type:boolean;not null;default:false" json:"admin"`
 }
 
 func NewPem(data ctype.Dict) *Pem {
@@ -125,5 +127,6 @@ func NewPem(data ctype.Dict) *Pem {
 		Title:  dictutil.GetValue[string](data, "Title"),
 		Module: dictutil.GetValue[string](data, "Module"),
 		Action: dictutil.GetValue[string](data, "Action"),
+		Admin:  dictutil.GetValue[bool](data, "Admin"),
 	}
 }

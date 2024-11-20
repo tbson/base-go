@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { NavLink, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Row, Col, Table, Flex } from 'antd';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
@@ -8,8 +8,7 @@ import {
     AddNewBtn,
     RemoveSelectedBtn,
     EditBtn,
-    RemoveBtn,
-    ViewBtn
+    RemoveBtn
 } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
 import Util from 'service/helper/util';
@@ -20,9 +19,9 @@ import Dialog from './dialog';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function RoleTable() {
-    const { id } = useParams();
+    const { tenant_id } = useParams();
     const [searchParam, setSearchParam] = useState({});
-    const [filterParam, setFilterParam] = useState({tenant_id: id});
+    const [filterParam, setFilterParam] = useState({tenant_id});
     const [sortParam, setSortParam] = useState({});
     const [pageParam, setPageParam] = useState({});
     const [init, setInit] = useState(false);
@@ -164,11 +163,6 @@ export default function RoleTable() {
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
                         <RemoveBtn onClick={() => onDelete(record.id)} />
-                    </PemCheck>
-                    <PemCheck pem_group={PEM_GROUP} pem="retrieve">
-                        <NavLink to={`/account/role/${record.id}`}>
-                            <ViewBtn onClick={() => {}} />
-                        </NavLink>
                     </PemCheck>
                 </Flex>
             )

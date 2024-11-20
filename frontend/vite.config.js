@@ -30,15 +30,5 @@ export default defineConfig({
         globals: true,
         environment: "jsdom",
         setupFiles: ["./src/vitest.setup.js"]
-    },
-    css: {
-        preprocessorOptions: {
-            less: {
-                modifyVars: {
-                    "primary-color": "@blue-6"
-                },
-                javascriptEnabled: true
-            }
-        }
     }
 });

@@ -8,7 +8,6 @@ import { urls, getMessages } from './config';
 import Table from './table';
 
 export default function Role() {
-    /*
     const [roleOption, setRoleOption] = useAtom(roleOptionSt);
     useEffect(() => {
         if (!roleOption.loaded) {
@@ -25,7 +24,6 @@ export default function Role() {
                 setRoleOption((prev) => ({ ...prev, loaded: true }));
             });
     };
-    */
     const messages = getMessages();
     return (
         <>

@@ -23,6 +23,31 @@ func New(client *gorm.DB) Repo {
 	}
 }
 
+func getAdmin(profileTypes []string) bool {
+	// if profileTypes ONLY contains ADMIN, return true
+	if len(profileTypes) == 1 && profileTypes[0] == profiletype.ADMIN {
+		return true
+	}
+
+	// if profileTypes ONLY contains STAFF, return true
+	if len(profileTypes) == 1 && profileTypes[0] == profiletype.STAFF {
+		return true
+	}
+
+	// if profileTypes contains ADMIN and STAFF, return true
+	if slices.Contains(
+		profileTypes,
+		profiletype.ADMIN,
+	) && slices.Contains(
+		profileTypes,
+		profiletype.STAFF,
+	) {
+		return true
+	}
+
+	return false
+}
+
 func (r Repo) WritePems(pemMap ctype.PemMap) error {
 	pemRepo := pem.New(r.client)
 	for _, pemData := range pemMap {
@@ -36,6 +61,7 @@ func (r Repo) WritePems(pemMap ctype.PemMap) error {
 			"Title":  pemData.Title,
 			"Module": pemData.Module,
 			"Action": pemData.Action,
+			"Admin":  getAdmin(pemData.ProfileTypes),
 		}
 
 		_, err := pemRepo.GetOrCreate(filterOptions, data)
