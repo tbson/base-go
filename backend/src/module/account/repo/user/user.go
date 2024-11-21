@@ -94,6 +94,9 @@ func (r Repo) Update(id uint, data ctype.Dict) (*Schema, error) {
 	if err != nil {
 		return nil, err
 	}
+	if _, ok := data["Roles"]; ok {
+		r.client.Model(&item).Association("Roles").Replace(data["Roles"])
+	}
 	result := r.client.Model(&item).Omit("ID").Updates(map[string]interface{}(data))
 	err = result.Error
 	if err != nil {

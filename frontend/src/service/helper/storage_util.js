@@ -140,6 +140,14 @@ export default class StorageUtil {
      */
     static getTenantUid() {
         const { userInfo } = StorageUtil.getStorageObj('auth');
-        return userInfo.tenant_uid || '';
+        let result = userInfo?.tenant_uid || '';
+        if (!result) {
+            result = StorageUtil.getStorageStr('tenantUid');
+        }
+        return result;
+    }
+
+    static setTenantUid(tenantUid) {
+        StorageUtil.setStorage('tenantUid', tenantUid);
     }
 }

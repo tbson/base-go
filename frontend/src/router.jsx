@@ -53,6 +53,14 @@ const router = createBrowserRouter([
                                         await import('component/account/role')
                                     ).default
                                 })
+                            },
+                            {
+                                path: 'user',
+                                lazy: async () => ({
+                                    Component: (
+                                        await import('component/account/user')
+                                    ).default
+                                })
                             }
                         ]
                     }

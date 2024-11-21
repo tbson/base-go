@@ -4,13 +4,14 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
-	"src/util/dictutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
+	"src/module/account/repo/role"
 	"src/module/account/repo/user"
 	"src/module/account/schema"
+	"src/module/account/usecase/cruduser/app"
 
 	"github.com/labstack/echo/v4"
 )
@@ -22,6 +23,30 @@ var NewRepo = user.New
 var searchableFields = []string{"uid", "description", "partition"}
 var filterableFields = []string{}
 var orderableFields = []string{"id", "uid"}
+
+func Option(c echo.Context) error {
+	tenantId := c.Get("TenantID").(uint)
+	roleRepo := role.New(dbutil.Db())
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"tenant_id": tenantId},
+		Order:   "title ASC",
+	}
+	items, err := roleRepo.List(queryOptions)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	roleOptions := []ctype.SelectOption[uint]{}
+	for _, item := range items {
+		roleOptions = append(roleOptions, ctype.SelectOption[uint]{
+			Value: item.ID,
+			Label: item.Title,
+		})
+	}
+	result := ctype.Dict{
+		"role": roleOptions,
+	}
+	return c.JSON(http.StatusOK, result)
+}
 
 func List(c echo.Context) error {
 	pager := paging.New[Schema](dbutil.Db())
@@ -40,7 +65,8 @@ func Retrieve(c echo.Context) error {
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"id": id},
+		Filters:  ctype.Dict{"id": id},
+		Preloads: []string{"Roles"},
 	}
 
 	result, err := cruder.Retrieve(queryOptions)
@@ -58,7 +84,7 @@ func Create(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	result, err := cruder.Create(dictutil.StructToDict(data))
+	result, err := cruder.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -68,14 +94,17 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	userRepo := NewRepo(dbutil.Db())
+	crudUserRepo := New(dbutil.Db())
+
+	srv := app.New(userRepo, crudUserRepo)
 
 	data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	id := vldtutil.ValidateId(c.Param("id"))
-	result, err := cruder.Update(id, data)
+	result, err := srv.Update(id, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

@@ -12,5 +12,6 @@ type InputData struct {
 	LastName    string     `json:"last_name" form:"last_name"`
 	AvatarStr   string     `json:"avatar_str" form:"avatar_str"`
 	ExtraInfo   ctype.Dict `json:"extra_info" form:"extra_info"`
-	Admin       bool       `json:"admin" form:"admin"`
+	RoleIDs     []uint     `json:"role_ids" form:"role_ids" validate:"required"`
+	// Admin       bool       `json:"admin" form:"admin"`
 }

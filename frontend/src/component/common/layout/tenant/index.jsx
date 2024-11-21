@@ -8,7 +8,8 @@ import {
     MenuFoldOutlined,
     LogoutOutlined,
     AuditOutlined,
-    TagsOutlined
+    TagsOutlined,
+    TeamOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
 import Util from 'service/helper/util';
@@ -72,14 +73,12 @@ export default function TenantLayout() {
                 key: `/account/tenant/${tenant_id}/role`,
                 icon: <TagsOutlined />
             });
-        /*
         PemUtil.canView('cruduser') &&
             result.push({
                 label: t`User`,
-                key: '/account/user',
+                key: `/account/tenant/${tenant_id}/user`,
                 icon: <TeamOutlined />
             });
-        */
         return result;
     };
 

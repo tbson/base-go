@@ -5,11 +5,11 @@ import { Modal } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import Form from './form';
-import { urls, getMessages } from '../config';
+import { urls, getMessages, TOGGLE_DIALOG_EVENT } from '../config';
 
 export class Service {
     static get toggleEvent() {
-        return 'TOGGLE_USER_DIALOG';
+        return TOGGLE_DIALOG_EVENT;
     }
 
     static toggle(open = true, id = 0) {
@@ -30,13 +30,18 @@ export default function UserDialog({ onChange }) {
     const messages = getMessages();
 
     const handleToggle = ({ detail: { open, id } }) => {
-        if (!open) return setOpen(false);
+        if (!open) {
+            return setOpen(false);
+        }
         setId(id);
         if (id) {
             Util.toggleGlobalLoading();
             RequestUtil.apiCall(`${urls.crud}${id}`)
                 .then((resp) => {
-                    setData(resp.data);
+                    const data = resp.data;
+                    data.role_ids = data.roles.map(({ id }) => id);
+                    delete data.roles;
+                    setData(data);
                     setOpen(true);
                 })
                 .finally(() => Util.toggleGlobalLoading(false));
@@ -63,7 +68,6 @@ export default function UserDialog({ onChange }) {
             okText={t`Save`}
             onCancel={() => Service.toggle(false)}
             cancelText={t`Cancel`}
-            width={1024}
             title={Util.getDialogTitle(id, messages)}
         >
             <Form

@@ -5,19 +5,14 @@ const urlMap = {
     base: {
         prefix: 'account/user',
         endpoints: {
-            crud: ''
-        }
-    },
-    profile: {
-        prefix: 'account',
-        endpoints: {
-            profile: 'profile'
+            crud: '',
+            option: 'option'
         }
     }
 };
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
-export const profileUrls = RequestUtil.prefixMapValues(urlMap.profile);
-
+export const TOGGLE_DIALOG_EVENT = 'TOGGLE_USER_DIALOG';
+export const PEM_GROUP = 'cruduser';
 const headingTxt = t`User`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({
@@ -26,24 +21,16 @@ export const getMessages = () => ({
     deleteMultiple: t`Do you want to remote these ${name}?`
 });
 
-export const emptyRecord = {
-    id: 0,
-    last_name: '',
-    first_name: '',
-    email: '',
-    mobile: '',
-    password: '',
-    is_active: true,
-    role_ids: []
-};
-
 export const getLabels = () => ({
-    full_name: t`Fullname`,
-    last_name: t`Lastname`,
-    first_name: t`Firstname`,
+    external_id: t`External ID`,
+    sub: t`Sub`,
     email: t`Email`,
-    mobile: t`Phone number`,
-    password: t`Password`,
-    is_active: t`Active`,
+    mobile: t`Mobile`,
+    first_name: t`First name`,
+    last_name: t`Last name`,
+    avatar: t`Avatar`,
+    admin: t`Admin`,
+    locked: t`Locked`,
+    locked_reason: t`Locked reason`,
     role_ids: t`Roles`
 });

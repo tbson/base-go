@@ -1,6 +1,7 @@
 package infra
 
 import (
+	"fmt"
 	"src/util/routeutil"
 
 	"src/common/ctype"
@@ -9,15 +10,46 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+var module = "account"
+var useCaseGroup = "user"
+var useCaseGroupName = "user"
+
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
-	g := e.Group("/account/user")
+	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
 	rr := routeutil.RegisterRoute(g, pemMap)
 
-	rr.Rbac("GET", "/", List, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Get user list")
-	rr.Rbac("GET", "/:id", Retrieve, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Get user detail")
-	rr.Rbac("POST", "/", Create, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Create user")
-	rr.Rbac("PUT", "/:id", Update, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Update user")
-	rr.Rbac("DELETE", "/:id", Delete, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Delete user")
-	rr.Rbac("DELETE", "/", DeleteList, []string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER}, "Delete list user")
+	rr.Private(
+		"GET", "/option/", Option,
+	)
+	rr.Rbac(
+		"GET", "/", List,
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
+		fmt.Sprintf("Get %s list", useCaseGroupName),
+	)
+	rr.Rbac(
+		"GET", "/:id", Retrieve,
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
+		fmt.Sprintf("Get %s detail", useCaseGroupName),
+	)
+	rr.Rbac(
+		"POST", "/", Create,
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
+		fmt.Sprintf("Create %s", useCaseGroupName),
+	)
+	rr.Rbac(
+		"PUT", "/:id", Update,
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
+		fmt.Sprintf("Update %s", useCaseGroupName),
+	)
+	rr.Rbac(
+		"DELETE", "/:id", Delete,
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
+		fmt.Sprintf("Delete %s", useCaseGroupName),
+	)
+	rr.Rbac(
+		"DELETE", "/", DeleteList,
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
+		fmt.Sprintf("Delete list %s", useCaseGroupName),
+	)
 	return e, pemMap
 }
