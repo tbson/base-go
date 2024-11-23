@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { Divider, Button } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import PageHeading from 'component/common/page_heading';
+import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import { tenantOptionSt } from '../state';
 import { urls, getMessages } from '../config';
@@ -34,9 +35,12 @@ export default function Tenant() {
     };
 
     const getItem = (tenant_id) => {
+        Util.toggleGlobalLoading();
         return RequestUtil.apiCall(`${urls.crud}${tenant_id}`).then((resp) => {
             setItem(resp.data);
-        });
+        }).finally(() => {
+            Util.toggleGlobalLoading(false);
+        })
     };
 
     const onChange = (data, _id) => {
