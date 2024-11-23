@@ -53,11 +53,11 @@ func Option(c echo.Context) error {
 }
 
 func List(c echo.Context) error {
+	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
+
 	if err := CheckRequiredFilter(c, "tenant_id"); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-
-	pager := paging.New[Schema](dbutil.Db())
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	listResult, err := pager.Paging(options, searchableFields)
@@ -83,7 +83,7 @@ func Retrieve(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, err)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, DetailPres(*result))
 }
 
 func Create(c echo.Context) error {

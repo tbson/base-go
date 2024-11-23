@@ -49,9 +49,10 @@ func Option(c echo.Context) error {
 }
 
 func List(c echo.Context) error {
-	pager := paging.New[Schema](dbutil.Db())
+	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
+	options.Preloads = []string{"Roles"}
 	listResult, err := pager.Paging(options, searchableFields)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -75,7 +76,7 @@ func Retrieve(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, err)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, DetailPres(*result))
 }
 
 func Create(c echo.Context) error {

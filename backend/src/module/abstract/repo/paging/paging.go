@@ -6,20 +6,22 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repo[T any] struct {
+type Repo[S any, P any] struct {
 	client *gorm.DB
+	pres   func([]S) []P
 }
 
-func New[T any](client *gorm.DB) Repo[T] {
-	return Repo[T]{
+func New[S any, P any](client *gorm.DB, pres func([]S) []P) Repo[S, P] {
+	return Repo[S, P]{
 		client: client,
+		pres:   pres,
 	}
 }
 
-func (r Repo[T]) Paging(
+func (r Repo[S, P]) Paging(
 	options restlistutil.ListOptions,
 	searchableFields []string,
-) (restlistutil.ListRestfulResult[T], error) {
+) (restlistutil.ListRestfulResult[P], error) {
 	db := r.client
 	preloads := options.Preloads
 	if len(preloads) > 0 {
@@ -28,8 +30,8 @@ func (r Repo[T]) Paging(
 		}
 	}
 	pageSize := restlistutil.DEFAULT_PAGE_SIZE
-	var items []T
-	emptyResult := restlistutil.ListRestfulResult[T]{
+	var items []P
+	emptyResult := restlistutil.ListRestfulResult[P]{
 		Items:      items,
 		Total:      0,
 		PageSize:   pageSize,
@@ -39,7 +41,14 @@ func (r Repo[T]) Paging(
 			Prev: 0,
 		},
 	}
-	query := db.Model(new(*T))
+	query := db.Model(new(*S))
+
+	// Apply preloads
+	if len(preloads) > 0 {
+		for _, preload := range preloads {
+			query = query.Preload(preload)
+		}
+	}
 
 	// Apply search logic
 	query = restlistutil.ApplySearch(query, options.Search, searchableFields)
@@ -63,12 +72,13 @@ func (r Repo[T]) Paging(
 	totalPages := pagingREsult.TotalPages
 
 	// Fetch the results
-	result := query.Find(&items)
+	schemaItems := []S{}
+	result := query.Find(&schemaItems)
 	if result.Error != nil {
 		return emptyResult, result.Error
 	}
-	return restlistutil.ListRestfulResult[T]{
-		Items:      items,
+	return restlistutil.ListRestfulResult[P]{
+		Items:      r.pres(schemaItems),
 		Total:      total,
 		Pages:      pages,
 		PageSize:   pageSize,

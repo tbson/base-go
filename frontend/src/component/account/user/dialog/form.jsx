@@ -89,7 +89,7 @@ export default function UserForm({ data, onChange }) {
 
             <Form.Item
                 name="role_ids"
-                label={labels.role_ids}
+                label={labels.roles}
                 rules={[FormUtil.ruleRequired()]}
             >
                 <SelectInput block options={userOption.role} mode="multiple" />

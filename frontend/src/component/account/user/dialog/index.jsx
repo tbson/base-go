@@ -38,10 +38,7 @@ export default function UserDialog({ onChange }) {
             Util.toggleGlobalLoading();
             RequestUtil.apiCall(`${urls.crud}${id}`)
                 .then((resp) => {
-                    const data = resp.data;
-                    data.role_ids = data.roles.map(({ id }) => id);
-                    delete data.roles;
-                    setData(data);
+                    setData(resp.data);
                     setOpen(true);
                 })
                 .finally(() => Util.toggleGlobalLoading(false));

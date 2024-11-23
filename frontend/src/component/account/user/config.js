@@ -32,5 +32,5 @@ export const getLabels = () => ({
     admin: t`Admin`,
     locked: t`Locked`,
     locked_reason: t`Locked reason`,
-    role_ids: t`Roles`
+    roles: t`Roles`
 });

@@ -23,7 +23,7 @@ var filterableFields = []string{}
 var orderableFields = []string{"id", "uid"}
 
 func List(c echo.Context) error {
-	pager := paging.New[Schema](dbutil.Db())
+	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	listResult, err := pager.Paging(options, searchableFields)
@@ -48,7 +48,7 @@ func Retrieve(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, err)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, DetailPres(*result))
 }
 
 func Create(c echo.Context) error {

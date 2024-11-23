@@ -162,10 +162,17 @@ export default function UserTable() {
             dataIndex: 'last_name'
         },
         {
+            key: 'role_labels',
+            title: labels.roles,
+            dataIndex: 'role_labels',
+            render: (text) => text.join(', ')
+        },
+        {
             key: 'admin',
             title: labels.admin,
             dataIndex: 'admin',
-            render: (text) => (text ? 'Yes' : 'No')
+            render: (text) => (text ? 'Yes' : 'No'),
+            width: 90,
         },
         {
             key: 'action',

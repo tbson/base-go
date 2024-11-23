@@ -85,10 +85,11 @@ func GetOptions(c echo.Context, filterableFields []string, orderableFields []str
 		order = defaultOrder
 	}
 	return ListOptions{
-		Search:  search,
-		Filters: filters,
-		Order:   order,
-		Page:    page,
+		Search:   search,
+		Filters:  filters,
+		Order:    order,
+		Page:     page,
+		Preloads: []string{},
 	}
 }
 
