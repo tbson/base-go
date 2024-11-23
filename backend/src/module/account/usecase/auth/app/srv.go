@@ -133,3 +133,31 @@ func (srv Service) HandleCallback(
 	tokensAndClaims.UserInfo.ID = user.ID
 	return tokensAndClaims, nil
 }
+
+func (srv Service) RefreshToken(
+	ctx context.Context,
+	realm string,
+	refreshToken string,
+) (ssoutil.TokensAndClaims, error) {
+	sub, err := srv.iamRepo.GetSub(refreshToken, realm)
+	if err != nil {
+		return ssoutil.TokensAndClaims{}, err
+	}
+
+	authClientInfo, err := srv.authRepo.GetAuthClientFromSub(sub)
+	if err != nil {
+		return ssoutil.TokensAndClaims{}, err
+	}
+
+	clientId := authClientInfo.ClientID
+	clientSecret := authClientInfo.ClientSecret
+
+	tokensAndClaims, err := srv.iamRepo.RefreshToken(
+		ctx, realm, refreshToken, clientId, clientSecret,
+	)
+	if err != nil {
+		return ssoutil.TokensAndClaims{}, err
+	}
+
+	return tokensAndClaims, nil
+}

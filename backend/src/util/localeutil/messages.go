@@ -172,4 +172,9 @@ var (
 		ID:    "MissingTenantID",
 		Other: "missing tenant ID",
 	}
+
+	SubClaimNotFound = &i18n.Message{
+		ID:    "SubClaimNotFound",
+		Other: "sub claim not found",
+	}
 )

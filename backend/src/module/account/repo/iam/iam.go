@@ -44,7 +44,7 @@ func (r Repo) GetAuthUrl(
 		setting.KEYCLOAK_URL,
 		realm,
 		clientId,
-		setting.KEYCLOAK_DEFAULT_REDIRECT_URI,
+		setting.KEYCLOAK_REDIRECT_URI,
 		stateStr,
 	)
 	return keycloakAuthURL
@@ -59,7 +59,7 @@ func (r Repo) GetLogoutUrl(
 		setting.KEYCLOAK_URL,
 		realm,
 		clientId,
-		setting.KEYCLOAK_DEFAULT_POST_LOGOUT_URI,
+		setting.KEYCLOAK_POST_LOGOUT_URI,
 	)
 	return keycloakAuthURL
 }
@@ -85,7 +85,7 @@ func (r Repo) ValidateCallback(
 	token, err := r.client.GetToken(ctx, realm, gocloak.TokenOptions{
 		ClientID:     gocloak.StringP(clientId),
 		ClientSecret: gocloak.StringP(clientSecret),
-		RedirectURI:  gocloak.StringP(setting.KEYCLOAK_DEFAULT_REDIRECT_URI),
+		RedirectURI:  gocloak.StringP(setting.KEYCLOAK_REDIRECT_URI),
 		Code:         gocloak.StringP(code),
 		GrantType:    gocloak.StringP("authorization_code"),
 	})
@@ -137,7 +137,7 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (ssoutil.UserInfo, er
 	}
 
 	// Parse the JWT token to extract headers and claims
-	clockSkew := 2 * time.Minute
+	clockSkew := 0 * time.Minute
 	token, err := jwt.Parse(
 		[]byte(tokenStr),
 		jwt.WithKeySet(keySet),
@@ -176,10 +176,57 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (ssoutil.UserInfo, er
 	return result, nil
 }
 
+func (r Repo) GetSub(tokenStr string, realm string) (string, error) {
+	localizer := localeutil.Get()
+	result := ""
+
+	// Parse the JWT token to extract headers and claims
+	clockSkew := 0 * time.Minute
+	token, err := jwt.Parse(
+		[]byte(tokenStr),
+		jwt.WithVerify(false),                        // Skip signature verification
+		jwt.WithClock(jwt.ClockFunc(time.Now().UTC)), // Use UTC time directly
+		jwt.WithAcceptableSkew(clockSkew),            // Set clock skew tolerance
+	)
+	if err != nil {
+		fmt.Println("Error parsing token")
+		fmt.Println(err)
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.FailedToParseToken,
+		})
+		return result, errutil.New("", []string{msg})
+	}
+
+	// Check if the token is expired by inspecting the "exp" claim
+	if err := jwt.Validate(
+		token,
+		jwt.WithClock(jwt.ClockFunc(time.Now().UTC)),
+		jwt.WithAcceptableSkew(clockSkew),
+	); err != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.TokenHasExpired,
+		})
+		return result, errutil.New("", []string{msg})
+	}
+
+	// If verification is successful, print the claims
+	sub, ok := token.Get("sub")
+	if !ok {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.SubClaimNotFound,
+		})
+		return result, errutil.New("", []string{msg})
+	}
+
+	return sub.(string), nil
+}
+
 func (r Repo) RefreshToken(
 	ctx context.Context,
 	realm string,
 	refreshToken string,
+	clientId string,
+	clientSecret string,
 ) (ssoutil.TokensAndClaims, error) {
 	var result ssoutil.TokensAndClaims
 	localizer := localeutil.Get()
@@ -194,8 +241,8 @@ func (r Repo) RefreshToken(
 	token, err := r.client.RefreshToken(
 		ctx,
 		refreshToken,
-		setting.KEYCLOAK_DEFAULT_CLIENT_ID,
-		setting.KEYCLOAK_DEFAULT_CLIENT_SECRET,
+		clientId,
+		clientSecret,
 		realm,
 	)
 	if err != nil {

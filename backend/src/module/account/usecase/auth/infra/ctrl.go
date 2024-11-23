@@ -83,8 +83,9 @@ func RefreshToken(c echo.Context) error {
 	refreshToken := cookieutil.GetValue(c, "refresh_token")
 	realm := cookieutil.GetValue(c, "realm")
 
-	iamRepo := iam.New(ssoutil.Client())
-	result, err := iamRepo.RefreshToken(c.Request().Context(), realm, refreshToken)
+	srv := getService()
+
+	result, err := srv.RefreshToken(c.Request().Context(), realm, refreshToken)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}

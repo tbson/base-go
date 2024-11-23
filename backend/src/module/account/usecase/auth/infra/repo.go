@@ -93,3 +93,24 @@ func (r Repo) GetPemModulesActionsMap(userId uint) (app.PemModulesActionsMap, er
 
 	return result, nil
 }
+
+func (r Repo) GetAuthClientFromSub(sub string) (app.AuthClientInfo, error) {
+	repo := user.New(r.client)
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"sub": sub},
+		Preloads: []string{
+			"Tenant.AuthClient",
+		},
+	}
+	user, err := repo.Retrieve(queryOptions)
+	if err != nil {
+		return app.AuthClientInfo{}, err
+	}
+
+	return app.AuthClientInfo{
+		TenantID:     user.TenantID,
+		Realm:        user.Tenant.AuthClient.Partition,
+		ClientID:     user.Tenant.AuthClient.Uid,
+		ClientSecret: user.Tenant.AuthClient.Secret,
+	}, nil
+}

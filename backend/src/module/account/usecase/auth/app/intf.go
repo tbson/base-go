@@ -36,10 +36,19 @@ type IamRepo interface {
 		clientSecret string,
 		code string,
 	) (ssoutil.TokensAndClaims, error)
+	GetSub(tokenStr string, realm string) (string, error)
+	RefreshToken(
+		ctx context.Context,
+		realm string,
+		refreshToken string,
+		clientId string,
+		clientSecret string,
+	) (ssoutil.TokensAndClaims, error)
 }
 
 type AuthRepo interface {
 	GetTenantUser(tenantID uint, email string) (AuthUserResult, error)
 	GetAuthClientFromTenantUid(tenantUid string) (AuthClientInfo, error)
+	GetAuthClientFromSub(tenantUid string) (AuthClientInfo, error)
 	GetPemModulesActionsMap(userId uint) (PemModulesActionsMap, error)
 }
