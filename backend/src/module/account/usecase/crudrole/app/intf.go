@@ -11,5 +11,5 @@ type RoleRepo interface {
 }
 
 type CrudRoleRepo interface {
-	ListByIds(ids []uint) ([]schema.Pem, error)
+	ListPemByIds(ids []uint) ([]schema.Pem, error)
 }

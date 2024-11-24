@@ -6,12 +6,21 @@ const urlMap = {
         prefix: 'account/user',
         endpoints: {
             crud: '',
-            option: 'option'
+            option: 'option',
+        }
+    },
+    lock: {
+        prefix: 'account/lock-user',
+        endpoints: {
+            lock: '',
         }
     }
 };
+
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
+export const lockUrls = RequestUtil.prefixMapValues(urlMap.lock);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_USER_DIALOG';
+export const TOGGLE_LOCK_DIALOG_EVENT = 'TOGGLE_LOCK_DIALOG_EVENT';
 export const PEM_GROUP = 'cruduser';
 const headingTxt = t`User`;
 const name = headingTxt.toLowerCase();

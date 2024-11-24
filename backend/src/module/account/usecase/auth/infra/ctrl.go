@@ -69,7 +69,7 @@ func Callback(c echo.Context) error {
 
 	result, err := srv.HandleCallback(c.Request().Context(), state, code)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+		return c.Redirect(http.StatusTemporaryRedirect, "/auth-error")
 	}
 	return CallbackPres(c, result)
 }

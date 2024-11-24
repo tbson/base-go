@@ -177,4 +177,14 @@ var (
 		ID:    "SubClaimNotFound",
 		Other: "sub claim not found",
 	}
+
+	LockedAccount = &i18n.Message{
+		ID:    "LockedAccount",
+		Other: "account is locked",
+	}
+
+	CannotLogout = &i18n.Message{
+		ID:    "CannotLogout",
+		Other: "cannot logout",
+	}
 )

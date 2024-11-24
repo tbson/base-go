@@ -64,6 +64,13 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 				return c.JSON(401, errutil.New("", []string{msg}))
 			}
 
+			if user.LockedAt != nil {
+				msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+					DefaultMessage: localeutil.LockedAccount,
+				})
+				return c.JSON(401, errutil.New("", []string{msg}))
+			}
+
 			// check cross tenant query
 			// only admin can do it
 			var tenantID uint = user.TenantID

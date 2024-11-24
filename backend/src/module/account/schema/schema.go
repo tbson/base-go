@@ -70,7 +70,7 @@ type User struct {
 	AvatarStr    string         `gorm:"type:text;not null;default:''" json:"avatar_str"`
 	ExtraInfo    datatypes.JSON `gorm:"type:json;not null;default:'{}'" json:"extra_info"`
 	Admin        bool           `gorm:"type:boolean;not null;default:false" json:"admin"`
-	LockedAt     time.Time      `gorm:"type:timestamp;default:null" json:"locked_at"`
+	LockedAt     *time.Time     `gorm:"type:timestamp;default:null" json:"locked_at"`
 	LockedReason string         `gorm:"type:text;not null;default:''" json:"locked_reason"`
 	CreatedAt    time.Time      `json:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at"`

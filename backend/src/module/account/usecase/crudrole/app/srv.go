@@ -18,7 +18,7 @@ func (srv Service) Create(data ctype.Dict) (schema.Role, error) {
 	emptyResult := schema.Role{}
 	pemIds := data["PemIDs"].([]uint)
 	delete(data, "PemIDs")
-	pems, err := srv.crudRoleRepo.ListByIds(pemIds)
+	pems, err := srv.crudRoleRepo.ListPemByIds(pemIds)
 	if err != nil {
 		return emptyResult, err
 	}
@@ -35,7 +35,7 @@ func (srv Service) Update(id uint, data ctype.Dict) (schema.Role, error) {
 	emptyResult := schema.Role{}
 	pemIds := data["PemIDs"].([]uint)
 	delete(data, "PemIDs")
-	pems, err := srv.crudRoleRepo.ListByIds(pemIds)
+	pems, err := srv.crudRoleRepo.ListPemByIds(pemIds)
 	if err != nil {
 		return emptyResult, err
 	}

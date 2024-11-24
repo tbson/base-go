@@ -7,8 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-var newSchema = schema.NewRole
-
 type Repo struct {
 	client *gorm.DB
 }

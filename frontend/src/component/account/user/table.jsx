@@ -1,19 +1,17 @@
 import * as React from 'react';
+import { t } from 'ttag';
 import { useEffect, useState } from 'react';
-import { Row, Col, Table } from 'antd';
+import { Row, Col, Table, Button, Flex, Tooltip } from 'antd';
+import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
-import {
-    AddNewBtn,
-    RemoveSelectedBtn,
-    EditBtn,
-    RemoveBtn
-} from 'component/common/table/buttons';
+import { RemoveSelectedBtn, EditBtn, RemoveBtn } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
 import Util from 'service/helper/util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
 import Dialog from './dialog';
+import LockUserDialog from './lock_user';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function UserTable() {
@@ -172,7 +170,7 @@ export default function UserTable() {
             title: labels.admin,
             dataIndex: 'admin',
             render: (text) => (text ? 'Yes' : 'No'),
-            width: 90,
+            width: 90
         },
         {
             key: 'action',
@@ -180,14 +178,26 @@ export default function UserTable() {
             fixed: 'right',
             width: 90,
             render: (_text, record) => (
-                <div className="flex-space">
+                <Flex wrap gap={5} justify="flex-end">
                     <PemCheck pem_group={PEM_GROUP} pem="update">
                         <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
                         <RemoveBtn onClick={() => onDelete(record.id)} />
                     </PemCheck>
-                </div>
+
+                    <PemCheck pem_group={PEM_GROUP} pem="delete">
+                        <Tooltip title={t`Lock`}>
+                            <Button
+                                danger={record.locked}
+                                htmlType="button"
+                                icon={record.locked ? <LockOutlined /> : <UnlockOutlined />}
+                                size="small"
+                                onClick={() => LockUserDialog.toggle(true, record.id)}
+                            />
+                        </Tooltip>
+                    </PemCheck>
+                </Flex>
             )
         }
     ];
@@ -225,6 +235,7 @@ export default function UserTable() {
             />
             <Pagination next={pages.next} prev={pages.prev} onChange={handlePaging} />
             <Dialog onChange={onChange} />
+            <LockUserDialog onChange={onChange} />
         </div>
     );
 }

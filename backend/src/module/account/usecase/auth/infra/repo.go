@@ -5,10 +5,13 @@ import (
 	"src/common/ctype"
 	"src/module/account/repo/tenant"
 	"src/module/account/repo/user"
+	"src/util/errutil"
+	"src/util/localeutil"
 	"src/util/stringutil"
 
 	"src/module/account/usecase/auth/app"
 
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"gorm.io/gorm"
 )
 
@@ -38,8 +41,10 @@ func (r Repo) GetTenantUser(
 		return app.AuthUserResult{}, err
 	}
 	result := app.AuthUserResult{
-		ID:    user.ID,
-		Admin: user.Admin,
+		ID:       user.ID,
+		Admin:    user.Admin,
+		LockedAt: user.LockedAt,
+		Sub:      user.Sub,
 	}
 	return result, err
 }
@@ -95,6 +100,7 @@ func (r Repo) GetPemModulesActionsMap(userId uint) (app.PemModulesActionsMap, er
 }
 
 func (r Repo) GetAuthClientFromSub(sub string) (app.AuthClientInfo, error) {
+	localizer := localeutil.Get()
 	repo := user.New(r.client)
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"sub": sub},
@@ -105,6 +111,13 @@ func (r Repo) GetAuthClientFromSub(sub string) (app.AuthClientInfo, error) {
 	user, err := repo.Retrieve(queryOptions)
 	if err != nil {
 		return app.AuthClientInfo{}, err
+	}
+
+	if user.LockedAt != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.LockedAccount,
+		})
+		return app.AuthClientInfo{}, errutil.New("", []string{msg})
 	}
 
 	return app.AuthClientInfo{

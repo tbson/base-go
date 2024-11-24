@@ -113,6 +113,15 @@ func (srv Service) HandleCallback(
 			return tokensAndClaims, err
 		}
 	} else {
+		localizer := localeutil.Get()
+		if user.LockedAt != nil {
+			srv.iamRepo.Logout(clientId, clientSecret, realm, tokensAndClaims.RefreshToken)
+			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+				DefaultMessage: localeutil.LockedAccount,
+			})
+			return tokensAndClaims, errutil.New("", []string{msg})
+		}
+
 		userData := dictutil.StructToDict(userInfo)
 		delete(userData, "ID")
 		delete(userData, "ProfileType")

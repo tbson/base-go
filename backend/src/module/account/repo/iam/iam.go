@@ -327,3 +327,18 @@ func (r Repo) SetPassword(
 	}
 	return nil
 }
+
+func (r Repo) Logout(clientId string, clientSecret string, realm string, refreshToken string) error {
+	ctx := context.Background()
+	localizer := localeutil.Get()
+	err := r.client.Logout(ctx, clientId, clientSecret, realm, refreshToken)
+	if err != nil {
+		fmt.Println("Error logging outlllllllllll")
+		fmt.Println(err)
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.CannotLogout,
+		})
+		return errutil.New("", []string{msg})
+	}
+	return nil
+}

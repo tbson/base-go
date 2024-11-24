@@ -90,7 +90,7 @@ func Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusCreated, MutatePres(*result))
 
 }
 
@@ -111,7 +111,7 @@ func Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, MutatePres(result))
 }
 
 func Delete(c echo.Context) error {

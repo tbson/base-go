@@ -5,13 +5,16 @@ import (
 	"src/common/ctype"
 	"src/module/account/schema"
 	"src/util/ssoutil"
+	"time"
 )
 
 type PemModulesActionsMap map[string][]string
 
 type AuthUserResult struct {
-	ID    uint
-	Admin bool
+	ID       uint
+	Admin    bool
+	LockedAt *time.Time
+	Sub      *string
 }
 
 type AuthClientInfo struct {
@@ -44,6 +47,7 @@ type IamRepo interface {
 		clientId string,
 		clientSecret string,
 	) (ssoutil.TokensAndClaims, error)
+	Logout(clientId string, clientSecret string, realm string, refreshToken string) error
 }
 
 type AuthRepo interface {
