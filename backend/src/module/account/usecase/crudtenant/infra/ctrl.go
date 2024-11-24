@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
+	"src/util/errutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
@@ -80,8 +81,15 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
-	roleRepo := role.New(dbutil.Db())
+	db := dbutil.Db()
+	tx := db.Begin()
+	if tx.Error != nil {
+		msg := errutil.New("", []string{tx.Error.Error()})
+		return c.JSON(http.StatusBadRequest, msg)
+	}
+
+	cruder := NewRepo(tx)
+	roleRepo := role.New(tx)
 
 	srv := app.New(cruder, roleRepo)
 
@@ -96,8 +104,15 @@ func Create(c echo.Context) error {
 	}
 
 	result, err := srv.Create(data)
+
 	if err != nil {
+		tx.Rollback()
 		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		msg := errutil.New("", []string{err.Error()})
+		return c.JSON(http.StatusBadRequest, msg)
 	}
 
 	return c.JSON(http.StatusCreated, result)
