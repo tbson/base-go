@@ -2,6 +2,8 @@ package role
 
 import (
 	"src/common/ctype"
+	"src/common/profiletype"
+	"src/common/setting"
 	"src/module/account/schema"
 	"src/util/dictutil"
 	"src/util/errutil"
@@ -137,4 +139,28 @@ func (r Repo) DeleteList(ids []uint) ([]uint, error) {
 		return ids, errutil.NewGormError(err)
 	}
 	return ids, err
+}
+
+func (r Repo) EnsureTenantRoles(ID uint, Uid string) error {
+	profileTypes := []string{}
+	if Uid == setting.ADMIN_TEANT_UID {
+		profileTypes = profiletype.PlatformProfileTypes
+	} else {
+		profileTypes = profiletype.TenantProfileTypes
+	}
+
+	for _, roleTitle := range profileTypes {
+		filterOptions := ctype.QueryOptions{
+			Filters: ctype.Dict{
+				"tenant_id": ID,
+				"title":     roleTitle,
+			},
+		}
+		data := ctype.Dict{
+			"TenantID": ID,
+			"Title":    roleTitle,
+		}
+		r.GetOrCreate(filterOptions, data)
+	}
+	return nil
 }

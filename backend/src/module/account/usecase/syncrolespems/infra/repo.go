@@ -4,10 +4,8 @@ import (
 	"slices"
 	"src/common/ctype"
 	"src/common/profiletype"
-	"src/common/setting"
 	"src/module/account/repo/pem"
 	"src/module/account/repo/role"
-	"src/module/account/repo/tenant"
 	"src/module/account/schema"
 
 	"gorm.io/gorm"
@@ -70,41 +68,6 @@ func (r Repo) WritePems(pemMap ctype.PemMap) error {
 			panic(err)
 		}
 	}
-	return nil
-}
-
-func (r Repo) EnsureTenantsRoles() error {
-	tenantRepo := tenant.New(r.client)
-	roleRepo := role.New(r.client)
-
-	tenants, err := tenantRepo.List(ctype.QueryOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, tenant := range tenants {
-		profileTypes := []string{}
-		if tenant.Uid == setting.ADMIN_TEANT_UID {
-			profileTypes = profiletype.PlatformProfileTypes
-		} else {
-			profileTypes = profiletype.TenantProfileTypes
-		}
-
-		for _, roleTitle := range profileTypes {
-			filterOptions := ctype.QueryOptions{
-				Filters: ctype.Dict{
-					"tenant_id": tenant.ID,
-					"title":     roleTitle,
-				},
-			}
-			data := ctype.Dict{
-				"TenantID": tenant.ID,
-				"Title":    roleTitle,
-			}
-			roleRepo.GetOrCreate(filterOptions, data)
-		}
-	}
-
 	return nil
 }
 
