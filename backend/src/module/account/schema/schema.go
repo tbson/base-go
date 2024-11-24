@@ -36,6 +36,7 @@ type Tenant struct {
 	ID           uint        `gorm:"primaryKey" json:"id"`
 	AuthClientID uint        `json:"auth_client_id"`
 	AuthClient   *AuthClient `json:"auth_client"`
+	Roles        []Role      `gorm:"constraint:OnDelete:CASCADE;" json:"roles"`
 	Uid          string      `gorm:"type:text;not null;unique" json:"uid"`
 	Title        string      `gorm:"type:text;not null" json:"title"`
 	Avatar       string      `gorm:"type:text;not null;default:''" json:"avatar"`

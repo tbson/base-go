@@ -67,7 +67,6 @@ export default function TenantForm({ data, onChange }) {
                     <Form.Item
                         name="avatar"
                         label={labels.avatar}
-                        rules={[FormUtil.ruleRequired()]}
                     >
                         <ImgInput />
                     </Form.Item>

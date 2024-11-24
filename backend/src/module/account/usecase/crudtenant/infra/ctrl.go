@@ -9,8 +9,10 @@ import (
 
 	"src/module/abstract/repo/paging"
 	"src/module/account/repo/authclient"
+	"src/module/account/repo/role"
 	"src/module/account/repo/tenant"
 	"src/module/account/schema"
+	"src/module/account/usecase/crudtenant/app"
 
 	"github.com/labstack/echo/v4"
 )
@@ -79,6 +81,10 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
+	roleRepo := role.New(dbutil.Db())
+
+	srv := app.New(cruder, roleRepo)
+
 	data, err := vldtutil.ValidatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -89,7 +95,7 @@ func Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	result, err := cruder.Create(data)
+	result, err := srv.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

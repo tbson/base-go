@@ -115,11 +115,11 @@ func (r Repo) UpdateOrCreate(
 
 func (r Repo) Delete(id uint) ([]uint, error) {
 	ids := []uint{id}
-	result := r.client.Where("id = ?", id).Delete(&Schema{})
 	_, err := r.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"id": id}})
 	if err != nil {
 		return ids, err
 	}
+	result := r.client.Where("id = ?", id).Delete(&Schema{})
 	err = result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)
