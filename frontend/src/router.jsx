@@ -1,7 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 import StorageUtil from 'service/helper/storage_util';
 import NotMatch from 'component/common/route/not_match';
-import AuthError from 'component/common/route/auth_error';
+import AuthError from 'component/common/result/auth_error';
+import VerifyEmail from 'component/common/result/verify_email';
 import PrivateRoute from 'component/common/route/private_route.jsx';
 import BlankLayout from 'component/common/layout/blank';
 import AdminLayout from 'component/common/layout/admin';
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
                 element: <AuthError />
             },
             {
+                path: 'verify-email',
+                element: <VerifyEmail />
+            },
+            {
                 path: 'login',
                 element: <BlankLayout />,
                 children: [
@@ -31,6 +36,18 @@ const router = createBrowserRouter([
                         path: '',
                         lazy: async () => ({
                             Component: (await import('component/auth/login')).default
+                        })
+                    }
+                ]
+            },
+            {
+                path: 'signup',
+                element: <BlankLayout />,
+                children: [
+                    {
+                        path: '',
+                        lazy: async () => ({
+                            Component: (await import('component/auth/signup')).default
                         })
                     }
                 ]

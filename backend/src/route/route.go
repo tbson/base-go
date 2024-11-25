@@ -9,6 +9,7 @@ import (
 	cruduser "src/module/account/usecase/cruduser/infra"
 	lockuser "src/module/account/usecase/lockuser/infra"
 	profile "src/module/account/usecase/profile/infra"
+	signuptenant "src/module/account/usecase/signuptenant/infra"
 	crudvariable "src/module/config/usecase/crudvariable/infra"
 	configoption "src/module/config/usecase/option/infra"
 
@@ -26,5 +27,6 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = auth.RegisterUrls(e, pemMap)
 	e, pemMap = profile.RegisterUrls(e, pemMap)
 	e, pemMap = lockuser.RegisterUrls(e, pemMap)
+	e, pemMap = signuptenant.RegisterUrls(e, pemMap)
 	return e, pemMap
 }

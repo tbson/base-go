@@ -4,12 +4,12 @@ import { Result, Button } from "antd";
 import { HomeFilled } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
-export default function NotMatch() {
+export default function VerifyEmail() {
     return (
         <Result
-            status="error"
-            title="Can not authenticate"
-            subTitle={t`Sorry, there was a problem with authentication. Please contact the administrator.`}
+            status="success"
+            title={t`We have sent you an verification email`}
+            subTitle={t`Please check your email and click on the link to verify your email`}
             extra={
                 <Link to="/">
                     {" "}
@@ -22,4 +22,4 @@ export default function NotMatch() {
     );
 }
 
-NotMatch.displayName = "NotMatch";
+VerifyEmail.displayName = "VerifyEmail";

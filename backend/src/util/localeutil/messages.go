@@ -187,4 +187,14 @@ var (
 		ID:    "CannotLogout",
 		Other: "cannot logout",
 	}
+
+	CannotCreateIAMUser = &i18n.Message{
+		ID:    "CannotCreateIAMUser",
+		Other: "cannot create IAM user",
+	}
+
+	CannotSendVerifyEmail = &i18n.Message{
+		ID:    "CannotSendVerifyEmail",
+		Other: "cannot send verify email",
+	}
 )

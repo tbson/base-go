@@ -284,6 +284,62 @@ func (r Repo) GetAdminAccessToken() (string, error) {
 	return token.AccessToken, nil
 }
 
+func (r Repo) CreateUser(
+	accessToken string,
+	realm string,
+	email string,
+	firstName string,
+	lastName string,
+	mobile *string,
+) (string, error) {
+	ctx := context.Background()
+	localizer := localeutil.Get()
+
+	user := gocloak.User{
+		FirstName: gocloak.StringP(firstName),
+		LastName:  gocloak.StringP(lastName),
+		Email:     gocloak.StringP(email),
+		Enabled:   gocloak.BoolP(true),
+		Attributes: &map[string][]string{
+			"mobile": {fmt.Sprintf("%s", *mobile)},
+		},
+	}
+
+	sub, err := r.client.CreateUser(ctx, accessToken, realm, user)
+	if err != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.CannotCreateIAMUser,
+		})
+		return "", errutil.New("", []string{msg})
+	}
+	return sub, nil
+}
+
+func (r Repo) SendVerifyEmail(
+	accessToken string,
+	sub string,
+	realm string,
+) error {
+	fmt.Println("Send verify email")
+	fmt.Println(accessToken)
+	fmt.Println(sub)
+	fmt.Println(realm)
+
+	ctx := context.Background()
+	localizer := localeutil.Get()
+
+	err := r.client.SendVerifyEmail(ctx, accessToken, sub, realm)
+	if err != nil {
+		fmt.Println("Error sending verify email")
+		fmt.Println(err)
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.CannotSendVerifyEmail,
+		})
+		return errutil.New("", []string{msg})
+	}
+	return nil
+}
+
 func (r Repo) UpdateUser(
 	accessToken string,
 	realm string,

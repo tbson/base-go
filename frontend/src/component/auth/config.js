@@ -6,10 +6,17 @@ const urlMap = {
         endpoints: {
             loginCheck: "login/check",
         }
+    },
+    signup: {
+        prefix: "account/signup-tenant",
+        endpoints: {
+            signup: "",
+        }
     }
 };
 
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
+export const signupUrls = RequestUtil.prefixMapValues(urlMap.signup);
 
 const headingTxt = "Hồ sơ";
 export const messages = {

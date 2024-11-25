@@ -14,7 +14,7 @@ const styles = {
         marginTop: 20
     }
 };
-export default function Login() {
+export default function Signup() {
     const navigate = useNavigate();
     const navigateTo = NavUtil.navigateTo(navigate);
 
@@ -22,12 +22,8 @@ export default function Login() {
         StorageUtil.getUserInfo() && navigateTo();
     }, []);
 
-    const handleLogin = (tenantUid) => {
-        setTimeout(() => {
-            Util.toggleGlobalLoading();
-        }, 100);
-        const ssoUrl = `/api/v1/account/auth/sso/login/${tenantUid}`;
-        window.location.href = ssoUrl;
+    const handleSignup = () => {
+        navigateTo("/verify-email");
     };
 
     return (
@@ -41,12 +37,12 @@ export default function Login() {
                     md={{ span: 12, offset: 6 }}
                     lg={{ span: 8, offset: 8 }}
                 >
-                    <Card title={t`Login`} style={styles.wrapper}>
-                        <Form onChange={handleLogin} />
-                        <Divider plain>Don't have account yet?</Divider>
+                    <Card title={t`Signup`} style={styles.wrapper}>
+                        <Form onChange={handleSignup} />
+                        <Divider plain>Already had account?</Divider>
                         <div className="center">
-                            <Link to="/signup">
-                                <Button type="primary" type="link">Signup</Button>
+                            <Link to="/login">
+                                <Button type="primary" type="link">Login</Button>
                             </Link>
                         </div>
                     </Card>

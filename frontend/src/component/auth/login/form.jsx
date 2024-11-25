@@ -14,21 +14,13 @@ export default function LoginForm({ onChange, children }) {
         tenantUid: StorageUtil.getTenantUid()
     };
 
-    const formAttrs = {
-        tenantUid: {
-            name: 'tenantUid',
-            label: t`Company code`,
-            rules: [FormUtil.ruleRequired()]
-        }
-    };
-
     const checkAuthUrl = (tenantUid) => {
         FormUtil.submit(`${urls.loginCheck}${tenantUid}`, {}, 'get')
             .then(() => {
                 StorageUtil.setStorage('tenantUid', tenantUid);
                 onChange(tenantUid);
             })
-            .catch(FormUtil.setFormErrors(form))
+            .catch(FormUtil.setFormErrors(form));
     };
 
     return (
@@ -41,7 +33,11 @@ export default function LoginForm({ onChange, children }) {
                 checkAuthUrl(payload.tenantUid);
             }}
         >
-            <Form.Item {...formAttrs.tenantUid}>
+            <Form.Item
+                name="tenantUid"
+                label={t`Company code`}
+                rules={[FormUtil.ruleRequired()]}
+            >
                 <Input autoFocus />
             </Form.Item>
 
