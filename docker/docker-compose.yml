@@ -81,7 +81,7 @@ services:
         depends_on:
             basecode_db:
                 condition: service_healthy
-        tty: ${DOCKER_TTY}
+        tty: true
         command: ${DOCKER_COMMAND}
 
     basecode_frontend:
@@ -94,7 +94,7 @@ services:
             - /code/node_modules
         ports:
             - '3000:3000'
-        tty: ${DOCKER_TTY}
+        tty: true
 
     basecode_nginx:
         container_name: basecode_nginx

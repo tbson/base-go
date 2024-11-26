@@ -94,6 +94,8 @@ elif [ "$FIRST_ARG" == "fmakemessages" ]; then
 elif [ "$FIRST_ARG" == "fdumpmessages" ]; then
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/vi.po > ../frontend/src/locale/vi.po.json
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/en.po > ../frontend/src/locale/en.po.json
+elif [ "$FIRST_ARG" == "fupgrade" ]; then
+    docker compose exec "$NAME"_frontend yarn upgrade-interactive --latest
 elif [ "$FIRST_ARG" == "go" ]; then
     docker compose exec "$NAME"_backend go $ARGS
 elif [ "$FIRST_ARG" == "atlas" ]; then
@@ -133,6 +135,8 @@ elif [ "$FIRST_ARG" == "resetmakemigrations" ]; then
     docker compose exec "$NAME"_backend atlas migrate apply --env gorm
 elif [ "$FIRST_ARG" == "bserver" ]; then
     docker compose exec "$NAME"_backend air src/main.go --root src
+elif [ "$FIRST_ARG" == "bbuild" ]; then
+    docker compose exec "$NAME"_backend bash -c 'GOOS=linux GOARCH=amd64 go build -o main .'
 elif [ "$FIRST_ARG" == "btest" ]; then
     prepareTestingDbs 
     setTestEnv
