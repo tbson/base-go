@@ -27,17 +27,13 @@ services:
             - ../backend:/code:delegated
         environment:
             GOPATH: /code/
+            DEBUG: ${DEBUG}
             SECRET_KEY: ${SECRET_KEY}
             TIME_ZONE: ${TIME_ZONE}
-            DEBUG: ${DEBUG}
 
-            APP_TITLE: ${APP_TITLE}
-            APP_DESCRTIPTION: ${APP_DESCRTIPTION}
-
-            PORT: ${PORT}
-            PROTOCOL: ${PROTOCOL}
+            PROTOCOL: "https"
             DOMAIN: ${DOMAIN}
-            BASE_URL: '${PROTOCOL}://${DOMAIN}'
+            BASE_URL: 'https://${DOMAIN}'
 
             DB_HOST: ${POSTGRES_HOST}
             DB_PORT: ${POSTGRES_PORT}
@@ -48,14 +44,6 @@ services:
             DB_URL_TEST: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}_test?sslmode=disable'
             DB_URL_ATLAS: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}_atlas?sslmode=disable'
             DB_URL_ATLAS_TEST: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}_atlas_test?sslmode=disable'
-
-            EMAIL_ENABLE: ${EMAIL_ENABLE}
-            EMAIL_DOMAIN: ${EMAIL_DOMAIN}
-            EMAIL_HOST: ${EMAIL_HOST}
-            EMAIL_PORT: ${EMAIL_PORT}
-            EMAIL_HOST_USER: ${EMAIL_HOST_USER}
-            EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
-            EMAIL_USE_TLS: ${EMAIL_USE_TLS}
 
             S3_ACCOUNT_ID: ${S3_ACCOUNT_ID}
             S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
