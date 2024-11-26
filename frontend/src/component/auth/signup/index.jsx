@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { t } from 'ttag';
 import { Row, Col, Card, Button, Divider } from 'antd';
-import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
 import StorageUtil from 'service/helper/storage_util';
 import LocaleSelect from 'component/common/locale_select.jsx';
@@ -42,7 +41,7 @@ export default function Signup() {
                         <Divider plain>Already had account?</Divider>
                         <div className="center">
                             <Link to="/login">
-                                <Button type="primary" type="link">Login</Button>
+                                <Button type="link">Login</Button>
                             </Link>
                         </div>
                     </Card>

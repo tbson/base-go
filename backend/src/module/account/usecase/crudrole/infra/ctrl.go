@@ -55,7 +55,7 @@ func Option(c echo.Context) error {
 func List(c echo.Context) error {
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
-	if err := CheckRequiredFilter(c, "tenant_id"); err != nil {
+	if err := vldtutil.CheckRequiredFilter(c, "tenant_id"); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 

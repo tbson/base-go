@@ -37,6 +37,7 @@ type Tenant struct {
 	AuthClientID uint        `json:"auth_client_id"`
 	AuthClient   *AuthClient `json:"auth_client"`
 	Roles        []Role      `gorm:"constraint:OnDelete:CASCADE;" json:"roles"`
+	Users        []User      `gorm:"constraint:OnDelete:CASCADE;" json:"users"`
 	Uid          string      `gorm:"type:text;not null;unique" json:"uid"`
 	Title        string      `gorm:"type:text;not null" json:"title"`
 	Avatar       string      `gorm:"type:text;not null;default:''" json:"avatar"`
@@ -56,9 +57,9 @@ func NewTenant(data ctype.Dict) *Tenant {
 }
 
 type User struct {
-	ID           uint `gorm:"primaryKey" json:"id"`
-	TenantID     uint `gorm:"not null;uniqueIndex:idx_users_tenant_external;uniqueIndex:idx_users_tenant_email" json:"tenant_id"`
-	Tenant       *Tenant
+	ID           uint           `gorm:"primaryKey" json:"id"`
+	TenantID     uint           `gorm:"not null;uniqueIndex:idx_users_tenant_external;uniqueIndex:idx_users_tenant_email" json:"tenant_id"`
+	Tenant       Tenant         `gorm:"constraint:OnDelete:CASCADE;" json:"tenant"`
 	TenantTmpID  *uint          `json:"tenant_tmp_id"`
 	Sub          *string        `gorm:"type:text;default:null;unique" json:"sub"`
 	Roles        []Role         `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"roles"`
@@ -93,7 +94,7 @@ func NewUser(data ctype.Dict) *User {
 		Avatar:      dictutil.GetValue[string](data, "Avatar"),
 		AvatarStr:   dictutil.GetValue[string](data, "AvatarStr"),
 		ExtraInfo:   datatypes.JSON(extraInfoJSON),
-		Admin:       dictutil.GetValue[bool](data, "Admin"),
+		Roles:       dictutil.GetValue[[]Role](data, "Roles"),
 	}
 }
 
@@ -102,7 +103,7 @@ type Role struct {
 	Users     []User    `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"users"`
 	Pems      []Pem     `gorm:"many2many:roles_pems;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"pems"`
 	TenantID  uint      `gorm:"not null;uniqueIndex:idx_roles_tenant_title" json:"tenant_id"`
-	Tenant    *Tenant   `json:"tenant"`
+	Tenant    Tenant    `gorm:"constraint:OnDelete:CASCADE;" json:"tenant"`
 	Title     string    `gorm:"type:text;not null;uniqueIndex:idx_roles_tenant_title" json:"title"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

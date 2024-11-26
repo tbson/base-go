@@ -41,5 +41,11 @@ var KEYCLOAK_POST_LOGOUT_URI string = fmt.Sprintf(
 	frameworkutil.GetEnv("KEYCLOAK_POST_LOGOUT_URI", ""),
 )
 
+var FE_REDIRECT_URI string = fmt.Sprintf(
+	"%s%s",
+	BASE_URL,
+	"/login",
+)
+
 const DEFAULT_LANG = "en"
 const ADMIN_TEANT_UID = "default"

@@ -47,6 +47,10 @@ func Option(c echo.Context) error {
 func List(c echo.Context) error {
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
+	if err := vldtutil.CheckRequiredFilter(c, "tenant_id"); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	listResult, err := pager.Paging(options, searchableFields)
 	if err != nil {

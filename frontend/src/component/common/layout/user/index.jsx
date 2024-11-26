@@ -62,37 +62,19 @@ export default function UserLayout() {
         const result = [];
 
         result.push({ label: t`Profile`, key: '/', icon: <UserOutlined /> });
-        PemUtil.canView('crudtenant') &&
-            result.push({
-                label: t`Tenant`,
-                key: '/account/tenant',
-                icon: <AuditOutlined />
-            });
-        PemUtil.canView('crudauthclient') &&
-            result.push({
-                label: t`Auth client`,
-                key: '/account/auth-client',
-                icon: <LockOutlined />
-            });
-        PemUtil.canView('crudvariable') &&
-            result.push({
-                label: t`Variable`,
-                key: '/config/variable',
-                icon: <SettingFilled />
-            });
         /*
+        PemUtil.canView('crudrole') &&
+            result.push({
+                label: t`Role`,
+                key: `/account/tenant/${tenant_id}/role`,
+                icon: <TagsOutlined />
+            });
         PemUtil.canView('cruduser') &&
             result.push({
                 label: t`User`,
-                key: '/account/user',
+                key: `/account/tenant/${tenant_id}/user`,
                 icon: <TeamOutlined />
-            });
-        PemUtil.canView('role') &&
-            result.push({
-                label: t`Role`,
-                key: '/account/role',
-                icon: <TagsOutlined />
-            });
+            }); 
         */
         return result;
     };

@@ -15,6 +15,7 @@ type TenantRepo interface {
 }
 
 type RoleRepo interface {
+	Retrieve(queryOptions ctype.QueryOptions) (*schema.Role, error)
 	EnsureTenantRoles(ID uint, Uid string) error
 }
 
@@ -40,6 +41,7 @@ type IamRepo interface {
 	) error
 	SendVerifyEmail(
 		accessToken string,
+		clientID string,
 		sub string,
 		realm string,
 	) error

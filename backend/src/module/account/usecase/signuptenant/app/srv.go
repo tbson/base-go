@@ -1,6 +1,9 @@
 package app
 
-import "src/common/ctype"
+import (
+	"src/common/ctype"
+	"src/module/account/schema"
+)
 
 type Service struct {
 	authClientRepo AuthClientRepo
@@ -47,6 +50,7 @@ func (srv Service) SignupTenant(
 		return err
 	}
 
+	clientID := authClient.Uid
 	realm := authClient.Partition
 
 	// create tenant
@@ -63,6 +67,18 @@ func (srv Service) SignupTenant(
 
 	// ensure tenant roles
 	err = srv.roleRepo.EnsureTenantRoles(tentant.ID, tentant.Uid)
+	if err != nil {
+		return err
+	}
+
+	// get MANAGER role
+	roleOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"TenantID": tentant.ID,
+			"Title":    "MANAGER",
+		},
+	}
+	role, err := srv.roleRepo.Retrieve(roleOptions)
 	if err != nil {
 		return err
 	}
@@ -97,8 +113,7 @@ func (srv Service) SignupTenant(
 		"Mobile":    mobile,
 		"FirstName": firstName,
 		"LastName":  lastName,
-		"Admin":     admin,
-		"Sub":       sub,
+		"Roles":     []schema.Role{*role},
 	}
 
 	_, err = srv.userRepo.Create(userData)
@@ -107,7 +122,7 @@ func (srv Service) SignupTenant(
 	}
 
 	// send verify email
-	err = srv.iamRepo.SendVerifyEmail(accessToken, sub, realm)
+	err = srv.iamRepo.SendVerifyEmail(accessToken, clientID, sub, realm)
 	if err != nil {
 		return err
 	}

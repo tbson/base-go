@@ -317,6 +317,7 @@ func (r Repo) CreateUser(
 
 func (r Repo) SendVerifyEmail(
 	accessToken string,
+	clientID string,
 	sub string,
 	realm string,
 ) error {
@@ -328,7 +329,13 @@ func (r Repo) SendVerifyEmail(
 	ctx := context.Background()
 	localizer := localeutil.Get()
 
-	err := r.client.SendVerifyEmail(ctx, accessToken, sub, realm)
+	redirectUri := setting.KEYCLOAK_REDIRECT_URI
+	params := gocloak.SendVerificationMailParams{
+		ClientID:    &clientID,
+		RedirectURI: &redirectUri,
+	}
+
+	err := r.client.SendVerifyEmail(ctx, accessToken, sub, realm, params)
 	if err != nil {
 		fmt.Println("Error sending verify email")
 		fmt.Println(err)

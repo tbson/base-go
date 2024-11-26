@@ -65,6 +65,10 @@ func Callback(c echo.Context) error {
 	code := c.QueryParam("code")
 	state := c.QueryParam("state")
 
+	if code == "" || state == "" {
+		return c.Redirect(http.StatusTemporaryRedirect, "/login")
+	}
+
 	srv := getService()
 
 	result, err := srv.HandleCallback(c.Request().Context(), state, code)

@@ -244,3 +244,14 @@ func getFormParamsKeys(c echo.Context) ([]string, error) {
 
 	return keyList, nil
 }
+
+func CheckRequiredFilter(c echo.Context, param string) error {
+	localizer := localeutil.Get()
+	if c.QueryParam(param) == "" {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.MissingTenantID,
+		})
+		return errutil.New("", []string{msg})
+	}
+	return nil
+}
