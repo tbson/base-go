@@ -46,7 +46,7 @@ export default function Login() {
                         <Divider plain>Don't have account yet?</Divider>
                         <div className="center">
                             <Link to="/signup">
-                                <Button type="primary" type="link">Signup</Button>
+                                <Button type="link">Signup</Button>
                             </Link>
                         </div>
                     </Card>
