@@ -42,7 +42,10 @@ export default function RoleForm({ data, onChange }) {
     const initialValues = Util.isEmpty(data) ? emptyRecord : data;
     const { id } = initialValues;
 
-    const endPoint = id ? `${urls.crud}${id}` : urls.crud;
+    let endPoint = id ? `${urls.crud}${id}` : urls.crud;
+    if (tenant_id) {
+        endPoint += `?tenant_id=${tenant_id}`;
+    }
     const method = id ? 'put' : 'post';
 
     useEffect(() => {
@@ -58,7 +61,6 @@ export default function RoleForm({ data, onChange }) {
             layout="vertical"
             initialValues={{ ...initialValues }}
             onFinish={(payload) => {
-                payload.tenant_id = parseInt(tenant_id);
                 FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))
                     .catch(FormUtil.setFormErrors(form));

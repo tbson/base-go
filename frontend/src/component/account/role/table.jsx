@@ -20,8 +20,9 @@ import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function RoleTable() {
     const { tenant_id } = useParams();
+    const defaultFilterParam = tenant_id ? { tenant_id } : {};
     const [searchParam, setSearchParam] = useState({});
-    const [filterParam, setFilterParam] = useState({tenant_id});
+    const [filterParam, setFilterParam] = useState(defaultFilterParam);
     const [sortParam, setSortParam] = useState({});
     const [pageParam, setPageParam] = useState({});
     const [init, setInit] = useState(false);

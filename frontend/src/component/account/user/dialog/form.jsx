@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useAtomValue } from 'jotai';
 import { Form, Input } from 'antd';
+import { useParams } from 'react-router-dom';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import CheckInput from 'component/common/form/ant/input/check_input';
@@ -37,6 +38,7 @@ const emptyRecord = {
  * @param {FormCallback} props.onChange
  */
 export default function UserForm({ data, onChange }) {
+    const { tenant_id } = useParams();
     const userOption = useAtomValue(userOptionSt);
     const [form] = Form.useForm();
 
@@ -45,7 +47,10 @@ export default function UserForm({ data, onChange }) {
     const initialValues = Util.isEmpty(data) ? emptyRecord : data;
     const { id } = initialValues;
 
-    const endPoint = id ? `${urls.crud}${id}` : urls.crud;
+    let endPoint = id ? `${urls.crud}${id}` : urls.crud;
+    if (tenant_id) {
+        endPoint += `?tenant_id=${tenant_id}`;
+    }
     const method = id ? 'put' : 'post';
 
     return (
@@ -58,7 +63,7 @@ export default function UserForm({ data, onChange }) {
             wrapperCol={{ span: 18 }}
             initialValues={{ ...initialValues }}
             onFinish={(payload) =>
-                FormUtil.submit(endPoint, {role_ids: payload.role_ids}, method)
+                FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))
                     .catch(FormUtil.setFormErrors(form))
             }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { t } from 'ttag';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Row, Col, Table, Button, Flex, Tooltip } from 'antd';
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
@@ -15,8 +16,10 @@ import LockUserDialog from './lock_user';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function UserTable() {
+    const { tenant_id } = useParams();
+    const defaultFilterParam = tenant_id ? { tenant_id } : {};
     const [searchParam, setSearchParam] = useState({});
-    const [filterParam, setFilterParam] = useState({});
+    const [filterParam, setFilterParam] = useState(defaultFilterParam);
     const [sortParam, setSortParam] = useState({});
     const [pageParam, setPageParam] = useState({});
     const [init, setInit] = useState(false);

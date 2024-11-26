@@ -1,6 +1,7 @@
 package infra
 
 import (
+	"fmt"
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
@@ -49,9 +50,12 @@ func Option(c echo.Context) error {
 }
 
 func List(c echo.Context) error {
+	tenantId := c.Get("TenantID").(uint)
+	fmt.Println("tenantId", tenantId)
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
+	options.Filters["tenant_id"] = tenantId
 	options.Preloads = []string{"Roles"}
 	listResult, err := pager.Paging(options, searchableFields)
 	if err != nil {
@@ -80,8 +84,9 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
+	tenantId := c.Get("TenantID").(uint)
 	cruder := NewRepo(dbutil.Db())
-	data, err := vldtutil.ValidatePayload(c, InputData{})
+	data, err := vldtutil.ValidatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -95,12 +100,13 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
+	tenantId := c.Get("TenantID").(uint)
 	userRepo := NewRepo(dbutil.Db())
 	crudUserRepo := New(dbutil.Db())
 
 	srv := app.New(userRepo, crudUserRepo)
 
-	data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	data, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

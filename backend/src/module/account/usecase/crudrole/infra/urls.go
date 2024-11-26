@@ -23,17 +23,17 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	)
 	rr.Rbac(
 		"GET", "/", List,
-		[]string{profiletype.ADMIN, profiletype.STAFF},
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
 		fmt.Sprintf("Get %s list", useCaseGroupName),
 	)
 	rr.Rbac(
 		"GET", "/:id", Retrieve,
-		[]string{profiletype.ADMIN, profiletype.STAFF},
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
 		fmt.Sprintf("Get %s detail", useCaseGroupName),
 	)
 	rr.Rbac(
 		"POST", "/", Create,
-		[]string{profiletype.ADMIN, profiletype.STAFF},
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
 		fmt.Sprintf("Create %s", useCaseGroupName),
 	)
 	rr.Rbac(
@@ -43,12 +43,12 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	)
 	rr.Rbac(
 		"DELETE", "/:id", Delete,
-		[]string{profiletype.ADMIN, profiletype.STAFF},
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
 		fmt.Sprintf("Delete %s", useCaseGroupName),
 	)
 	rr.Rbac(
 		"DELETE", "/", DeleteList,
-		[]string{profiletype.ADMIN, profiletype.STAFF},
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
 		fmt.Sprintf("Delete list %s", useCaseGroupName),
 	)
 	return e, pemMap

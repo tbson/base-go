@@ -8,9 +8,8 @@ import {
     MenuFoldOutlined,
     UserOutlined,
     LogoutOutlined,
-    SettingFilled,
-    AuditOutlined,
-    LockOutlined
+    TagsOutlined,
+    TeamOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
 import Util from 'service/helper/util';
@@ -33,7 +32,7 @@ function processSelectedKeys(pathname) {
         return '/user';
     }
     return [pathname];
-};
+}
 
 /**
  * UserLayout.
@@ -62,20 +61,18 @@ export default function UserLayout() {
         const result = [];
 
         result.push({ label: t`Profile`, key: '/', icon: <UserOutlined /> });
-        /*
         PemUtil.canView('crudrole') &&
             result.push({
                 label: t`Role`,
-                key: `/account/tenant/${tenant_id}/role`,
+                key: `/account/role`,
                 icon: <TagsOutlined />
             });
         PemUtil.canView('cruduser') &&
             result.push({
                 label: t`User`,
-                key: `/account/tenant/${tenant_id}/user`,
+                key: `/account/user`,
                 icon: <TeamOutlined />
-            }); 
-        */
+            });
         return result;
     };
 

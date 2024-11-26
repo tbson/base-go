@@ -127,6 +127,22 @@ const router = createBrowserRouter([
                                         await import('component/account/tenant')
                                     ).default
                                 })
+                            },
+                            {
+                                path: 'account/role',
+                                lazy: async () => ({
+                                    Component: (
+                                        await import('component/account/role')
+                                    ).default
+                                })
+                            },
+                            {
+                                path: 'account/user',
+                                lazy: async () => ({
+                                    Component: (
+                                        await import('component/account/user')
+                                    ).default
+                                })
                             }
                         ]
                     }
