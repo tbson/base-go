@@ -321,11 +321,6 @@ func (r Repo) SendVerifyEmail(
 	sub string,
 	realm string,
 ) error {
-	fmt.Println("Send verify email")
-	fmt.Println(accessToken)
-	fmt.Println(sub)
-	fmt.Println(realm)
-
 	ctx := context.Background()
 	localizer := localeutil.Get()
 
@@ -396,7 +391,7 @@ func (r Repo) Logout(clientId string, clientSecret string, realm string, refresh
 	localizer := localeutil.Get()
 	err := r.client.Logout(ctx, clientId, clientSecret, realm, refreshToken)
 	if err != nil {
-		fmt.Println("Error logging outlllllllllll")
+		fmt.Println("Error logging out")
 		fmt.Println(err)
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.CannotLogout,
