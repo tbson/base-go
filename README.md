@@ -58,7 +58,7 @@ Add this line to hosts file
 ./exec bbuild
 ```
 
-## Run frontend code
+## Build frontend code
 ```
 ./exec yarn build
 ```
