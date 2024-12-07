@@ -39,8 +39,6 @@ export default function UserLayout() {
 
     const getMenuItems = () => {
         const result = [];
-
-        result.push({ label: t`Profile`, key: '/', icon: <UserOutlined /> });
         PemUtil.canView('crudrole') &&
             result.push({
                 label: t`Role`,
@@ -73,7 +71,7 @@ export default function UserLayout() {
                     {collapsed || (
                         <div className="logo">
                             <div className="logo-text">
-                                <NavLink to="/">{LOGO_TEXT}</NavLink>
+                                <NavLink to="/">{LOGO_TEXT}U</NavLink>
                             </div>
                         </div>
                     )}

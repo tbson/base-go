@@ -10,6 +10,8 @@ import { urls, getLabels } from '../config';
 
 const { TextArea } = Input;
 
+const dateFields = [];
+
 const formName = 'VariableForm';
 const emptyRecord = {
     id: 0,
@@ -40,7 +42,9 @@ export default function VariableForm({ data, onChange }) {
 
     const labels = getLabels();
 
-    const initialValues = Util.isEmpty(data) ? emptyRecord : data;
+    const initialValues = Util.isEmpty(data)
+        ? emptyRecord
+        : RequestUtil.formatResponseDate(data, dateFields);
     const { id } = initialValues;
 
     const endPoint = id ? `${urls.crud}${id}` : urls.crud;
@@ -59,11 +63,12 @@ export default function VariableForm({ data, onChange }) {
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 18 }}
             initialValues={{ ...initialValues }}
-            onFinish={(payload) =>
+            onFinish={(data) => {
+                const payload = RequestUtil.formatPayloadDate(data, dateFields);
                 FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))
-                    .catch(FormUtil.setFormErrors(form))
-            }
+                    .catch(FormUtil.setFormErrors(form));
+            }}
         >
             <Form.Item name="key" label={labels.key} rules={[FormUtil.ruleRequired()]}>
                 <Input ref={inputRef} />
